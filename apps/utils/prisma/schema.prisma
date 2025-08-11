@@ -8,46 +8,74 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Organization {
-  id              String   @id @default(cuid())
-  name            String
-  createdAt       DateTime @default(now())
-  superadmin        User     @relation("SuperadminForOrg", fields: [superadminId], references: [id])
-  superadminId    String   @unique
+model Office {
+  id       String   @id @default(cuid())
+  name     String
+  location String
+  tenants  Tenant[] @relation("TenantOfficeMapper")
+  tenantId String?
+}
 
+model Tenant {
+  id           String   @id @default(cuid())
+  name         String
+  createdAt    DateTime @default(now())
+  superadmin   User     @relation("SuperadminForOrg", fields: [superadminId], references: [id])
+  superadminId String   @unique
 
-  users           User[]   @relation("UsersInOrg")
+  users User[] @relation("UsersInOrg")
+
+  office   Office? @relation("TenantOfficeMapper", fields: [officeId], references: [id])
+  officeId String?
+
+  @@map("Tenant")
+}
+
+model Address {
+  id           String  @id @default(cuid())
+  addressLine1 String
+  addressLine2 String?
+  city         String
+  zipCode      String
+  landMark     String?
+  user         User?
 }
 
 model User {
-  id              String   @id @default(cuid())
-  email           String   @unique
-  passwordHash    String   
-  name            String
-  age             Int?     
-  phoneNo         String   @unique
-  profileImgUrl   String?
-  homeLocation    String?  
+  id            String   @id @default(cuid())
+  email         String   @unique
+  passwordHash  String
+  name          String
+  age           Int?
+  phoneNo       String   @unique
+  profileImgUrl String?
+  address       Address? @relation(fields: [addressId], references: [id])
+  addressId     String   @unique
 
-  role            UserRole 
-  organization    Organization? @relation("UsersInOrg", fields: [tenantId], references: [id])
-  tenantId        String?
-  organizationAsSuperadmin Organization? @relation("SuperadminForOrg")
-  vehicle         Vehicle?
+  role                     UserRole
+  status                   MembershipStatus @default(PENDING)
+  /**
+   * the organization details should be optional, since a superadmin can exist in the records
+   * without having created an organization yet
+   */
+  organization             Tenant?          @relation("UsersInOrg", fields: [tenantId], references: [id])
+  tenantId                 String?
+  organizationAsSuperadmin Tenant?          @relation("SuperadminForOrg")
+  vehicle                  Vehicle?
 
   @@index([tenantId])
 }
 
 model Vehicle {
-  id              String   @id @default(cuid())
-  make            String   // e.g., "Toyota"
-  model           String   // e.g., "Camry"
-  licensePlate    String   @unique
-  color           String
-  capacity        Int
+  id           String @id @default(cuid())
+  make         String // e.g., "Toyota"
+  model        String // e.g., "Camry"
+  licensePlate String @unique
+  color        String
+  capacity     Int
 
-  driver          User     @relation(fields: [driverId], references: [id])
-  driverId        String   @unique
+  driver   User   @relation(fields: [driverId], references: [id])
+  driverId String @unique
 }
 
 enum UserRole {
@@ -55,4 +83,9 @@ enum UserRole {
   ADMIN
   DRIVER
   EMPLOYEE
+}
+
+enum MembershipStatus {
+  PENDING // The user has requested to join but is not yet approved.
+  MEMBER // The user is an active, approved member of the organization.
 }
