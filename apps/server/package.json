@@ -1,13 +1,15 @@
 {
-  "name": "riderota",
+  "name": "server",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev:landing-site": "pnpm --filter landing-site dev",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "aatir <aatir.nadim@gmail.com>",
-  "license": "MIT"
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.1.0"
+  }
 }
