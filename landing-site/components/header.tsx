@@ -20,7 +20,7 @@ export function Header() {
 
   return (
     <motion.header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-100 ${
         isScrolled
           ? "bg-white/95 backdrop-blur-md shadow-custom border-b border-neutral-200/20"
           : "bg-transparent"
@@ -59,7 +59,7 @@ export function Header() {
                     className="text-neutral-700 hover:text-primary-600 transition-colors relative group"
                   >
                     {item}
-                    <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary-gradient group-hover:w-full transition-all duration-300"></span>
+                    <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary-gradient group-hover:w-full transition-all duration-100"></span>
                   </Link>
                 </motion.div>
               )
@@ -78,7 +78,7 @@ export function Header() {
             >
               Login
             </Button>
-            <Button className="bg-primary-gradient hover:shadow-custom-hover transition-all duration-300 transform hover:scale-105">
+            <Button className="bg-primary-gradient hover:shadow-custom-hover transition-all duration-100 transform hover:scale-105">
               Sign Up
             </Button>
           </motion.div>

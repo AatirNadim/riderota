@@ -13,9 +13,9 @@ import {
   Linkedin,
   Instagram,
 } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 
-const containerVariants = {
+const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
@@ -26,13 +26,13 @@ const containerVariants = {
   },
 };
 
-const itemVariants = {
+const itemVariants: Variants = {
   hidden: { y: 20, opacity: 0 },
   visible: {
     y: 0,
     opacity: 1,
     transition: {
-      duration: 0.6,
+      duration: 0.3,
       ease: "easeOut",
     },
   },
@@ -74,7 +74,7 @@ export function Footer() {
                 >
                   <Button
                     size="lg"
-                    className="bg-primary-gradient hover:shadow-custom-hover transition-all duration-300"
+                    className="bg-primary-gradient hover:shadow-custom-hover transition-all duration-100"
                   >
                     Start Free Trial
                   </Button>
@@ -86,7 +86,7 @@ export function Footer() {
                   <Button
                     variant="outline"
                     size="lg"
-                    className="text-white bg-transparent transition-all duration-300"
+                    className="text-white bg-transparent transition-all duration-100"
                     style={{
                       borderColor: "var(--neutral-600)",
                       "&:hover": { backgroundColor: "var(--neutral-800)" },
@@ -262,7 +262,7 @@ export function Footer() {
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.3 }}
           >
             <div
               className="text-sm mb-4 md:mb-0"

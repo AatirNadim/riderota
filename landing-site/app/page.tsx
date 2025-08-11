@@ -14,7 +14,7 @@ export default function LandingPage() {
       className="min-h-screen bg-hero-gradient"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
+      transition={{ duration: 0.1 }}
     >
       <Header />
       <main>

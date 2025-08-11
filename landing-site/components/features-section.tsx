@@ -81,7 +81,7 @@ const itemVariants = {
     y: 0,
     opacity: 1,
     transition: {
-      duration: 0.6,
+      duration: 0.1,
       ease: "easeOut",
     },
   },
@@ -96,7 +96,7 @@ export function FeaturesSection() {
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: 0.1 }}
         >
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6" style={{ color: "var(--neutral-900)" }}>
             Powerful Features for <span className="text-primary-gradient">Every Role</span>
@@ -124,13 +124,13 @@ export function FeaturesSection() {
               }}
               transition={{ type: "spring", stiffness: 300, damping: 20 }}
             >
-              <Card className="border-0 shadow-custom hover:shadow-custom-hover transition-all duration-300 h-full">
+              <Card className="border-0 shadow-custom hover:shadow-custom-hover transition-all duration-100 h-full">
                 <CardContent className="p-6">
                   <motion.div
                     className="inline-flex items-center justify-center w-12 h-12 rounded-lg mb-4"
                     style={{ backgroundColor: `${feature.color}20` }}
                     whileHover={{ rotate: 360 }}
-                    transition={{ duration: 0.6 }}
+                    transition={{ duration: 0.1 }}
                   >
                     <feature.icon className="h-6 w-6" style={{ color: feature.color }} />
                   </motion.div>

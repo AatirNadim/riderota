@@ -1,11 +1,11 @@
-"use client"
+"use client";
 
-import { Card, CardContent } from "@/components/ui/card"
-import { Star, Quote } from "lucide-react"
-import { motion } from "framer-motion"
-import { testimonials } from "@/public/data/testimonials"
+import { Card, CardContent } from "@/components/ui/card";
+import { Star, Quote } from "lucide-react";
+import { motion, Variants } from "framer-motion";
+import { testimonials } from "@/public/data/testimonials";
 
-const containerVariants = {
+const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
@@ -14,19 +14,19 @@ const containerVariants = {
       staggerChildren: 0.15,
     },
   },
-}
+};
 
-const itemVariants = {
+const itemVariants: Variants = {
   hidden: { y: 30, opacity: 0 },
   visible: {
     y: 0,
     opacity: 1,
     transition: {
-      duration: 0.7,
+      duration: 0.1,
       ease: "easeOut",
     },
   },
-}
+};
 
 export function TestimonialsSection() {
   return (
@@ -39,12 +39,18 @@ export function TestimonialsSection() {
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
         >
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6" style={{ color: "var(--neutral-900)" }}>
+          <h2
+            className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6"
+            style={{ color: "var(--neutral-900)" }}
+          >
             What Our <span className="text-primary-gradient">Users Say</span>
           </h2>
-          <p className="text-xl max-w-3xl mx-auto" style={{ color: "var(--neutral-600)" }}>
-            {`Don't`} just take our word for it. {`Here's`} what real users across different roles have to say about their
-            RideRota experience.
+          <p
+            className="text-xl max-w-3xl mx-auto"
+            style={{ color: "var(--neutral-600)" }}
+          >
+            {`Don't`} just take our word for it. {`Here's`} what real users
+            across different roles have to say about their RideRota experience.
           </p>
         </motion.div>
 
@@ -70,9 +76,16 @@ export function TestimonialsSection() {
                   <motion.div
                     className="absolute top-4 right-4 opacity-10"
                     animate={{ rotate: [0, 10, -10, 0] }}
-                    transition={{ duration: 4, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
+                    transition={{
+                      duration: 4,
+                      repeat: Number.POSITIVE_INFINITY,
+                      ease: "easeInOut",
+                    }}
                   >
-                    <Quote className="h-8 w-8" style={{ color: "var(--primary-600)" }} />
+                    <Quote
+                      className="h-8 w-8"
+                      style={{ color: "var(--primary-600)" }}
+                    />
                   </motion.div>
 
                   <motion.div
@@ -88,14 +101,21 @@ export function TestimonialsSection() {
                         initial={{ scale: 0 }}
                         whileInView={{ scale: 1 }}
                         viewport={{ once: true }}
-                        transition={{ delay: 0.3 + i * 0.1, type: "spring", stiffness: 500 }}
+                        transition={{
+                          delay: 0.3 + i * 0.1,
+                          type: "spring",
+                          stiffness: 500,
+                        }}
                       >
                         <Star className="h-4 w-4 text-yellow-400 fill-current" />
                       </motion.div>
                     ))}
                   </motion.div>
 
-                  <p className="mb-6 leading-relaxed" style={{ color: "var(--neutral-600)" }}>
+                  <p
+                    className="mb-6 leading-relaxed"
+                    style={{ color: "var(--neutral-600)" }}
+                  >
                     {testimonial.content}
                   </p>
 
@@ -109,13 +129,23 @@ export function TestimonialsSection() {
                       alt={testimonial.name}
                       className="w-12 h-12 rounded-full mr-4 object-cover"
                       whileHover={{ scale: 1.1 }}
-                      transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 400,
+                        damping: 10,
+                      }}
                     />
                     <div>
-                      <div className="font-semibold" style={{ color: "var(--neutral-900)" }}>
+                      <div
+                        className="font-semibold"
+                        style={{ color: "var(--neutral-900)" }}
+                      >
                         {testimonial.name}
                       </div>
-                      <div className="text-sm" style={{ color: "var(--neutral-500)" }}>
+                      <div
+                        className="text-sm"
+                        style={{ color: "var(--neutral-500)" }}
+                      >
                         {testimonial.role} at {testimonial.company}
                       </div>
                     </div>
@@ -127,5 +157,5 @@ export function TestimonialsSection() {
         </motion.div>
       </div>
     </section>
-  )
+  );
 }

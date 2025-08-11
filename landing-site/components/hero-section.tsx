@@ -2,9 +2,9 @@
 
 import { Button } from "@/components/ui/button"
 import { ArrowRight, Car, Users, Shield, Zap } from "lucide-react"
-import { motion } from "framer-motion"
+import { motion, Variants } from "framer-motion"
 
-const containerVariants = {
+const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
@@ -15,25 +15,25 @@ const containerVariants = {
   },
 }
 
-const itemVariants = {
+const itemVariants: Variants = {
   hidden: { y: 20, opacity: 0 },
   visible: {
     y: 0,
     opacity: 1,
     transition: {
-      duration: 0.8,
+      duration: 0.4,
       ease: "easeOut",
     },
   },
 }
 
-const statsVariants = {
+const statsVariants: Variants = {
   hidden: { scale: 0.8, opacity: 0 },
   visible: {
     scale: 1,
     opacity: 1,
     transition: {
-      duration: 0.6,
+      duration: 0.3,
       ease: "easeOut",
     },
   },
@@ -132,17 +132,17 @@ export function HeroSection() {
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Button
                 size="lg"
-                className="bg-primary-gradient hover:shadow-custom-hover text-white px-8 py-4 text-lg font-semibold shadow-custom transition-all duration-300"
+                className="bg-primary-gradient hover:shadow-custom-hover text-white px-10 py-6 text-lg font-semibold shadow-xl transition-all duration-100"
               >
                 Get Started Free
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </motion.div>
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            {/* <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Button
                 variant="outline"
                 size="lg"
-                className="border-2 px-8 py-4 text-lg font-semibold transition-all duration-300 bg-transparent hover:bg-primary-50"
+                className="border-2 px-8 py-4 text-lg font-semibold transition-all duration-100 bg-transparent hover:bg-primary-50"
                 style={{
                   borderColor: "var(--neutral-300)",
                   color: "var(--neutral-700)",
@@ -150,7 +150,7 @@ export function HeroSection() {
               >
                 Watch Demo
               </Button>
-            </motion.div>
+            </motion.div> */}
           </motion.div>
 
           {/* Stats */}
