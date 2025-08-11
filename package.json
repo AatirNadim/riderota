@@ -5,6 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev:landing-site": "pnpm --filter landing-site dev",
+    "dev:superadmin-ui": "pnpm --filter superadmin-ui dev",
+    "dev:admin-ui": "pnpm --filter admin-ui dev",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
