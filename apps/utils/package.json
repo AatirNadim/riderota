@@ -16,6 +16,7 @@
     "typescript": "^5"
   },
   "dependencies": {
-    "@prisma/client": "^6.13.0"
+    "@prisma/client": "^6.13.0",
+    "openapi": "^1.0.1"
   }
 }
