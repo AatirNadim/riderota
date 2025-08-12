@@ -10,6 +10,9 @@ importers:
 
   apps/server:
     dependencies:
+      '@riderota/utils':
+        specifier: workspace:^
+        version: link:../utils
       dotenv:
         specifier: ^17.2.1
         version: 17.2.1
