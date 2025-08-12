@@ -2,31 +2,138 @@ openapi: 3.0.3
 info:
   title: rideRota API
   version: 1.0.0
+tags:
+  - name: Authentication
+    description: Operations for user authentication and session management.
+  - name: User Management
+    description: Operations for creating different types of users.
+
 paths:
   /api/auth/login:
     post:
       summary: User Login
-      tags:
-        - Authentication
+      tags: [Authentication]
       requestBody:
+        description: User credentials for login
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/LoginRequest"
+              $ref: '#/components/schemas/LoginPayload'
       responses:
-        "200":
-          description: Successful login
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/LoginResponse"
-        "401":
-          description: Invalid credentials
+        '200':
+          $ref: '#/components/responses/AuthSuccessResponse'
+        '401':
+          description: Unauthorized / Invalid credentials
+
+  /api/superadmin:
+    post:
+      summary: Create a new Super Admin
+      tags: [User Management]
+      requestBody:
+        description: Super Admin user details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SuperAdminCreatePayload'
+      responses:
+        '201':
+          $ref: '#/components/responses/AuthSuccessResponse'
+
+  /api/admins:
+    post:
+      summary: Create a new Admin
+      tags: [User Management]
+      requestBody:
+        description: Admin user details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminCreatePayload'
+      responses:
+        '201':
+          $ref: '#/components/responses/AuthSuccessResponse'
+        '400':
+          description: Bad Request / Validation Error
+
+  /api/employees:
+    post:
+      summary: Create a new Employee
+      tags: [User Management]
+      requestBody:
+        description: Employee user details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmployeeCreatePayload'
+      responses:
+        '201':
+          $ref: '#/components/responses/AuthSuccessResponse'
+        '400':
+          description: Bad Request / Validation Error
+
+  /api/drivers:
+    post:
+      summary: Create a new Driver
+      tags: [User Management]
+      requestBody:
+        description: Driver user details and vehicle information
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DriverCreatePayload'
+      responses:
+        '201':
+          $ref: '#/components/responses/AuthSuccessResponse'
+        '400':
+          description: Bad Request / Validation Error
 
 components:
   schemas:
-    LoginRequest:
+    # --- Base Types ---
+    UserBase:
+      type: object
+      properties:
+        name:
+          type: string
+          example: 'John Doe'
+        age:
+          type: integer
+          example: 30
+        phoneNo:
+          type: string
+          example: '+11234567890'
+        email:
+          type: string
+          format: email
+          example: 'john.doe@example.com'
+        profileImgUrl:
+          type: string
+          format: uri
+          nullable: true
+          example: 'https://example.com/profile.jpg'
+      required:
+        - name
+        - phoneNo
+        - email
+
+    UserCreatePayload:
+      allOf:
+        - $ref: '#/components/schemas/UserBase'
+        - type: object
+          properties:
+            password_hash:
+              type: string
+              description: "The user's hashed password."
+              example: '$2b$10$K2.09uI5GU.J4sF2uB5gIuJ0Z5jJ6X3Y2Z5jJ6X3Y2Z5jJ6X3Y2Z'
+          required:
+            - password_hash
+
+    LoginPayload:
       type: object
       properties:
         email:
@@ -34,17 +141,82 @@ components:
           format: email
         password:
           type: string
+          format: password
       required:
         - email
         - password
 
-    LoginResponse:
+    ApiResponse:
       type: object
       properties:
-        accessToken:
-          type: string
-        refreshToken:
+        message:
           type: string
       required:
-        - accessToken
-        - refreshToken
+        - message
+
+    # --- User Payloads & Responses ---
+    SuperAdminCreatePayload:
+      allOf:
+        - $ref: '#/components/schemas/UserCreatePayload'
+
+    AdminCreatePayload:
+      allOf:
+        - $ref: '#/components/schemas/UserCreatePayload'
+
+    EmployeeCreatePayload:
+      allOf:
+        - $ref: '#/components/schemas/UserCreatePayload'
+        - type: object
+          properties:
+            location:
+              type: string
+              description: "The employee's home address or pickup location."
+              example: "123 Main St, Anytown, USA"
+          required:
+            - location
+
+    DriverCreatePayload:
+      allOf:
+        - $ref: '#/components/schemas/UserCreatePayload'
+        - type: object
+          properties:
+            carMake:
+              type: string
+              example: 'Toyota'
+            carName:
+              type: string
+              example: 'Camry'
+            carColor:
+              type: string
+              example: 'Blue'
+            carPlate:
+              type: string
+              example: 'RIDE-123'
+            numberOfSeats:
+              type: integer
+              example: 4
+            carDescription:
+              type: string
+              nullable: true
+          required:
+            - carMake
+            - carName
+            - carColor
+            - carPlate
+            - numberOfSeats
+
+  responses:
+    AuthSuccessResponse:
+      description: |-
+        Request successful. An httpOnly cookie containing an access token and another httpOnly cookie containing a refresh token have been set.
+      headers:
+        Set-Cookie:
+          schema:
+            type: string
+            example: 'accessToken=...; HttpOnly; Path=/; SameSite=Strict'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiResponse'
+            example:
+              message: "Authentication successful"
