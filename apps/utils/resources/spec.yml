@@ -9,113 +9,222 @@ tags:
     description: Operations for creating different types of users.
 
 paths:
+  /api/auth/signup/superadmin:
+    post:
+      summary: Superadmin and Organization Signup
+      tags: [Authentication & Onboarding]
+      description: >
+        Creates a new superadmin user and their associated organization.
+        On success, returns access and refresh tokens via HttpOnly Set-Cookie headers.
+      requestBody:
+        description: Superadmin and new organization details.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SuperadminCreatePayload"
+      responses:
+        "201":
+          description: >
+            User and organization created successfully.
+            Tokens are returned in HttpOnly cookies.
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                example: "accessToken=...; HttpOnly; Secure; Path=/; Max-Age=900"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericSuccessResponse"
+        "400":
+          description: Bad Request / Validation Error
+        "409":
+          description: Conflict - A user or organization with these details already exists.
+
+  /api/auth/signup/admin:
+    post:
+      summary: Admin Signup
+      tags: [Authentication & Onboarding]
+      description: >
+        Creates a new admin user.
+        On success, returns access and refresh tokens via HttpOnly Set-Cookie headers.
+      requestBody:
+        description: Admin user details.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminCreatePayload"
+      responses:
+        "201":
+          description: >
+            User created successfully.
+            Tokens are returned in HttpOnly cookies.
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                example: "accessToken=...; HttpOnly; Secure; Path=/; Max-Age=900"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericSuccessResponse"
+        "400":
+          description: Bad Request / Validation Error
+        "409":
+          description: Conflict - A user with these details already exists.
+
+  /api/auth/signup/driver:
+    post:
+      summary: Driver Signup
+      tags: [Authentication & Onboarding]
+      description: >
+        Creates a new driver user.
+        On success, returns access and refresh tokens via HttpOnly Set-Cookie headers.
+      requestBody:
+        description: Driver user details.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DriverCreatePayload"
+      responses:
+        "201":
+          description: >
+            User created successfully.
+            Tokens are returned in HttpOnly cookies.
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                example: "accessToken=...; HttpOnly; Secure; Path=/; Max-Age=900"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericSuccessResponse"
+        "400":
+          description: Bad Request / Validation Error
+        "409":
+          description: Conflict - A user with these details already exists.
+
+  /api/auth/signup/employee:
+    post:
+      summary: Employee Signup
+      tags: [Authentication & Onboarding]
+      description: >
+        Creates a new employee user.
+        On success, returns access and refresh tokens via HttpOnly Set-Cookie headers.
+      requestBody:
+        description: Employee user details.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EmployeeCreatePayload"
+      responses:
+        "201":
+          description: >
+            User created successfully.
+            Tokens are returned in HttpOnly cookies.
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                example: "accessToken=...; HttpOnly; Secure; Path=/; Max-Age=900"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericSuccessResponse"
+        "400":
+          description: Bad Request / Validation Error
+        "409":
+          description: Conflict - A user with these details already exists.
+
+  # You would have a similar login endpoint
   /api/auth/login:
     post:
       summary: User Login
-      tags: [Authentication]
+      tags: [Authentication & Onboarding]
+      description: >
+        Authenticates a user. On success, returns access and refresh
+        tokens via HttpOnly Set-Cookie headers.
       requestBody:
         description: User credentials for login
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/LoginPayload'
+              $ref: "#/components/schemas/LoginPayload"
       responses:
-        '200':
-          $ref: '#/components/responses/AuthSuccessResponse'
-        '401':
-          description: Unauthorized / Invalid credentials
+        "200":
+          description: Login successful. Tokens are returned in HttpOnly cookies.
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                example: "accessToken=...; HttpOnly; Secure; Path=/; Max-Age=900"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericSuccessResponse"
 
-  /api/superadmin:
+  /api/invite:
     post:
-      summary: Create a new Super Admin
+      summary: Invite a new User
       tags: [User Management]
       requestBody:
-        description: Super Admin user details
+        description: User email and type
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SuperAdminCreatePayload'
+              $ref: "#/components/schemas/UserInvitePayload"
       responses:
-        '201':
-          $ref: '#/components/responses/AuthSuccessResponse'
-
-  /api/admins:
-    post:
-      summary: Create a new Admin
-      tags: [User Management]
-      requestBody:
-        description: Admin user details
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AdminCreatePayload'
-      responses:
-        '201':
-          $ref: '#/components/responses/AuthSuccessResponse'
-        '400':
-          description: Bad Request / Validation Error
-
-  /api/employees:
-    post:
-      summary: Create a new Employee
-      tags: [User Management]
-      requestBody:
-        description: Employee user details
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/EmployeeCreatePayload'
-      responses:
-        '201':
-          $ref: '#/components/responses/AuthSuccessResponse'
-        '400':
-          description: Bad Request / Validation Error
-
-  /api/drivers:
-    post:
-      summary: Create a new Driver
-      tags: [User Management]
-      requestBody:
-        description: Driver user details and vehicle information
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/DriverCreatePayload'
-      responses:
-        '201':
-          $ref: '#/components/responses/AuthSuccessResponse'
-        '400':
+        "201":
+          $ref: "#/components/schemas/GenericSuccessResponse"
+        "400":
           description: Bad Request / Validation Error
 
 components:
   schemas:
+    UserInvitePayload:
+      type: object
+      properties:
+        userType:
+          type: string
+          enum: [admin, driver, employee]
+          description: "The type of user to invite."
+          example: "admin"
+        email:
+          type: string
+          format: email
+          example: "admin@example.com"
+      required:
+        - email
+
     # --- Base Types ---
     UserBase:
       type: object
       properties:
         name:
           type: string
-          example: 'John Doe'
+          example: "John Doe"
         age:
           type: integer
           example: 30
         phoneNo:
           type: string
-          example: '+11234567890'
+          example: "+11234567890"
         email:
           type: string
           format: email
-          example: 'john.doe@example.com'
+          example: "john.doe@example.com"
         profileImgUrl:
           type: string
           format: uri
           nullable: true
-          example: 'https://example.com/profile.jpg'
+          example: "https://example.com/profile.jpg"
       required:
         - name
         - phoneNo
@@ -123,13 +232,13 @@ components:
 
     UserCreatePayload:
       allOf:
-        - $ref: '#/components/schemas/UserBase'
+        - $ref: "#/components/schemas/UserBase"
         - type: object
           properties:
             password_hash:
               type: string
               description: "The user's hashed password."
-              example: '$2b$10$K2.09uI5GU.J4sF2uB5gIuJ0Z5jJ6X3Y2Z5jJ6X3Y2Z5jJ6X3Y2Z'
+              example: "$2b$10$K2.09uI5GU.J4sF2uB5gIuJ0Z5jJ6X3Y2Z5jJ6X3Y2Z5jJ6X3Y2Z"
           required:
             - password_hash
 
@@ -154,18 +263,29 @@ components:
       required:
         - message
 
+    TenantCreatePayload:
+      type: object
+      properties:
+        organizationName:
+          type: string
+          description: "The name of the new organization."
+          example: "Innovate Inc."
+      required:
+        - organizationName
+
     # --- User Payloads & Responses ---
-    SuperAdminCreatePayload:
+    SuperadminCreatePayload:
       allOf:
-        - $ref: '#/components/schemas/UserCreatePayload'
+        - $ref: "#/components/schemas/UserCreatePayload"
+        - $ref: "#/components/schemas/TenantCreatePayload"
 
     AdminCreatePayload:
       allOf:
-        - $ref: '#/components/schemas/UserCreatePayload'
+        - $ref: "#/components/schemas/UserCreatePayload"
 
     EmployeeCreatePayload:
       allOf:
-        - $ref: '#/components/schemas/UserCreatePayload'
+        - $ref: "#/components/schemas/UserCreatePayload"
         - type: object
           properties:
             location:
@@ -177,21 +297,21 @@ components:
 
     DriverCreatePayload:
       allOf:
-        - $ref: '#/components/schemas/UserCreatePayload'
+        - $ref: "#/components/schemas/UserCreatePayload"
         - type: object
           properties:
             carMake:
               type: string
-              example: 'Toyota'
+              example: "Toyota"
             carName:
               type: string
-              example: 'Camry'
+              example: "Camry"
             carColor:
               type: string
-              example: 'Blue'
+              example: "Blue"
             carPlate:
               type: string
-              example: 'RIDE-123'
+              example: "RIDE-123"
             numberOfSeats:
               type: integer
               example: 4
@@ -205,6 +325,13 @@ components:
             - carPlate
             - numberOfSeats
 
+    GenericSuccessResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Authentication successful."
+
   responses:
     AuthSuccessResponse:
       description: |-
@@ -213,10 +340,10 @@ components:
         Set-Cookie:
           schema:
             type: string
-            example: 'accessToken=...; HttpOnly; Path=/; SameSite=Strict'
+            example: "accessToken=...; HttpOnly; Path=/; SameSite=Strict"
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ApiResponse'
+            $ref: "#/components/schemas/ApiResponse"
             example:
               message: "Authentication successful"
