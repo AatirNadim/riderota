@@ -6,6 +6,7 @@
   "scripts": {
     "dev:landing-site": "pnpm --filter landing-site dev",
     "dev:administration-ui": "pnpm --filter administration-ui dev -p 3001",
+    "dev:server": "pnpm --filter server dev",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
