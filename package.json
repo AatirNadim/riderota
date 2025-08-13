@@ -8,7 +8,7 @@
     "dev:administration-ui": "pnpm --filter administration-ui dev -p 3001",
     "dev:server": "pnpm --filter server dev",
     "build:utils": "pnpm --filter @riderota/utils build",
-
+    "build:server": "pnpm --filter server build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

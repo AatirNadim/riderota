@@ -4,8 +4,8 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "generate-types": "swagger-typescript-api -p ../utils/resources/spec.yml -o ./src/types -n generated-api.ts --no-client",
-    "build": "pnpm generate-types && tsc",
+    "generate-types": "swagger-typescript-api generate -p ../utils/resources/spec.yml -o ./src/types -n generated-api.ts",
+    "build": "pnpm run generate-types && tsc",
     "start": "node dist/index.js",
     "dev": "tsx watch src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
