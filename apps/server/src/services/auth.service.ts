@@ -1,20 +1,21 @@
 import { AuthRepo } from "../repositories/auth.repo";
-import { components } from "../types/generated-api";
+import { components } from "@riderota/utils";
 
 export class AuthService {
-  private authRepo;
-  constructor() {
-    this.authRepo = new AuthRepo();
-  }
+  constructor(private authRepo: AuthRepo) {}
 
-  async createSuperAdmin(
+  async superAdminSignup(
     data: components["schemas"]["SuperadminCreatePayload"]
   ): Promise<any> {
-    return this.authRepo.createSuperAdminInDb(data);
-  }
+    try {
+      await this.authRepo.createSuperAdminInDb(data);
+      console.log("Superadmin created successfully");
 
-  async superAdminSignup(data: any): Promise<any> {
-    // Implement the signup logic for super admins
+      
+
+    } catch (error) {
+      // Handle error
+    }
   }
 
   async healthCheck(): Promise<any> {
