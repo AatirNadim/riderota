@@ -4,7 +4,7 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "generate-types": "swagger-typescript-api generate -p ../utils/resources/spec.yml -o ./src/types -n generated-api.ts",
+    "generate-types": "openapi-typescript ../utils/resources/spec.yml --output src/types/generated-api.ts",
     "build": "pnpm run generate-types && tsc",
     "start": "node dist/index.js",
     "dev": "tsx watch src/index.ts",
@@ -22,7 +22,7 @@
     "@types/express": "^5.0.3",
     "@types/node": "^20",
     "nodemon": "^3.1.10",
-    "swagger-typescript-api": "^13.2.8",
+    "openapi-typescript": "^7.9.1",
     "ts-node": "^10.9.2",
     "tsx": "^4.20.3",
     "typescript": "^5"
