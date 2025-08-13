@@ -235,12 +235,12 @@ components:
         - $ref: "#/components/schemas/UserBase"
         - type: object
           properties:
-            password_hash:
+            passwordHash:
               type: string
               description: "The user's hashed password."
               example: "$2b$10$K2.09uI5GU.J4sF2uB5gIuJ0Z5jJ6X3Y2Z5jJ6X3Y2Z5jJ6X3Y2Z"
           required:
-            - password_hash
+            - passwordHash
 
     LoginPayload:
       type: object
@@ -277,7 +277,7 @@ components:
     SuperadminCreatePayload:
       allOf:
         - $ref: "#/components/schemas/UserCreatePayload"
-        - $ref: "#/components/schemas/TenantCreatePayload"
+        # - $ref: "#/components/schemas/TenantCreatePayload"
 
     AdminCreatePayload:
       allOf:
