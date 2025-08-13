@@ -14,14 +14,17 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/ms": "^2.1.0",
     "@types/node": "^20",
-    "prisma": "^6.13.0",
     "openapi-typescript": "^7.9.1",
+    "prisma": "^6.13.0",
     "tsx": "^4.20.3",
     "typescript": "^5"
   },
   "dependencies": {
     "@prisma/client": "^6.13.0",
+    "jsonwebtoken": "^9.0.2",
     "openapi": "^1.0.1"
   }
 }
