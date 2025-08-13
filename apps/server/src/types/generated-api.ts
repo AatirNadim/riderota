@@ -4,437 +4,438 @@
  */
 
 export interface paths {
-    "/api/auth/signup/superadmin": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Superadmin and Organization Signup
-         * @description Creates a new superadmin user and their associated organization. On success, returns access and refresh tokens via HttpOnly Set-Cookie headers.
-         *
-         */
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            /** @description Superadmin and new organization details. */
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["SuperadminCreatePayload"];
-                };
-            };
-            responses: {
-                /** @description User and organization created successfully. Tokens are returned in HttpOnly cookies.
-                 *      */
-                201: {
-                    headers: {
-                        "Set-Cookie"?: string;
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["GenericSuccessResponse"];
-                    };
-                };
-                /** @description Bad Request / Validation Error */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Conflict - A user or organization with these details already exists. */
-                409: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+  "/api/auth/signup/superadmin": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/auth/signup/admin": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    get?: never;
+    put?: never;
+    /**
+     * Superadmin and Organization Signup
+     * @description Creates a new superadmin user and their associated organization. On success, returns access and refresh tokens via HttpOnly Set-Cookie headers.
+     *
+     */
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      /** @description Superadmin and new organization details. */
+      requestBody: {
+        content: {
+          "application/json": components["schemas"]["SuperadminCreatePayload"];
         };
-        get?: never;
-        put?: never;
-        /**
-         * Admin Signup
-         * @description Creates a new admin user. On success, returns access and refresh tokens via HttpOnly Set-Cookie headers.
-         *
-         */
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            /** @description Admin user details. */
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["AdminCreatePayload"];
-                };
-            };
-            responses: {
-                /** @description User created successfully. Tokens are returned in HttpOnly cookies.
-                 *      */
-                201: {
-                    headers: {
-                        "Set-Cookie"?: string;
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["GenericSuccessResponse"];
-                    };
-                };
-                /** @description Bad Request / Validation Error */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Conflict - A user with these details already exists. */
-                409: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-            };
+      };
+      responses: {
+        /** @description User and organization created successfully. Tokens are returned in HttpOnly cookies.
+         *      */
+        201: {
+          headers: {
+            "Set-Cookie"?: string;
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": components["schemas"]["GenericSuccessResponse"];
+          };
         };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+        /** @description Bad Request / Validation Error */
+        400: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Conflict - A user or organization with these details already exists. */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+      };
     };
-    "/api/auth/signup/driver": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Driver Signup
-         * @description Creates a new driver user. On success, returns access and refresh tokens via HttpOnly Set-Cookie headers.
-         *
-         */
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            /** @description Driver user details. */
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["DriverCreatePayload"];
-                };
-            };
-            responses: {
-                /** @description User created successfully. Tokens are returned in HttpOnly cookies.
-                 *      */
-                201: {
-                    headers: {
-                        "Set-Cookie"?: string;
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["GenericSuccessResponse"];
-                    };
-                };
-                /** @description Bad Request / Validation Error */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Conflict - A user with these details already exists. */
-                409: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/auth/signup/admin": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/auth/signup/employee": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    get?: never;
+    put?: never;
+    /**
+     * Admin Signup
+     * @description Creates a new admin user. On success, returns access and refresh tokens via HttpOnly Set-Cookie headers.
+     *
+     */
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      /** @description Admin user details. */
+      requestBody: {
+        content: {
+          "application/json": components["schemas"]["AdminCreatePayload"];
         };
-        get?: never;
-        put?: never;
-        /**
-         * Employee Signup
-         * @description Creates a new employee user. On success, returns access and refresh tokens via HttpOnly Set-Cookie headers.
-         *
-         */
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            /** @description Employee user details. */
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["EmployeeCreatePayload"];
-                };
-            };
-            responses: {
-                /** @description User created successfully. Tokens are returned in HttpOnly cookies.
-                 *      */
-                201: {
-                    headers: {
-                        "Set-Cookie"?: string;
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["GenericSuccessResponse"];
-                    };
-                };
-                /** @description Bad Request / Validation Error */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Conflict - A user with these details already exists. */
-                409: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-            };
+      };
+      responses: {
+        /** @description User created successfully. Tokens are returned in HttpOnly cookies.
+         *      */
+        201: {
+          headers: {
+            "Set-Cookie"?: string;
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": components["schemas"]["GenericSuccessResponse"];
+          };
         };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+        /** @description Bad Request / Validation Error */
+        400: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Conflict - A user with these details already exists. */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+      };
     };
-    "/api/auth/login": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * User Login
-         * @description Authenticates a user. On success, returns access and refresh tokens via HttpOnly Set-Cookie headers.
-         *
-         */
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            /** @description User credentials for login */
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["LoginPayload"];
-                };
-            };
-            responses: {
-                /** @description Login successful. Tokens are returned in HttpOnly cookies. */
-                200: {
-                    headers: {
-                        "Set-Cookie"?: string;
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["GenericSuccessResponse"];
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/auth/signup/driver": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/invite": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    get?: never;
+    put?: never;
+    /**
+     * Driver Signup
+     * @description Creates a new driver user. On success, returns access and refresh tokens via HttpOnly Set-Cookie headers.
+     *
+     */
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      /** @description Driver user details. */
+      requestBody: {
+        content: {
+          "application/json": components["schemas"]["DriverCreatePayload"];
         };
-        get?: never;
-        put?: never;
-        /** Invite a new User */
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            /** @description User email and type */
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["UserInvitePayload"];
-                };
-            };
-            responses: {
-                201: components["schemas"]["GenericSuccessResponse"];
-                /** @description Bad Request / Validation Error */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-            };
+      };
+      responses: {
+        /** @description User created successfully. Tokens are returned in HttpOnly cookies.
+         *      */
+        201: {
+          headers: {
+            "Set-Cookie"?: string;
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": components["schemas"]["GenericSuccessResponse"];
+          };
         };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+        /** @description Bad Request / Validation Error */
+        400: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Conflict - A user with these details already exists. */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+      };
     };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/auth/signup/employee": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Employee Signup
+     * @description Creates a new employee user. On success, returns access and refresh tokens via HttpOnly Set-Cookie headers.
+     *
+     */
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      /** @description Employee user details. */
+      requestBody: {
+        content: {
+          "application/json": components["schemas"]["EmployeeCreatePayload"];
+        };
+      };
+      responses: {
+        /** @description User created successfully. Tokens are returned in HttpOnly cookies.
+         *      */
+        201: {
+          headers: {
+            "Set-Cookie"?: string;
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": components["schemas"]["GenericSuccessResponse"];
+          };
+        };
+        /** @description Bad Request / Validation Error */
+        400: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Conflict - A user with these details already exists. */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/auth/login": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * User Login
+     * @description Authenticates a user. On success, returns access and refresh tokens via HttpOnly Set-Cookie headers.
+     *
+     */
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      /** @description User credentials for login */
+      requestBody: {
+        content: {
+          "application/json": components["schemas"]["LoginPayload"];
+        };
+      };
+      responses: {
+        /** @description Login successful. Tokens are returned in HttpOnly cookies. */
+        200: {
+          headers: {
+            "Set-Cookie"?: string;
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": components["schemas"]["GenericSuccessResponse"];
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/invite": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Invite a new User */
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      /** @description User email and type */
+      requestBody: {
+        content: {
+          "application/json": components["schemas"]["UserInvitePayload"];
+        };
+      };
+      responses: {
+        201: components["schemas"]["GenericSuccessResponse"];
+        /** @description Bad Request / Validation Error */
+        400: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
-    schemas: {
-        UserInvitePayload: {
-            /**
-             * @description The type of user to invite.
-             * @example admin
-             * @enum {string}
-             */
-            userType?: "admin" | "driver" | "employee";
-            /**
-             * Format: email
-             * @example admin@example.com
-             */
-            email: string;
-        };
-        UserBase: {
-            /** @example John Doe */
-            name: string;
-            /** @example 30 */
-            age?: number;
-            /** @example +11234567890 */
-            phoneNo: string;
-            /**
-             * Format: email
-             * @example john.doe@example.com
-             */
-            email: string;
-            /**
-             * Format: uri
-             * @example https://example.com/profile.jpg
-             */
-            profileImgUrl?: string | null;
-        };
-        UserCreatePayload: components["schemas"]["UserBase"] & {
-            /**
-             * @description The user's hashed password.
-             * @example $2b$10$K2.09uI5GU.J4sF2uB5gIuJ0Z5jJ6X3Y2Z5jJ6X3Y2Z5jJ6X3Y2Z
-             */
-            password_hash: string;
-        };
-        LoginPayload: {
-            /** Format: email */
-            email: string;
-            /** Format: password */
-            password: string;
-        };
-        ApiResponse: {
-            message: string;
-        };
-        TenantCreatePayload: {
-            /**
-             * @description The name of the new organization.
-             * @example Innovate Inc.
-             */
-            organizationName: string;
-        };
-        SuperadminCreatePayload: components["schemas"]["UserCreatePayload"] & components["schemas"]["TenantCreatePayload"];
-        AdminCreatePayload: components["schemas"]["UserCreatePayload"];
-        EmployeeCreatePayload: components["schemas"]["UserCreatePayload"] & {
-            /**
-             * @description The employee's home address or pickup location.
-             * @example 123 Main St, Anytown, USA
-             */
-            location: string;
-        };
-        DriverCreatePayload: components["schemas"]["UserCreatePayload"] & {
-            /** @example Toyota */
-            carMake: string;
-            /** @example Camry */
-            carName: string;
-            /** @example Blue */
-            carColor: string;
-            /** @example RIDE-123 */
-            carPlate: string;
-            /** @example 4 */
-            numberOfSeats: number;
-            carDescription?: string | null;
-        };
-        GenericSuccessResponse: {
-            /** @example Authentication successful. */
-            message?: string;
-        };
+  schemas: {
+    UserInvitePayload: {
+      /**
+       * @description The type of user to invite.
+       * @example admin
+       * @enum {string}
+       */
+      userType?: "admin" | "driver" | "employee";
+      /**
+       * Format: email
+       * @example admin@example.com
+       */
+      email: string;
     };
-    responses: {
-        /** @description Request successful. An httpOnly cookie containing an access token and another httpOnly cookie containing a refresh token have been set. */
-        AuthSuccessResponse: {
-            headers: {
-                "Set-Cookie"?: string;
-                [name: string]: unknown;
-            };
-            content: {
-                "application/json": components["schemas"]["ApiResponse"];
-            };
-        };
+    UserBase: {
+      /** @example John Doe */
+      name: string;
+      /** @example 30 */
+      age?: number;
+      /** @example +11234567890 */
+      phoneNo: string;
+      /**
+       * Format: email
+       * @example john.doe@example.com
+       */
+      email: string;
+      /**
+       * Format: uri
+       * @example https://example.com/profile.jpg
+       */
+      profileImgUrl?: string | null;
     };
-    parameters: never;
-    requestBodies: never;
-    headers: never;
-    pathItems: never;
+    UserCreatePayload: components["schemas"]["UserBase"] & {
+      /**
+       * @description The user's hashed password.
+       * @example $2b$10$K2.09uI5GU.J4sF2uB5gIuJ0Z5jJ6X3Y2Z5jJ6X3Y2Z5jJ6X3Y2Z
+       */
+      password_hash: string;
+    };
+    LoginPayload: {
+      /** Format: email */
+      email: string;
+      /** Format: password */
+      password: string;
+    };
+    ApiResponse: {
+      message: string;
+    };
+    TenantCreatePayload: {
+      /**
+       * @description The name of the new organization.
+       * @example Innovate Inc.
+       */
+      organizationName: string;
+    };
+    SuperadminCreatePayload: components["schemas"]["UserCreatePayload"] &
+      components["schemas"]["TenantCreatePayload"];
+    AdminCreatePayload: components["schemas"]["UserCreatePayload"];
+    EmployeeCreatePayload: components["schemas"]["UserCreatePayload"] & {
+      /**
+       * @description The employee's home address or pickup location.
+       * @example 123 Main St, Anytown, USA
+       */
+      location: string;
+    };
+    DriverCreatePayload: components["schemas"]["UserCreatePayload"] & {
+      /** @example Toyota */
+      carMake: string;
+      /** @example Camry */
+      carName: string;
+      /** @example Blue */
+      carColor: string;
+      /** @example RIDE-123 */
+      carPlate: string;
+      /** @example 4 */
+      numberOfSeats: number;
+      carDescription?: string | null;
+    };
+    GenericSuccessResponse: {
+      /** @example Authentication successful. */
+      message?: string;
+    };
+  };
+  responses: {
+    /** @description Request successful. An httpOnly cookie containing an access token and another httpOnly cookie containing a refresh token have been set. */
+    AuthSuccessResponse: {
+      headers: {
+        "Set-Cookie"?: string;
+        [name: string]: unknown;
+      };
+      content: {
+        "application/json": components["schemas"]["ApiResponse"];
+      };
+    };
+  };
+  parameters: never;
+  requestBodies: never;
+  headers: never;
+  pathItems: never;
 }
 export type $defs = Record<string, never>;
 export type operations = Record<string, never>;
