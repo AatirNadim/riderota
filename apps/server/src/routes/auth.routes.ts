@@ -1,10 +1,9 @@
 import { Router } from "express";
-import { superAdminSignupController } from "../controllers/auth.controller";
-import { paths } from "../types/generated-api";
+import { authController } from "../controllers/auth.controller";
 
 const router = Router();
 
-router.post("signup/superadmin", superAdminSignupController);
+router.post("signup/superadmin", authController.superAdminSignupController);
 
 router.post("health-check", (_, res) => {
   res.json({ status: "ok from auth" });

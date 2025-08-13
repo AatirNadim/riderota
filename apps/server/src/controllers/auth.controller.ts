@@ -1,10 +1,11 @@
 import { Request, Response } from "express";
 import { components } from "@riderota/utils";
 import { AuthService } from "../services/auth.service";
+import { AuthRepo } from "../repositories/auth.repo";
 
 type SuperAdminCreatePayload = components["schemas"]["SuperadminCreatePayload"];
 
-export class AuthController {
+class AuthController {
   constructor(private authService: AuthService) {}
 
   async superAdminSignupController(
@@ -31,3 +32,7 @@ export class AuthController {
     }
   }
 }
+
+export const authController = new AuthController(
+  new AuthService(new AuthRepo())
+);
