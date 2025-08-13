@@ -1,4 +1,4 @@
-import { PrismaClient, UserRole } from "../../generated/prisma";
+import { PrismaClient, UserRole } from "../../dist/generated/prisma";
 
 declare global {
   // allow global `var` declarations
