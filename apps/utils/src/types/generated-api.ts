@@ -248,6 +248,53 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/auth/whoami": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Current User Details
+         * @description Retrieves the details of the currently authenticated user based on the session token provided in the request cookies.
+         *
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description User details retrieved successfully. */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["UserDetails"];
+                    };
+                };
+                /** @description Unauthorized - The user is not authenticated or the session has expired. */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/auth/login": {
         parameters: {
             query?: never;
@@ -413,6 +460,45 @@ export interface components {
             /** @example 4 */
             numberOfSeats: number;
             carDescription?: string | null;
+        };
+        /** @description Public details of a user. */
+        UserDetails: {
+            /**
+             * @description The user's unique identifier.
+             * @example clxjq1z0a0000e8b4c2g7h6k9
+             */
+            id?: string;
+            /**
+             * Format: email
+             * @example john.doe@example.com
+             */
+            email?: string;
+            /** @example John Doe */
+            name?: string;
+            /** @example 30 */
+            age?: number | null;
+            /** @example +11234567890 */
+            phoneNo?: string;
+            /**
+             * Format: uri
+             * @example https://example.com/profile.jpg
+             */
+            profileImgUrl?: string | null;
+            /**
+             * @example EMPLOYEE
+             * @enum {string}
+             */
+            role?: "SUPERADMIN" | "ADMIN" | "DRIVER" | "EMPLOYEE";
+            /**
+             * @example ACTIVE
+             * @enum {string}
+             */
+            status?: "PENDING" | "ACTIVE" | "INACTIVE";
+            /**
+             * @description The ID of the tenant/organization the user belongs to.
+             * @example clxjq2a1b0001e8b4d3h8i9j0
+             */
+            tenantId?: string | null;
         };
         GenericSuccessResponse: {
             /** @example Authentication successful. */

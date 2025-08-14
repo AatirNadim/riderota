@@ -1,14 +1,13 @@
 import jwt from "jsonwebtoken";
 import type { StringValue } from "ms";
 
-type AuthTokens = {
+type SessionInfo = {
+  payload: any;
   accessToken: string;
   refreshToken: string;
 };
 
-export const createTokens = (
-  payload: any
-): { accessToken: string; refreshToken: string } => {
+export const createTokens = (payload: any): SessionInfo => {
   const accessTokenSecret = process.env.JWT_ACCESS_TOKEN_SECRET;
   const refreshTokenSecret = process.env.JWT_REFRESH_TOKEN_SECRET;
   const accessTokenExpiresIn = (process.env.JWT_ACCESS_TOKEN_EXPIRATION ||
@@ -27,7 +26,7 @@ export const createTokens = (
     expiresIn: refreshTokenExpiresIn,
   });
 
-  return { accessToken, refreshToken };
+  return { payload, accessToken, refreshToken };
 };
 
 export const verifyAccessToken = <T>(token: string): T => {
@@ -46,7 +45,7 @@ export const verifyAccessToken = <T>(token: string): T => {
   }
 };
 
-export const refreshTokens = <T>(oldRefreshToken: string): AuthTokens => {
+export const refreshTokens = <T>(oldRefreshToken: string): SessionInfo => {
   const secret = process.env.JWT_REFRESH_TOKEN_SECRET;
   if (!secret) {
     throw new Error(

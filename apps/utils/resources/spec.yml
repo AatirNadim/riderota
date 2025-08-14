@@ -141,6 +141,22 @@ paths:
         "409":
           description: Conflict - A user with these details already exists.
 
+  /api/auth/whoami:
+    get:
+      summary: Get Current User Details
+      tags: [Authentication]
+      description: >
+        Retrieves the details of the currently authenticated user based on the session
+        token provided in the request cookies.
+      responses:
+        "200":
+          description: User details retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserDetails"
+        "401":
+          description: Unauthorized - The user is not authenticated or the session has expired.
   # You would have a similar login endpoint
   /api/auth/login:
     post:
@@ -324,6 +340,47 @@ components:
             - carColor
             - carPlate
             - numberOfSeats
+
+    UserDetails:
+      type: object
+      description: "Public details of a user."
+      properties:
+        id:
+          type: string
+          description: "The user's unique identifier."
+          example: "clxjq1z0a0000e8b4c2g7h6k9"
+        email:
+          type: string
+          format: email
+          example: "john.doe@example.com"
+        name:
+          type: string
+          example: "John Doe"
+        age:
+          type: integer
+          nullable: true
+          example: 30
+        phoneNo:
+          type: string
+          example: "+11234567890"
+        profileImgUrl:
+          type: string
+          format: uri
+          nullable: true
+          example: "https://example.com/profile.jpg"
+        role:
+          type: string
+          enum: [SUPERADMIN, ADMIN, DRIVER, EMPLOYEE]
+          example: "EMPLOYEE"
+        status:
+          type: string
+          enum: [PENDING, ACTIVE, INACTIVE]
+          example: "ACTIVE"
+        tenantId:
+          type: string
+          nullable: true
+          description: "The ID of the tenant/organization the user belongs to."
+          example: "clxjq2a1b0001e8b4d3h8i9j0"
 
     GenericSuccessResponse:
       type: object
