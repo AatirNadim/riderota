@@ -36,6 +36,7 @@ import {
   X,
 } from "lucide-react";
 import { toast } from "sonner";
+import { components } from "@riderota/utils";
 
 const signupSchema = z
   .object({
@@ -72,6 +73,9 @@ const signupSchema = z
     path: ["confirmPassword"],
   });
 
+type RequiredSignUpPayloadType =
+  components["schemas"]["SuperadminCreatePayload"];
+
 type SignupFormData = z.infer<typeof signupSchema>;
 
 const passwordRequirements = [
@@ -107,6 +111,17 @@ function SignupForm() {
       // await new Promise((resolve) => setTimeout(resolve, 2000));
 
       console.log("\n\nForm Data:", data, "\n\n");
+
+
+      const payload: RequiredSignUpPayloadType = {
+        email: data.email,
+        name: data.name,
+        passwordHash: data.password, // to be hashed from the beginning
+        phoneNo: data.phoneNo || null,
+        age: data.age || null,
+        profileImgUrl: data.profileImgUrl || null,
+
+      }
 
       // In real implementation:
       // const response = await fetch('/api/auth/signup', {
@@ -223,7 +238,7 @@ function SignupForm() {
                 className="text-xl"
                 style={{ color: "var(--neutral-900)" }}
               >
-                Super Admin Registration
+                SuperAdmin Registration
               </CardTitle>
               <CardDescription className="text-base">
                 Fill in your details to get started with RideRota
