@@ -1,71 +1,77 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
-import { motion } from "framer-motion"
-import { Button } from "@/components/ui/button"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Input} from "@/components/ui/input"
-import { Eye, EyeOff, ArrowRight, Loader2 } from "lucide-react"
-import { toast } from "sonner"
-import type { SignupData } from "../superadmin-signup"
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { User, Mail, ArrowRight, Loader2 } from "lucide-react";
+import { toast } from "sonner";
+import { useState } from "react";
+import { SignupData } from "@/lib/types";
 
-const formSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters").max(50, "Name must be less than 50 characters"),
-  email: z.string().email("Please enter a valid email address"),
-  password: z
+const stepOneSchema = z.object({
+  name: z
     .string()
-    .min(8, "Password must be at least 8 characters")
-    .regex(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-      "Password must contain at least one uppercase letter, one lowercase letter, and one number",
-    ),
-})
+    .min(2, "Name must be at least 2 characters")
+    .max(50, "Name must be less than 50 characters")
+    .regex(/^[a-zA-Z\s]+$/, "Name can only contain letters and spaces"),
+  email: z
+    .string()
+    .min(1, "Email is required")
+    .email("Please enter a valid email address")
+    .toLowerCase(),
+});
 
-type FormData = z.infer<typeof formSchema>
+type StepOneFormData = z.infer<typeof stepOneSchema>;
 
-interface BasicInfoFormProps {
-  data: Partial<SignupData>
-  onNext: (data: Partial<SignupData>) => void
-  isLoading: boolean
-  setIsLoading: (loading: boolean) => void
+interface StepOneFormProps {
+  data: Partial<SignupData>;
+  onNext: (data: Partial<SignupData>) => void;
 }
 
-export function BasicInfoForm({ data, onNext, isLoading, setIsLoading }: BasicInfoFormProps) {
-  const [showPassword, setShowPassword] = useState(false)
+export function BasicInfoForm({ data, onNext }: StepOneFormProps) {
+  const [isLoading, setIsLoading] = useState(false);
 
-  const form = useForm<FormData>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<StepOneFormData>({
+    resolver: zodResolver(stepOneSchema),
     defaultValues: {
       name: data.name || "",
       email: data.email || "",
-      password: data.password || "",
     },
-  })
+    mode: "onChange",
+  });
 
-  const onSubmit = async (values: FormData) => {
-    setIsLoading(true)
+  const onSubmit = async (formData: StepOneFormData) => {
+    setIsLoading(true);
     try {
-      // Simulate API call for basic signup
-      await new Promise((resolve) => setTimeout(resolve, 1500))
+      // Simulate API call to check if email exists
+      // await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      // In real implementation, this would call your signup API
-      // const response = await fetch('/api/auth/signup', {
+      // In real implementation, check if email already exists
+      // const response = await fetch('/api/auth/check-email', {
       //   method: 'POST',
       //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify(values),
+      //   body: JSON.stringify({ email: formData.email }),
       // })
 
-      toast.success("Account created successfully!")
-      onNext(values)
+      toast.success("Basic information saved!");
+      onNext(formData);
     } catch (error) {
-      toast.error("Failed to create account. Please try again.")
+      toast.error("Failed to validate information. Please try again.");
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <motion.div
@@ -76,100 +82,95 @@ export function BasicInfoForm({ data, onNext, isLoading, setIsLoading }: BasicIn
     >
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          {/* Name Field */}
           <FormField
             control={form.control}
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm font-medium" style={{ color: "var(--neutral-700)" }}>
+                <FormLabel
+                  className="text-sm font-medium"
+                  style={{ color: "var(--neutral-700)" }}
+                >
                   Full Name
                 </FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter your full name" {...field} className="h-11" disabled={isLoading} />
+                  <div className="relative">
+                    <User
+                      className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5"
+                      style={{ color: "var(--neutral-400)" }}
+                    />
+                    <Input
+                      placeholder="Enter your full name"
+                      {...field}
+                      className="h-12 pl-10 text-base border-neutral-300 focus:border-primary-500 focus:ring-primary-500"
+                      disabled={isLoading}
+                    />
+                  </div>
                 </FormControl>
-                <FormMessage />
+                <FormMessage
+                  className="text-sm"
+                  style={{ color: "var(--error-500)" }}
+                />
               </FormItem>
             )}
           />
 
+          {/* Email Field */}
           <FormField
             control={form.control}
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm font-medium" style={{ color: "var(--neutral-700)" }}>
+                <FormLabel
+                  className="text-sm font-medium"
+                  style={{ color: "var(--neutral-700)" }}
+                >
                   Email Address
                 </FormLabel>
                 <FormControl>
-                  <Input
-                    type="email"
-                    placeholder="Enter your email address"
-                    {...field}
-                    className="h-11"
-                    disabled={isLoading}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-sm font-medium" style={{ color: "var(--neutral-700)" }}>
-                  Password
-                </FormLabel>
-                <FormControl>
                   <div className="relative">
+                    <Mail
+                      className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5"
+                      style={{ color: "var(--neutral-400)" }}
+                    />
                     <Input
-                      type={showPassword ? "text" : "password"}
-                      placeholder="Create a strong password"
+                      type="email"
+                      placeholder="Enter your email address"
                       {...field}
-                      className="h-11 pr-10"
+                      className="h-12 pl-10 text-base border-neutral-300 focus:border-primary-500 focus:ring-primary-500"
                       disabled={isLoading}
                     />
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                      onClick={() => setShowPassword(!showPassword)}
-                      disabled={isLoading}
-                    >
-                      {showPassword ? (
-                        <EyeOff className="h-4 w-4" style={{ color: "var(--neutral-400)" }} />
-                      ) : (
-                        <Eye className="h-4 w-4" style={{ color: "var(--neutral-400)" }} />
-                      )}
-                    </Button>
                   </div>
                 </FormControl>
-                <FormMessage />
-                <p className="text-xs mt-1" style={{ color: "var(--neutral-500)" }}>
-                  Must contain at least 8 characters with uppercase, lowercase, and numbers
-                </p>
+                <FormMessage
+                  className="text-sm"
+                  style={{ color: "var(--error-500)" }}
+                />
               </FormItem>
             )}
           />
 
-          <motion.div className="pt-4" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+          {/* Submit Button */}
+          <motion.div
+            className="pt-4"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
             <Button
               type="submit"
-              className="w-full h-11 bg-primary-gradient hover:shadow-custom-hover transition-all duration-300"
-              disabled={isLoading}
+              className="w-full h-12 bg-primary-gradient hover:shadow-custom-hover text-white text-base font-semibold transition-all duration-300"
+              disabled={isLoading || !form.formState.isValid}
             >
               {isLoading ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Creating Account...
+                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                  Validating...
                 </>
               ) : (
                 <>
                   Continue
-                  <ArrowRight className="ml-2 h-4 w-4" />
+                  <ArrowRight className="ml-2 h-5 w-5" />
                 </>
               )}
             </Button>
@@ -177,5 +178,5 @@ export function BasicInfoForm({ data, onNext, isLoading, setIsLoading }: BasicIn
         </form>
       </Form>
     </motion.div>
-  )
+  );
 }

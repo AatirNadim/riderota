@@ -1,18 +1,11 @@
 export interface SignupData {
-  // Basic Info
+  // Step 1
   name: string;
   email: string;
+  // Step 2
   password: string;
-
-  // Profile Details
+  confirmPassword: string;
   phoneNo: string;
   age?: number;
-  address: string;
   profileImageUrl?: string;
-
-  // Tenant Details
-  tenantName: string;
-  tenantImageUrl?: string;
-  officeName: string;
-  officeLocation: string;
 }
