@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -26,6 +26,7 @@ import {
   CheckCircle2,
   X,
   CheckCircle,
+  Camera,
 } from "lucide-react";
 import { toast } from "sonner";
 import { SignupData } from "@/lib/types";
@@ -89,6 +90,13 @@ export function ProfileDetailsForm({ data, onComplete }: StepTwoFormProps) {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  const [isUploading, setIsUploading] = useState(false);
+  const [imagePreview, setImagePreview] = useState<string | null>(
+    data.profileImageUrl || null
+  );
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const form = useForm<StepTwoFormData>({
     resolver: zodResolver(stepTwoSchema),
     defaultValues: {
@@ -103,6 +111,45 @@ export function ProfileDetailsForm({ data, onComplete }: StepTwoFormProps) {
 
   const password = form.watch("password");
   const profileImageUrl = form.watch("profileImageUrl");
+
+  const handleImageUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      return toast.error("Please select a valid image file.");
+    }
+    if (file.size > 4 * 1024 * 1024) {
+      // 4MB limit
+      return toast.error("Image size must be less than 4MB.");
+    }
+
+    const previewUrl = URL.createObjectURL(file);
+    setImagePreview(previewUrl);
+    setIsUploading(true);
+
+    const uploadPromise = uploadToCloudinary(file);
+
+    toast.promise(uploadPromise, {
+      loading: "Uploading your image...",
+      success: (result) => {
+        form.setValue("profileImageUrl", result.publicUrl, {
+          shouldValidate: true,
+        });
+        setIsUploading(false);
+        return "Image uploaded successfully!";
+      },
+      error: (err) => {
+        setImagePreview(data.profileImageUrl || null); // Revert on failure
+        setIsUploading(false);
+        return `Upload failed: ${
+          (err as Error).message || "Please try again."
+        }`;
+      },
+    });
+  };
 
   const onSubmit = async (formData: StepTwoFormData) => {
     setIsLoading(true);
@@ -388,7 +435,7 @@ export function ProfileDetailsForm({ data, onComplete }: StepTwoFormProps) {
           />
 
           {/* Profile Image URL Field */}
-          <FormField
+          {/* <FormField
             control={form.control}
             name="profileImageUrl"
             render={({ field }) => (
@@ -437,6 +484,52 @@ export function ProfileDetailsForm({ data, onComplete }: StepTwoFormProps) {
                         </div>
                       </div>
                     )}
+                  </div>
+                </FormControl>
+                <FormMessage
+                  className="text-sm"
+                  style={{ color: "var(--error-500)" }}
+                />
+              </FormItem>
+            )}
+          /> */}
+
+          <FormField
+            control={form.control}
+            name="profileImageUrl"
+            render={({ field }) => (
+              <FormItem className="flex flex-col items-center">
+                <FormLabel className="text-sm font-medium text-neutral-700">
+                  Profile Picture
+                </FormLabel>
+                <FormControl>
+                  <div className="relative mt-2">
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      onChange={handleImageUpload}
+                      className="hidden"
+                      accept="image/png, image/jpeg, image/gif"
+                      disabled={isUploading}
+                    />
+                    <div
+                      className="w-28 h-28 rounded-full bg-neutral-100 border-2 border-dashed border-neutral-300 flex items-center justify-center cursor-pointer overflow-hidden hover:border-primary-500 transition-colors"
+                      onClick={() => fileInputRef.current?.click()}
+                    >
+                      {isUploading ? (
+                        <Loader2 className="h-8 w-8 animate-spin text-neutral-500" />
+                      ) : imagePreview ? (
+                        <Image
+                          src={imagePreview}
+                          alt="Profile preview"
+                          width={112}
+                          height={112}
+                          className="object-cover w-full h-full"
+                        />
+                      ) : (
+                        <Camera className="h-8 w-8 text-neutral-500" />
+                      )}
+                    </div>
                   </div>
                 </FormControl>
                 <FormMessage
