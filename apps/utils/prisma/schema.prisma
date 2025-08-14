@@ -89,3 +89,4 @@ enum MembershipStatus {
   PENDING // The user has requested to join but is not yet approved.
   MEMBER // The user is an active, approved member of the organization.
 }
+
