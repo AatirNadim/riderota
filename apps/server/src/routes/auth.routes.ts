@@ -5,7 +5,7 @@ const router = Router();
 
 router.post("signup/superadmin", authController.superAdminSignupController);
 
-router.post("health-check", (_, res) => {
+router.get("/health-check", (_, res) => {
   res.json({ status: "ok from auth" });
 });
 
