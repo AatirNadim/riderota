@@ -37,8 +37,6 @@ class AuthController {
     try {
       const user = await this.authService.getUserFromRequest(req, res);
 
-      
-
       res.json(user);
     } catch (error) {
       if (error instanceof UserNotFoundError) {
@@ -48,6 +46,16 @@ class AuthController {
       } else {
         res.status(500).json({ message: "Error fetching user information" });
       }
+    }
+  }
+
+  async clearSession(res: Response) {
+    try {
+      res.clearCookie("accessToken");
+      res.clearCookie("refreshToken");
+      res.status(200).json({ message: "Session cleared successfully." });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to clear session." });
     }
   }
 }
