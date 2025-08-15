@@ -107,7 +107,7 @@ function MultiStepSignupForm() {
               RideRota
             </span>
           </div>
-          <h1 className="text-[var(--neutral-900)] text-3xl font-bold mb-2">
+          <h1 className="text-[var(--neutral-900)] text-3xl font-bold mb-2 text-shadow-md">
             Create Your Account
           </h1>
           <p className="text-lg" style={{ color: "var(--neutral-600)" }}>
@@ -119,15 +119,19 @@ function MultiStepSignupForm() {
         <motion.div className="mb-6" variants={itemVariants}>
           <div className="flex justify-between mb-2">
             <span
-              className={`text-sm font-medium ${
-                currentStep >= 1 ? "text-primary-600" : "text-neutral-400"
+              className={`text-sm font-semibold ${
+                currentStep >= 1
+                  ? "text-[var(--primary-600)]"
+                  : "text-neutral-400"
               }`}
             >
               Basic Info
             </span>
             <span
-              className={`text-sm font-medium ${
-                currentStep >= 2 ? "text-primary-600" : "text-neutral-400"
+              className={`text-sm font-semibold ${
+                currentStep >= 2
+                  ? "text-[var(--primary-600)]"
+                  : "text-neutral-400"
               }`}
             >
               Account Details

@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev:landing-site": "pnpm --filter landing-site dev",
-    "dev:administration-ui": "pnpm --filter administration-ui dev",
+    "dev:landing-site": "rm -rf ./landing-site/.next && pnpm --filter landing-site dev",
+    "dev:administration-ui": "rm -rf ./apps/ui/administration-ui/.next && pnpm --filter administration-ui dev",
     "dev:server": "pnpm --filter server dev",
     "build:utils": "pnpm --filter @riderota/utils build",
     "build:server": "pnpm --filter server build",

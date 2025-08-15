@@ -32,6 +32,8 @@ import { toast } from "sonner";
 import { SignupData } from "@/lib/types";
 import Image from "next/image";
 
+import { uploadAssetToCloudinary } from "@/app/actions";
+
 import { uploadToCloudinary } from "@riderota/utils";
 
 const stepTwoSchema = z
@@ -147,11 +149,13 @@ export function ProfileDetailsForm({ data, onComplete }: StepTwoFormProps) {
 
       // send the path of the file
       try {
-        const assetUrl = await uploadToCloudinary(base64Image);
+        const assetUrl = await uploadAssetToCloudinary(base64Image);
         console.log("Uploaded Image URL:", assetUrl);
         form.setValue("profileImageUrl", assetUrl, {
           shouldValidate: true,
         });
+
+        setIsUploading(false);
 
         toast.success("Image uploaded successfully!");
       } catch (error) {
@@ -562,7 +566,7 @@ export function ProfileDetailsForm({ data, onComplete }: StepTwoFormProps) {
               className="w-full h-12 bg-primary-gradient hover:shadow-custom-hover text-white text-base font-semibold transition-all duration-300"
               disabled={isLoading || !form.formState.isValid}
             >
-              {isLoading ? (
+              {isLoading || isUploading ? (
                 <>
                   <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                   Creating Account...
