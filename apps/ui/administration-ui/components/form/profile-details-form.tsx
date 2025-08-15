@@ -30,6 +30,9 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { SignupData } from "@/lib/types";
+import Image from "next/image";
+
+import { uploadToCloudinary } from "@riderota/utils";
 
 const stepTwoSchema = z
   .object({
@@ -130,25 +133,33 @@ export function ProfileDetailsForm({ data, onComplete }: StepTwoFormProps) {
     setImagePreview(previewUrl);
     setIsUploading(true);
 
-    const uploadPromise = uploadToCloudinary(file);
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
 
-    toast.promise(uploadPromise, {
-      loading: "Uploading your image...",
-      success: (result) => {
-        form.setValue("profileImageUrl", result.publicUrl, {
+    let base64Image: string | null = null;
+
+    reader.onload = async () => {
+      base64Image = reader.result as string;
+      if (!base64Image) {
+        setIsUploading(false);
+        return toast.error("Could not process the image. Please try again.");
+      }
+
+      // send the path of the file
+      try {
+        const assetUrl = await uploadToCloudinary(base64Image);
+        console.log("Uploaded Image URL:", assetUrl);
+        form.setValue("profileImageUrl", assetUrl, {
           shouldValidate: true,
         });
+
+        toast.success("Image uploaded successfully!");
+      } catch (error) {
         setIsUploading(false);
-        return "Image uploaded successfully!";
-      },
-      error: (err) => {
-        setImagePreview(data.profileImageUrl || null); // Revert on failure
-        setIsUploading(false);
-        return `Upload failed: ${
-          (err as Error).message || "Please try again."
-        }`;
-      },
-    });
+        console.error("Image upload error:", error);
+        return toast.error("Failed to upload image. Please try again.");
+      }
+    };
   };
 
   const onSubmit = async (formData: StepTwoFormData) => {
