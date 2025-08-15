@@ -202,6 +202,41 @@ paths:
         "400":
           description: Bad Request / Validation Error
 
+  /api/auth/clearSession:
+    post:
+      summary: Clear User Session
+      tags: [Authentication]
+      description: >
+        Logs the user out by clearing the access and refresh token cookies.
+      responses:
+        "200":
+          description: >
+            Session cleared successfully. The authentication cookies have been invalidated.
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                example: "accessToken=; HttpOnly; Secure; Path=/; Max-Age=0"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Session cleared successfully."
+        "500":
+          description: >
+            An error occurred while clearing the session.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Failed to clear session."
+
 components:
   schemas:
     UserInvitePayload:
