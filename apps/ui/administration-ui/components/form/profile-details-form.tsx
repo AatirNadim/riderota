@@ -34,7 +34,7 @@ import Image from "next/image";
 
 import { uploadAssetToCloudinary } from "@/app/actions";
 
-import { uploadToCloudinary } from "@riderota/utils";
+import { useSuperAdminSignup } from "@/lib/hooks/auth/queries";
 
 const stepTwoSchema = z
   .object({
@@ -117,6 +117,9 @@ export function ProfileDetailsForm({ data, onComplete }: StepTwoFormProps) {
   const password = form.watch("password");
   const profileImageUrl = form.watch("profileImageUrl");
 
+
+  const { mutate: signup, error, isPending, isError, isIdle } = useSuperAdminSignup();
+
   const handleImageUpload = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -184,6 +187,9 @@ export function ProfileDetailsForm({ data, onComplete }: StepTwoFormProps) {
       };
 
       console.log("\n\nComplete Signup Data:", completeData, "\n\n");
+
+
+      
 
       // In real implementation:
       // const response = await fetch('/api/auth/signup', {
