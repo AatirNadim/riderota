@@ -11,6 +11,6 @@ router.get("/health-check", (_, res) => {
   res.json({ status: "ok from auth" });
 });
 
-router.post("/clearSession", authController.clearSession);
+router.get("/clearSession", authController.clearSession);
 
 export default router;

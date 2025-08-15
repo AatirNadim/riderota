@@ -388,14 +388,12 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
-        put?: never;
         /**
          * Clear User Session
          * @description Logs the user out by clearing the access and refresh token cookies.
          *
          */
-        post: {
+        get: {
             parameters: {
                 query?: never;
                 header?: never;
@@ -433,6 +431,8 @@ export interface paths {
                 };
             };
         };
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;

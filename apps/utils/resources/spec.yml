@@ -203,7 +203,7 @@ paths:
           description: Bad Request / Validation Error
 
   /api/auth/clearSession:
-    post:
+    get:
       summary: Clear User Session
       tags: [Authentication]
       description: >
