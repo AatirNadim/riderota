@@ -49,7 +49,7 @@ class AuthController {
     }
   }
 
-  async clearSession(res: Response) {
+  async clearSession(req: Request, res: Response) {
     try {
       res.clearCookie("accessToken");
       res.clearCookie("refreshToken");
