@@ -409,7 +409,7 @@ components:
           example: "EMPLOYEE"
         status:
           type: string
-          enum: [PENDING, ACTIVE, INACTIVE]
+          enum: [PENDING, MEMBER]
           example: "ACTIVE"
         tenantId:
           type: string

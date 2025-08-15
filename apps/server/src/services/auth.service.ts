@@ -36,7 +36,8 @@ export class AuthService {
 
   async getUserFromRequest(req: Request, res: Response): Promise<any> {
     const { userId } = await this.validateAndRefreshTokens(req, res);
-    const user: components["schemas"]["UserDetails"] = await this.authRepo.getUserById(userId);
+    const user: components["schemas"]["UserDetails"] | null =
+      await this.authRepo.getUserById(userId);
     return user;
   }
 

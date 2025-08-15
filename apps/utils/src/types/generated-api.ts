@@ -551,7 +551,7 @@ export interface components {
              * @example ACTIVE
              * @enum {string}
              */
-            status?: "PENDING" | "ACTIVE" | "INACTIVE";
+            status?: "PENDING" | "MEMBER";
             /**
              * @description The ID of the tenant/organization the user belongs to.
              * @example clxjq2a1b0001e8b4d3h8i9j0
