@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { components } from "@riderota/utils";
+import { components, paths } from "@riderota/utils";
 import { AuthService } from "../services/auth.service";
 import { AuthRepo } from "../repositories/auth.repo";
 import { UserNotFoundError } from "../exceptions/user-not-found.exception";
@@ -30,6 +30,35 @@ class AuthController {
     } catch (error) {
       // A more specific error handling can be implemented
       res.status(500).json({ message: "Error creating superadmin" });
+    }
+  }
+
+  async login(
+    req: Request,
+    res: Response<
+      | paths["/api/auth/login"]["post"]["responses"]["200"]["content"]["application/json"]
+      | paths["/api/auth/login"]["post"]["responses"]["401"]["content"]["application/json"]
+    >
+  ) {
+    try {
+      const { email, password } = req.body;
+      const { user, accessToken, refreshToken } = await this.authService.login(
+        email,
+        password
+      );
+
+      res.cookie("accessToken", accessToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+      });
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+      });
+
+      res.status(200).json(user);
+    } catch (error) {
+      res.status(401).json({ message: "Invalid email or password" });
     }
   }
 

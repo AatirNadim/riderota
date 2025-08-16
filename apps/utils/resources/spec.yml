@@ -175,15 +175,20 @@ paths:
       responses:
         "200":
           description: Login successful. Tokens are returned in HttpOnly cookies.
-          headers:
-            Set-Cookie:
-              schema:
-                type: string
-                example: "accessToken=...; HttpOnly; Secure; Path=/; Max-Age=900"
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GenericSuccessResponse"
+                $ref: "#/components/schemas/UserDetails"
+        "401":
+          description: Unauthorized - Invalid email or password.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid email or password."
 
   /api/invite:
     post:
@@ -286,12 +291,12 @@ components:
         - $ref: "#/components/schemas/UserBase"
         - type: object
           properties:
-            passwordHash:
+            password:
               type: string
-              description: "The user's hashed password."
+              description: "The user's regular password."
               example: "$2b$10$K2.09uI5GU.J4sF2uB5gIuJ0Z5jJ6X3Y2Z5jJ6X3Y2Z5jJ6X3Y2Z"
           required:
-            - passwordHash
+            - password
 
     LoginPayload:
       type: object

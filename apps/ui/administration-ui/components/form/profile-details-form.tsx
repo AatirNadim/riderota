@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -117,8 +117,14 @@ export function ProfileDetailsForm({ data, onComplete }: StepTwoFormProps) {
   const password = form.watch("password");
   const profileImageUrl = form.watch("profileImageUrl");
 
-
-  const { mutate: signup, error, isPending, isError, isIdle } = useSuperAdminSignup();
+  const {
+    mutateAsync: signup,
+    error,
+    isPending: isMutationLoading,
+    isError,
+    isIdle,
+    isSuccess,
+  } = useSuperAdminSignup();
 
   const handleImageUpload = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -169,6 +175,13 @@ export function ProfileDetailsForm({ data, onComplete }: StepTwoFormProps) {
     };
   };
 
+  useEffect(() => {
+    if (isError) {
+      console.error("Signup error:", error);
+      toast.error(`Failed to create account. Please try again. ${error}`);
+    }
+  }, [isError]);
+
   const onSubmit = async (formData: StepTwoFormData) => {
     setIsLoading(true);
     try {
@@ -188,22 +201,21 @@ export function ProfileDetailsForm({ data, onComplete }: StepTwoFormProps) {
 
       console.log("\n\nComplete Signup Data:", completeData, "\n\n");
 
+      if (!completeData.email || !completeData.name) {
+        toast.error("Please provide all required fields.");
+        throw new Error("Missing required fields");
+      }
 
-      
+      const res = await signup({
+        email: completeData.email,
+        name: completeData.name,
+        passwordHash: completeData.password,
+        phoneNo: completeData.phoneNo,
+        age: completeData.age,
+        profileImgUrl: completeData.profileImageUrl,
+      });
 
-      // In real implementation:
-      // const response = await fetch('/api/auth/signup', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({
-      //     email: completeData.email,
-      //     name: completeData.name,
-      //     passwordHash: completeData.password,
-      //     phoneNo: completeData.phoneNo,
-      //     age: completeData.age,
-      //     profileImgUrl: completeData.profileImageUrl,
-      //   }),
-      // })
+      console.log("superadmin account created", res);
 
       toast.success(
         "Account created successfully! Please check your email to verify your account."
@@ -572,7 +584,7 @@ export function ProfileDetailsForm({ data, onComplete }: StepTwoFormProps) {
               className="w-full h-12 bg-primary-gradient hover:shadow-custom-hover text-white text-base font-semibold transition-all duration-300"
               disabled={isLoading || !form.formState.isValid}
             >
-              {isLoading || isUploading ? (
+              {isLoading || isUploading || isMutationLoading ? (
                 <>
                   <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                   Creating Account...

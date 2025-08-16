@@ -8,6 +8,8 @@ import {
   verifyAccessToken,
 } from "@riderota/utils";
 
+import bcrypt from "bcryptjs";
+
 type ValidatedSession = {
   userId: string;
   accessToken: string;
@@ -15,12 +17,18 @@ type ValidatedSession = {
 };
 
 export class AuthService {
-  constructor(private authRepo: AuthRepo) {}
+  private salt: string;
+
+  constructor(private authRepo: AuthRepo) {
+    this.salt = bcrypt.genSaltSync(10);
+  }
 
   async superAdminSignup(
     data: components["schemas"]["SuperadminCreatePayload"]
   ): Promise<any> {
     try {
+      data.password = bcrypt.hashSync(data.password, this.salt);
+
       const userId = await this.authRepo.createSuperAdminInDb(data);
       console.log("Superadmin created successfully");
 
@@ -32,6 +40,24 @@ export class AuthService {
     } catch (error) {
       // Handle error
     }
+  }
+
+  async login(
+    email: string,
+    password: string
+  ): Promise<{
+    user: components["schemas"]["UserDetails"];
+    accessToken: string;
+    refreshToken: string;
+  }> {
+    const user = await this.authRepo.getUserByEmail(email);
+    if (!user) throw new UserNotFoundError();
+
+    const isPasswordValid = bcrypt.compareSync(password, user.passwordHash);
+    if (!isPasswordValid) throw new Error("Invalid password");
+
+    const { accessToken, refreshToken } = createTokens({ id: user.id });
+    return { user, accessToken, refreshToken };
   }
 
   async getUserFromRequest(req: Request, res: Response): Promise<any> {

@@ -326,11 +326,22 @@ export interface paths {
                 /** @description Login successful. Tokens are returned in HttpOnly cookies. */
                 200: {
                     headers: {
-                        "Set-Cookie"?: string;
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["GenericSuccessResponse"];
+                        "application/json": components["schemas"]["UserDetails"];
+                    };
+                };
+                /** @description Unauthorized - Invalid email or password. */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** @example Invalid email or password. */
+                            message?: string;
+                        };
                     };
                 };
             };
@@ -476,10 +487,10 @@ export interface components {
         };
         UserCreatePayload: components["schemas"]["UserBase"] & {
             /**
-             * @description The user's hashed password.
+             * @description The user's regular password.
              * @example $2b$10$K2.09uI5GU.J4sF2uB5gIuJ0Z5jJ6X3Y2Z5jJ6X3Y2Z5jJ6X3Y2Z
              */
-            passwordHash: string;
+            password: string;
         };
         LoginPayload: {
             /** Format: email */
