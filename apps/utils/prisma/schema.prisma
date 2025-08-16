@@ -50,7 +50,7 @@ model User {
   phoneNo       String   @unique
   profileImgUrl String?
   address       Address? @relation(fields: [addressId], references: [id])
-  addressId     String   @unique
+  addressId     String?  @unique
 
   role                     UserRole
   status                   MembershipStatus @default(PENDING)
@@ -89,4 +89,3 @@ enum MembershipStatus {
   PENDING // The user has requested to join but is not yet approved.
   MEMBER // The user is an active, approved member of the organization.
 }
-

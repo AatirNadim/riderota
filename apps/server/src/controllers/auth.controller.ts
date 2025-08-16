@@ -9,12 +9,13 @@ type SuperAdminCreatePayload = components["schemas"]["SuperadminCreatePayload"];
 class AuthController {
   constructor(private authService: AuthService) {}
 
-  async superAdminSignupController(
+  superAdminSignupController = async (
     req: Request<{}, {}, SuperAdminCreatePayload>,
     res: Response
-  ) {
+  ) => {
     try {
-      const { accessToken, refreshToken } =
+      console.log("Received superadmin signup request:", req.body);
+      const { userDetails, accessToken, refreshToken } =
         await this.authService.superAdminSignup(req.body);
 
       res.cookie("accessToken", accessToken, {
@@ -26,20 +27,25 @@ class AuthController {
         secure: process.env.NODE_ENV === "production",
       });
 
-      res.status(201).json({ message: "Superadmin created successfully" });
+      res.status(201).json({
+        message: "Superadmin created successfully",
+        user: userDetails,
+      });
     } catch (error) {
       // A more specific error handling can be implemented
-      res.status(500).json({ message: "Error creating superadmin" });
-    }
-  }
 
-  async login(
+      console.error("Error creating superadmin:", error);
+      res.status(500).json({ message: "Error creating superadmin", error });
+    }
+  };
+
+  login = async (
     req: Request,
     res: Response<
       | paths["/api/auth/login"]["post"]["responses"]["200"]["content"]["application/json"]
       | paths["/api/auth/login"]["post"]["responses"]["401"]["content"]["application/json"]
     >
-  ) {
+  ) => {
     try {
       const { email, password } = req.body;
       const { user, accessToken, refreshToken } = await this.authService.login(
@@ -60,14 +66,16 @@ class AuthController {
     } catch (error) {
       res.status(401).json({ message: "Invalid email or password" });
     }
-  }
+  };
 
-  async whoAmIController(req: Request, res: Response) {
+  whoAmIController = async (req: Request, res: Response) => {
     try {
+      console.log("Received request to get user information");
       const user = await this.authService.getUserFromRequest(req, res);
       if (!user) throw new UserNotFoundError();
       res.json(user);
     } catch (error) {
+      console.error("Error fetching user information:", error);
       if (error instanceof UserNotFoundError) {
         res.clearCookie("accessToken");
         res.clearCookie("refreshToken");
@@ -76,9 +84,9 @@ class AuthController {
         res.status(500).json({ message: "Error fetching user information" });
       }
     }
-  }
+  };
 
-  async clearSession(req: Request, res: Response) {
+  clearSession = async (req: Request, res: Response) => {
     try {
       res.clearCookie("accessToken");
       res.clearCookie("refreshToken");
@@ -86,7 +94,7 @@ class AuthController {
     } catch (error) {
       res.status(500).json({ message: "Failed to clear session." });
     }
-  }
+  };
 }
 
 export const authController = new AuthController(

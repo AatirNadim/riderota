@@ -28,11 +28,6 @@ paths:
           description: >
             User and organization created successfully.
             Tokens are returned in HttpOnly cookies.
-          headers:
-            Set-Cookie:
-              schema:
-                type: string
-                example: "accessToken=...; HttpOnly; Secure; Path=/; Max-Age=900"
           content:
             application/json:
               schema:

@@ -64,11 +64,7 @@ const stepTwoSchema = z
       .min(18, "Must be at least 18 years old")
       .max(100, "Please enter a valid age")
       .optional(),
-    profileImageUrl: z
-      .string()
-      .url("Please enter a valid URL")
-      .optional()
-      .or(z.literal("")),
+    profileImageUrl: z.string().url("Please enter a valid URL").optional(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",
@@ -182,6 +178,10 @@ export function ProfileDetailsForm({ data, onComplete }: StepTwoFormProps) {
     }
   }, [isError]);
 
+  useEffect(() => {
+    console.log("Form state changed:", form.formState, form.formState.errors);
+  }, [form.formState]);
+
   const onSubmit = async (formData: StepTwoFormData) => {
     setIsLoading(true);
     try {
@@ -209,7 +209,7 @@ export function ProfileDetailsForm({ data, onComplete }: StepTwoFormProps) {
       const res = await signup({
         email: completeData.email,
         name: completeData.name,
-        passwordHash: completeData.password,
+        password: completeData.password,
         phoneNo: completeData.phoneNo,
         age: completeData.age,
         profileImgUrl: completeData.profileImageUrl,
@@ -451,11 +451,6 @@ export function ProfileDetailsForm({ data, onComplete }: StepTwoFormProps) {
                       {...field}
                       className="h-12 pl-10 text-base border-neutral-300 focus:border-primary-500 focus:ring-primary-500"
                       disabled={isLoading}
-                      onChange={(e) =>
-                        field.onChange(
-                          e.target.value === "" ? "" : Number(e.target.value)
-                        )
-                      }
                     />
                   </div>
                 </FormControl>
@@ -582,9 +577,14 @@ export function ProfileDetailsForm({ data, onComplete }: StepTwoFormProps) {
             <Button
               type="submit"
               className="w-full h-12 bg-primary-gradient hover:shadow-custom-hover text-white text-base font-semibold transition-all duration-300"
-              disabled={isLoading || !form.formState.isValid}
+              disabled={
+                isLoading ||
+                isUploading ||
+                isMutationLoading ||
+                !form.formState.isValid
+              }
             >
-              {isLoading || isUploading || isMutationLoading ? (
+              {isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                   Creating Account...

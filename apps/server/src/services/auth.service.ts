@@ -27,18 +27,28 @@ export class AuthService {
     data: components["schemas"]["SuperadminCreatePayload"]
   ): Promise<any> {
     try {
+      const existingUser = await this.authRepo.getUserByEmail(data.email);
+
+      if (existingUser) {
+        throw new Error("User with this email already exists");
+      }
+
       data.password = bcrypt.hashSync(data.password, this.salt);
 
-      const userId = await this.authRepo.createSuperAdminInDb(data);
+      const userDetails = await this.authRepo.createSuperAdminInDb(data);
       console.log("Superadmin created successfully");
 
-      const { accessToken, refreshToken } = createTokens({ id: userId });
+      const { accessToken, refreshToken } = createTokens({
+        id: userDetails.id,
+      });
       console.log("Access Token:", accessToken);
       console.log("Refresh Token:", refreshToken);
 
-      return { accessToken, refreshToken };
+      return { userDetails, accessToken, refreshToken };
     } catch (error) {
       // Handle error
+      console.error("authService: Error creating superadmin:", error);
+      throw error;
     }
   }
 
@@ -62,6 +72,8 @@ export class AuthService {
 
   async getUserFromRequest(req: Request, res: Response): Promise<any> {
     const { userId } = await this.validateAndRefreshTokens(req, res);
+
+    console.log("Fetching user details for ID:", userId);
     const user: components["schemas"]["UserDetails"] | null =
       await this.authRepo.getUserById(userId);
     return user;

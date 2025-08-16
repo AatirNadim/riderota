@@ -1,4 +1,8 @@
-import { PrismaClient, UserRole } from "../../dist/generated/prisma";
+import {
+  PrismaClient,
+  UserRole,
+  MembershipStatus,
+} from "../../dist/generated/prisma";
 
 declare global {
   // allow global `var` declarations
@@ -19,4 +23,4 @@ if (process.env.NODE_ENV !== "production") {
   global.prisma = prisma;
 }
 
-export { UserRole };
+export { UserRole, MembershipStatus };

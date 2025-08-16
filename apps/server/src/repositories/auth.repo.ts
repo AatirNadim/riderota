@@ -1,4 +1,4 @@
-import { prisma, UserRole } from "@riderota/utils";
+import { prisma, UserRole, MembershipStatus } from "@riderota/utils";
 import { components } from "@riderota/utils";
 
 export class AuthRepo {
@@ -7,14 +7,20 @@ export class AuthRepo {
   ) {
     const res = await prisma.user.create({
       data: {
-        ...userData,
+        email: userData.email,
+        passwordHash: userData.password,
         role: UserRole.SUPERADMIN,
+        name: userData.name,
+        phoneNo: userData.phoneNo,
+        age: userData.age,
+        profileImgUrl: userData.profileImgUrl,
+        status: MembershipStatus.MEMBER,
       },
     });
 
     console.log("\n\nSuperadmin created:", res, "\n\n");
 
-    return res.id;
+    return res;
   }
 
   async getUserById(userId: string) {
