@@ -8,13 +8,13 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Office {
-  id       String   @id @default(cuid())
-  name     String
-  location String
-  tenants  Tenant[] @relation("TenantOfficeMapper")
-  tenantId String?
-}
+// model Office {
+//   id       String   @id @default(cuid())
+//   name     String
+//   location String
+//   tenants  Tenant[] @relation("TenantOfficeMapper")
+//   tenantId String?
+// }
 
 model Tenant {
   id           String   @id @default(cuid())
@@ -25,8 +25,11 @@ model Tenant {
 
   users User[] @relation("UsersInOrg")
 
-  office   Office? @relation("TenantOfficeMapper", fields: [officeId], references: [id])
-  officeId String?
+  // office   Office? @relation("TenantOfficeMapper", fields: [officeId], references: [id])
+  // officeId String?
+
+  office_name     String
+  office_location String
 
   @@map("Tenant")
 }

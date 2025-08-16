@@ -25,7 +25,7 @@ export interface paths {
                 path?: never;
                 cookie?: never;
             };
-            /** @description Superadmin and new organization details. */
+            /** @description Superadmin aand new organization details. */
             requestBody: {
                 content: {
                     "application/json": components["schemas"]["SuperadminCreatePayload"];
@@ -36,7 +36,6 @@ export interface paths {
                  *      */
                 201: {
                     headers: {
-                        "Set-Cookie"?: string;
                         [name: string]: unknown;
                     };
                     content: {
@@ -450,6 +449,70 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/tenant/create": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create a new tenant */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["TenantCreatePayload"];
+                };
+            };
+            responses: {
+                /** @description Tenant created successfully */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["TenantDetails"];
+                    };
+                };
+                /** @description Bad request, validation error */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** @example Invalid input data */
+                            message?: string;
+                        };
+                    };
+                };
+                /** @description Internal server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** @example An unexpected error occurred. */
+                            message?: string;
+                        };
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -500,13 +563,6 @@ export interface components {
         };
         ApiResponse: {
             message: string;
-        };
-        TenantCreatePayload: {
-            /**
-             * @description The name of the new organization.
-             * @example Innovate Inc.
-             */
-            organizationName: string;
         };
         SuperadminCreatePayload: components["schemas"]["UserCreatePayload"];
         AdminCreatePayload: components["schemas"]["UserCreatePayload"];
@@ -572,6 +628,41 @@ export interface components {
         GenericSuccessResponse: {
             /** @example Authentication successful. */
             message?: string;
+        };
+        TenantCreatePayload: {
+            /**
+             * @description The name of the new tenant.
+             * @example Innovate Inc.
+             */
+            name: string;
+            /**
+             * @description The name of the office associated with the tenant.
+             * @example Innovate HQ
+             */
+            office_name: string;
+            /**
+             * @description The location of the office associated with the tenant.
+             * @example 123 Innovation Drive, Tech City
+             */
+            office_location: string;
+        };
+        TenantDetails: components["schemas"]["TenantCreatePayload"] & {
+            /**
+             * @description The unique identifier for the tenant.
+             * @example tenant_123
+             */
+            id?: string;
+            /**
+             * Format: date-time
+             * @description The date and time when the tenant was created.
+             * @example 2023-01-01T12:00:00Z
+             */
+            createdAt?: string;
+            /**
+             * @description The unique identifier for the super admin user.
+             * @example user_456
+             */
+            superAdminId?: string;
         };
     };
     responses: {

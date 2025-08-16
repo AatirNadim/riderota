@@ -2,6 +2,7 @@ import express, { Request, Response } from "express";
 import "dotenv/config";
 import authRoutes from "./routes/auth.routes";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 
 const app = express();
 const port = process.env.PORT || 4000;
@@ -13,6 +14,7 @@ app.use(
       process.env.CLIENT_URL || /^http:\/\/([a-z0-9-]+\.)?localhost:3001$/,
   })
 );
+app.use(cookieParser());
 app.use(express.json());
 
 app.use("/api/auth", authRoutes);

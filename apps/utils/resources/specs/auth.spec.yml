@@ -17,7 +17,7 @@ paths:
         Creates a new superadmin user and their associated organization.
         On success, returns access and refresh tokens via HttpOnly Set-Cookie headers.
       requestBody:
-        description: Superadmin and new organization details.
+        description: Superadmin aand new organization details.
         required: true
         content:
           application/json:
@@ -237,6 +237,46 @@ paths:
                     type: string
                     example: "Failed to clear session."
 
+  /api/tenant/create:
+    post:
+      tags:
+        - Tenant Management
+      summary: Create a new tenant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TenantCreatePayload"
+      responses:
+        "201":
+          description: Tenant created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TenantDetails"
+        "400":
+          description: Bad request, validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid input data"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "An unexpected error occurred."
+
+
 components:
   schemas:
     UserInvitePayload:
@@ -313,22 +353,10 @@ components:
           type: string
       required:
         - message
-
-    TenantCreatePayload:
-      type: object
-      properties:
-        organizationName:
-          type: string
-          description: "The name of the new organization."
-          example: "Innovate Inc."
-      required:
-        - organizationName
-
     # --- User Payloads & Responses ---
     SuperadminCreatePayload:
       allOf:
         - $ref: "#/components/schemas/UserCreatePayload"
-        # - $ref: "#/components/schemas/TenantCreatePayload"
 
     AdminCreatePayload:
       allOf:
@@ -423,6 +451,47 @@ components:
         message:
           type: string
           example: "Authentication successful."
+
+    TenantCreatePayload:
+      type: object
+      properties:
+        name:
+          type: string
+          description: "The name of the new tenant."
+          example: "Innovate Inc."
+        office_name:
+          type: string
+          description: "The name of the office associated with the tenant."
+          example: "Innovate HQ"
+        office_location:
+          type: string
+          description: "The location of the office associated with the tenant."
+          example: "123 Innovation Drive, Tech City"
+      required:
+        - name
+        - office_name
+        - office_location
+
+    TenantDetails:
+      allOf:
+        - $ref: "#/components/schemas/TenantCreatePayload"
+        - type: object
+          properties:
+            id:
+              type: string
+              description: "The unique identifier for the tenant."
+              example: "tenant_123"
+            createdAt:
+              type: string
+              format: date-time
+              description: "The date and time when the tenant was created."
+              example: "2023-01-01T12:00:00Z"
+            superAdminId:
+              type: string
+              description: "The unique identifier for the super admin user."
+              example: "user_456"
+
+
 
   responses:
     AuthSuccessResponse:

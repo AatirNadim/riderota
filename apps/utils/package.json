@@ -5,8 +5,10 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "generate-types": "openapi-typescript ./resources/spec.yml --output src/types/generated-api.ts",
+    "generate-types": "openapi-typescript ./resources/specs/auth.spec.yml -o ./src/generated-types/index.ts",
     "generate:prisma": "prisma generate",
+    "migrate:prisma": "prisma migrate dev",
+    "dev:prisma": "pnpm run generate:prisma && pnpm run migrate:prisma",
     "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

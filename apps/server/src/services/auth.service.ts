@@ -85,6 +85,11 @@ export class AuthService {
   ): Promise<ValidatedSession> {
     const { accessToken, refreshToken } = req.cookies;
 
+    console.log("Validating tokens:", {
+      accessToken,
+      refreshToken,
+    });
+
     if (!accessToken || !refreshToken) {
       throw new UserNotFoundError();
     }

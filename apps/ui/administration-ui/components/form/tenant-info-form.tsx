@@ -1,24 +1,34 @@
-"use client"
+"use client";
 
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
-import { motion } from "framer-motion"
-import { Button } from "@/components/ui/button"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { ArrowLeft, Loader2, Building, MapPin, ImageIcon } from "lucide-react"
-import { toast } from "sonner"
-import { SignupData } from "@/lib/types"
-
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { ArrowLeft, Loader2, Building, MapPin, ImageIcon } from "lucide-react";
+import { toast } from "sonner";
+import { SignupData } from "@/lib/types";
 
 const formSchema = z.object({
   tenantName: z
     .string()
     .min(2, "Organization name must be at least 2 characters")
     .max(50, "Organization name must be less than 50 characters"),
-  tenantImageUrl: z.string().url("Please enter a valid URL").optional().or(z.literal("")),
+  tenantImageUrl: z
+    .string()
+    .url("Please enter a valid URL")
+    .optional()
+    .or(z.literal("")),
   officeName: z
     .string()
     .min(2, "Office name must be at least 2 characters")
@@ -27,40 +37,32 @@ const formSchema = z.object({
     .string()
     .min(10, "Office location must be at least 10 characters")
     .max(200, "Office location must be less than 200 characters"),
-})
+});
 
-type FormData = z.infer<typeof formSchema>
+type FormData = z.infer<typeof formSchema>;
 
-interface TenantDetailsFormProps {
-  data: Partial<SignupData>
-  onNext: (data: Partial<SignupData>) => void
-  onBack: () => void
-  isLoading: boolean
-  setIsLoading: (loading: boolean) => void
-}
-
-export function TenantDetailsForm({ data, onNext, onBack, isLoading, setIsLoading }: TenantDetailsFormProps) {
+export function TenantDetailsForm() {
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      tenantName: data.tenantName || "",
-      tenantImageUrl: data.tenantImageUrl || "",
-      officeName: data.officeName || "",
-      officeLocation: data.officeLocation || "",
+      tenantName: "",
+      tenantImageUrl: "",
+      officeName: "",
+      officeLocation: "",
     },
-  })
+  });
 
   const onSubmit = async (values: FormData) => {
-    setIsLoading(true)
     try {
       // Simulate API call for tenant creation
-      await new Promise((resolve) => setTimeout(resolve, 2000))
+      await new Promise((resolve) => setTimeout(resolve, 2000));
 
       // Process values
       const processedValues = {
         ...values,
-        tenantImageUrl: values.tenantImageUrl === "" ? undefined : values.tenantImageUrl,
-      }
+        tenantImageUrl:
+          values.tenantImageUrl === "" ? undefined : values.tenantImageUrl,
+      };
 
       // In real implementation, this would create the tenant and redirect to the tenant subdomain
       // const response = await fetch('/api/tenant/create', {
@@ -69,14 +71,12 @@ export function TenantDetailsForm({ data, onNext, onBack, isLoading, setIsLoadin
       //   body: JSON.stringify({ ...data, ...processedValues }),
       // })
 
-      toast.success("Organization created successfully!")
-      onNext(processedValues)
+      toast.success("Organization created successfully!");
     } catch (error) {
-      toast.error("Failed to create organization. Please try again.")
+      toast.error("Failed to create organization. Please try again.");
     } finally {
-      setIsLoading(false)
     }
-  }
+  };
 
   return (
     <motion.div
@@ -92,7 +92,10 @@ export function TenantDetailsForm({ data, onNext, onBack, isLoading, setIsLoadin
             name="tenantName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm font-medium" style={{ color: "var(--neutral-700)" }}>
+                <FormLabel
+                  className="text-sm font-medium"
+                  style={{ color: "var(--neutral-700)" }}
+                >
                   Organization Name
                 </FormLabel>
                 <FormControl>
@@ -107,10 +110,15 @@ export function TenantDetailsForm({ data, onNext, onBack, isLoading, setIsLoadin
                   </div>
                 </FormControl>
                 <FormMessage />
-                <p className="text-xs mt-1" style={{ color: "var(--neutral-500)" }}>
+                <p
+                  className="text-xs mt-1"
+                  style={{ color: "var(--neutral-500)" }}
+                >
                   This will be used to create your subdomain:{" "}
                   {field.value
-                    ? `${field.value.toLowerCase().replace(/\s+/g, "-")}.riderota.com`
+                    ? `${field.value
+                        .toLowerCase()
+                        .replace(/\s+/g, "-")}.riderota.com`
                     : "your-org.riderota.com"}
                 </p>
               </FormItem>
@@ -122,8 +130,12 @@ export function TenantDetailsForm({ data, onNext, onBack, isLoading, setIsLoadin
             name="tenantImageUrl"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm font-medium" style={{ color: "var(--neutral-700)" }}>
-                  Organization Logo URL <span className="text-neutral-400">(Optional)</span>
+                <FormLabel
+                  className="text-sm font-medium"
+                  style={{ color: "var(--neutral-700)" }}
+                >
+                  Organization Logo URL{" "}
+                  <span className="text-neutral-400">(Optional)</span>
                 </FormLabel>
                 <FormControl>
                   <div className="space-y-3">
@@ -145,15 +157,19 @@ export function TenantDetailsForm({ data, onNext, onBack, isLoading, setIsLoadin
                               alt="Organization logo preview"
                               className="w-full h-full object-cover"
                               onError={(e) => {
-                                const target = e.target as HTMLImageElement
-                                target.style.display = "none"
-                                target.nextElementSibling?.classList.remove("hidden")
+                                const target = e.target as HTMLImageElement;
+                                target.style.display = "none";
+                                target.nextElementSibling?.classList.remove(
+                                  "hidden"
+                                );
                               }}
                             />
                           ) : null}
                           <Building className="w-6 h-6 text-neutral-400 hidden" />
                         </div>
-                        <div className="text-sm text-neutral-600">Organization logo preview</div>
+                        <div className="text-sm text-neutral-600">
+                          Organization logo preview
+                        </div>
                       </div>
                     )}
                   </div>
@@ -168,7 +184,10 @@ export function TenantDetailsForm({ data, onNext, onBack, isLoading, setIsLoadin
             name="officeName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm font-medium" style={{ color: "var(--neutral-700)" }}>
+                <FormLabel
+                  className="text-sm font-medium"
+                  style={{ color: "var(--neutral-700)" }}
+                >
                   Office Name
                 </FormLabel>
                 <FormControl>
@@ -192,7 +211,10 @@ export function TenantDetailsForm({ data, onNext, onBack, isLoading, setIsLoadin
             name="officeLocation"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm font-medium" style={{ color: "var(--neutral-700)" }}>
+                <FormLabel
+                  className="text-sm font-medium"
+                  style={{ color: "var(--neutral-700)" }}
+                >
                   Office Location
                 </FormLabel>
                 <FormControl>
@@ -212,7 +234,11 @@ export function TenantDetailsForm({ data, onNext, onBack, isLoading, setIsLoadin
           />
 
           <div className="flex space-x-4 pt-4">
-            <motion.div className="flex-1" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+            <motion.div
+              className="flex-1"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
               <Button
                 type="button"
                 variant="outline"
@@ -224,7 +250,11 @@ export function TenantDetailsForm({ data, onNext, onBack, isLoading, setIsLoadin
                 Back
               </Button>
             </motion.div>
-            <motion.div className="flex-1" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+            <motion.div
+              className="flex-1"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
               <Button
                 type="submit"
                 className="w-full h-11 bg-primary-gradient hover:shadow-custom-hover transition-all duration-300"
@@ -244,5 +274,5 @@ export function TenantDetailsForm({ data, onNext, onBack, isLoading, setIsLoadin
         </form>
       </Form>
     </motion.div>
-  )
+  );
 }
