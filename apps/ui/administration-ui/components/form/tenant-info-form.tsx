@@ -18,6 +18,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, Loader2, Building, MapPin, ImageIcon } from "lucide-react";
 import { toast } from "sonner";
 import { SignupData } from "@/lib/types";
+import { useState } from "react";
 
 const formSchema = z.object({
   tenantName: z
@@ -51,6 +52,8 @@ export function TenantDetailsForm() {
       officeLocation: "",
     },
   });
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const onSubmit = async (values: FormData) => {
     try {
@@ -243,7 +246,7 @@ export function TenantDetailsForm() {
                 type="button"
                 variant="outline"
                 className="w-full h-11 bg-transparent"
-                onClick={onBack}
+                // onClick={onBack}
                 disabled={isLoading}
               >
                 <ArrowLeft className="mr-2 h-4 w-4" />
