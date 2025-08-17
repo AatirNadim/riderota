@@ -39,7 +39,11 @@ const formSchema = z.object({
   tenantName: z
     .string()
     .min(2, "Organization name must be at least 2 characters")
-    .max(50, "Organization name must be less than 50 characters"),
+    .max(50, "Organization name must be less than 50 characters")
+    .regex(
+      /^[a-zA-Z0-9]+(?: [a-zA-Z0-9]+)*$/,
+      "Name must be alphanumeric with single spaces between words."
+    ),
   tenantImageUrl: z
     .string()
     .url("Please enter a valid URL")
@@ -100,6 +104,12 @@ export function TenantDetailsForm() {
   });
 
   const checkSlugAvailability = async () => {
+    const isValid = await form.trigger("tenantName");
+    if (!isValid) {
+      toast.error("Please fix the errors in the organization name.");
+      return;
+    }
+
     const tenantName = form.getValues("tenantName");
     if (!tenantName || tenantName.length < 2) {
       toast.error("Please enter an organization name first");
