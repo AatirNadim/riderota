@@ -15,10 +15,22 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, Loader2, Building, MapPin, ImageIcon } from "lucide-react";
+import {
+  ArrowLeft,
+  Loader2,
+  Building,
+  MapPin,
+  ImageIcon,
+  Info,
+  Search,
+  Check,
+  X,
+} from "lucide-react";
 import { toast } from "sonner";
 import { SignupData } from "@/lib/types";
 import { useState } from "react";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { useCheckWhetherTenantSlugExists } from "@/lib/queries/tenant.queries";
 
 const formSchema = z.object({
   tenantName: z
@@ -54,6 +66,58 @@ export function TenantDetailsForm() {
   });
 
   const [isLoading, setIsLoading] = useState(false);
+  const [isCheckingSlug, setIsCheckingSlug] = useState(false);
+  const [slugStatus, setSlugStatus] = useState<"available" | "taken" | null>(
+    null
+  );
+  const [checkedSlug, setCheckedSlug] = useState<string>("");
+
+  const {
+    data: slugData,
+    isFetching,
+    isError,
+  } = useCheckWhetherTenantSlugExists(form.get);
+
+  const checkSlugAvailability = async () => {
+    const tenantName = form.getValues("tenantName");
+    if (!tenantName || tenantName.length < 2) {
+      toast.error("Please enter an organization name first");
+      return;
+    }
+
+    const slug = tenantName.toLowerCase().replace(/\s+/g, "-");
+    setIsCheckingSlug(true);
+    setCheckedSlug(slug);
+
+    try {
+      // Simulate API call to check slug availability
+
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
+      // In real implementation:
+      // const response = await fetch('/api/tenant/check-slug', {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify({ slug }),
+      // })
+      // const { exists } = await response.json()
+
+      // Simulate random availability for demo
+      const exists = Math.random() > 0.6;
+      setSlugStatus(exists ? "taken" : "available");
+
+      if (exists) {
+        toast.error("This organization name is already taken");
+      } else {
+        toast.success("Organization name is available!");
+      }
+    } catch (error) {
+      toast.error("Failed to check availability. Please try again.");
+      setSlugStatus(null);
+    } finally {
+      setIsCheckingSlug(false);
+    }
+  };
 
   const onSubmit = async (values: FormData) => {
     try {
@@ -96,34 +160,149 @@ export function TenantDetailsForm() {
             render={({ field }) => (
               <FormItem>
                 <FormLabel
-                  className="text-sm font-medium"
+                  className="text-sm font-medium flex items-center gap-2"
                   style={{ color: "var(--neutral-700)" }}
                 >
                   Organization Name
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="h-4 w-4 p-0 hover:bg-transparent"
+                        disabled={isLoading || isCheckingSlug}
+                      >
+                        <Info className="h-4 w-4 text-neutral-400 hover:text-neutral-600" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-80 p-4" side="top">
+                      <div className="space-y-2">
+                        <h4 className="font-medium text-sm">
+                          Organization Slug
+                        </h4>
+                        <p className="text-xs text-neutral-600">
+                          A unique slug will be created from your organization
+                          name. This slug will be used to create your subdomain
+                          (e.g., your-org.riderota.com) and must be unique
+                          across all organizations.
+                        </p>
+                        <div className="text-xs text-neutral-500">
+                          Special characters and spaces will be converted to
+                          hyphens.
+                        </div>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
                 </FormLabel>
                 <FormControl>
-                  <div className="relative">
-                    <Building className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-neutral-400" />
-                    <Input
-                      placeholder="Enter your organization name"
-                      {...field}
-                      className="h-11 pl-10"
-                      disabled={isLoading}
-                    />
+                  <div className="space-y-3">
+                    <div className="flex gap-2">
+                      <div className="relative flex-1">
+                        <Building className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-neutral-400" />
+                        <Input
+                          placeholder="Enter your organization name"
+                          {...field}
+                          className="h-11 pl-10"
+                          disabled={isLoading || isCheckingSlug}
+                          onChange={(e) => {
+                            field.onChange(e);
+                            // Reset slug status when name changes
+                            if (
+                              slugStatus &&
+                              checkedSlug !==
+                                e.target.value
+                                  .toLowerCase()
+                                  .replace(/\s+/g, "-")
+                            ) {
+                              setSlugStatus(null);
+                              setCheckedSlug("");
+                            }
+                          }}
+                        />
+                      </div>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={checkSlugAvailability}
+                        disabled={
+                          isLoading ||
+                          isCheckingSlug ||
+                          !field.value ||
+                          field.value.length < 2
+                        }
+                        className="h-11 px-4 whitespace-nowrap bg-transparent"
+                      >
+                        {isCheckingSlug ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Checking...
+                          </>
+                        ) : (
+                          <>
+                            <Search className="mr-2 h-4 w-4" />
+                            Check Availability
+                          </>
+                        )}
+                      </Button>
+                    </div>
+
+                    {/* Slug Status Display */}
+                    {slugStatus && checkedSlug && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className={`flex items-center gap-2 p-3 rounded-lg border ${
+                          slugStatus === "available"
+                            ? "bg-success-50 border-success-200"
+                            : "bg-error-50 border-error-200"
+                        }`}
+                      >
+                        {slugStatus === "available" ? (
+                          <Check className="h-4 w-4 text-success-600" />
+                        ) : (
+                          <X className="h-4 w-4 text-error-600" />
+                        )}
+                        <div className="flex-1">
+                          <div
+                            className={`text-sm font-medium ${
+                              slugStatus === "available"
+                                ? "text-success-700"
+                                : "text-error-700"
+                            }`}
+                          >
+                            {checkedSlug}.riderota.com
+                          </div>
+                          <div
+                            className={`text-xs ${
+                              slugStatus === "available"
+                                ? "text-success-600"
+                                : "text-error-600"
+                            }`}
+                          >
+                            {slugStatus === "available"
+                              ? "This organization name is available!"
+                              : "This organization name is already taken"}
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
                   </div>
                 </FormControl>
                 <FormMessage />
-                <p
-                  className="text-xs mt-1"
-                  style={{ color: "var(--neutral-500)" }}
-                >
-                  This will be used to create your subdomain:{" "}
-                  {field.value
-                    ? `${field.value
-                        .toLowerCase()
-                        .replace(/\s+/g, "-")}.riderota.com`
-                    : "your-org.riderota.com"}
-                </p>
+                {!slugStatus && (
+                  <p
+                    className="text-xs mt-1"
+                    style={{ color: "var(--neutral-500)" }}
+                  >
+                    This will be used to create your subdomain:{" "}
+                    {field.value
+                      ? `${field.value
+                          .toLowerCase()
+                          .replace(/\s+/g, "-")}.riderota.com`
+                      : "your-org.riderota.com"}
+                  </p>
+                )}
               </FormItem>
             )}
           />

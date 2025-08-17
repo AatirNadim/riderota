@@ -29,6 +29,7 @@ export const useCheckWhetherTenantSlugExists = (slug: string) => {
   return useQuery({
     queryKey: [`tenant-slug-${slug}`],
     queryFn: () => checkWhetherTenantSlugExists(slug),
+    enabled: false,
   });
 };
 
