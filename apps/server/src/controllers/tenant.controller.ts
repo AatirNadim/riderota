@@ -8,10 +8,13 @@ class TenantController {
     // Initialization code here
   }
 
-  createTenant = async (req: Request, res: Response) => {
+  createTenant = async (
+    req: Request<{}, {}, components["schemas"]["TenantCreatePayload"]>,
+    res: Response
+  ) => {
     // Logic for creating a tenant
 
-    console.log("received request to create tenant --> ", req);
+    const tenantDetails = this.tenantService.createTenant(req, res);
   };
 
   checkIfSlugExists = async (req: Request, res: Response) => {
@@ -33,6 +36,4 @@ class TenantController {
   };
 }
 
-export const tenantController = new TenantController(
-  new TenantService(new TenantRepo())
-);
+export default TenantController;

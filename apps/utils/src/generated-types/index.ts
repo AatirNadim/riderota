@@ -14,8 +14,8 @@ export interface paths {
         get?: never;
         put?: never;
         /**
-         * Superadmin and Organization Signup
-         * @description Creates a new superadmin user and their associated organization. On success, returns access and refresh tokens via HttpOnly Set-Cookie headers.
+         * Superadmin and Tenant Signup
+         * @description Creates a new superadmin user and their associated tenant. On success, returns access and refresh tokens via HttpOnly Set-Cookie headers.
          *
          */
         post: {
@@ -25,14 +25,14 @@ export interface paths {
                 path?: never;
                 cookie?: never;
             };
-            /** @description Superadmin aand new organization details. */
+            /** @description Superadmin and new tenant details. */
             requestBody: {
                 content: {
                     "application/json": components["schemas"]["SuperadminCreatePayload"];
                 };
             };
             responses: {
-                /** @description User and organization created successfully. Tokens are returned in HttpOnly cookies.
+                /** @description User and tenant created successfully. Tokens are returned in HttpOnly cookies.
                  *      */
                 201: {
                     headers: {
@@ -49,7 +49,7 @@ export interface paths {
                     };
                     content?: never;
                 };
-                /** @description Conflict - A user or organization with these details already exists. */
+                /** @description Conflict - A user or tenant with these details already exists. */
                 409: {
                     headers: {
                         [name: string]: unknown;
@@ -673,7 +673,7 @@ export interface components {
              */
             status?: "PENDING" | "MEMBER";
             /**
-             * @description The ID of the tenant/organization the user belongs to.
+             * @description The ID of the tenant the user belongs to.
              * @example clxjq2a1b0001e8b4d3h8i9j0
              */
             tenantId?: string | null;
@@ -692,7 +692,7 @@ export interface components {
              * @description A unique identifier for the tenant.
              * @example innovate-inc
              */
-            slug?: string;
+            slug: string;
             /**
              * @description The name of the office associated with the tenant.
              * @example Innovate HQ

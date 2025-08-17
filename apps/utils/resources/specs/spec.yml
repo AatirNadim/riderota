@@ -506,6 +506,7 @@ components:
         - name
         - office_name
         - office_location
+        - slug
 
     TenantDetails:
       allOf:

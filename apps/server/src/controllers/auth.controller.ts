@@ -97,6 +97,4 @@ class AuthController {
   };
 }
 
-export const authController = new AuthController(
-  new AuthService(new AuthRepo())
-);
+export default AuthController;
