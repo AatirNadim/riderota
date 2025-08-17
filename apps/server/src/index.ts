@@ -3,6 +3,7 @@ import "dotenv/config";
 import authRoutes from "./routes/auth.routes";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import tenantRoutes from "./routes/tenant.routes";
 
 const app = express();
 const port = process.env.PORT || 4000;
@@ -12,12 +13,15 @@ app.use(
     credentials: true,
     origin:
       process.env.CLIENT_URL || /^http:\/\/([a-z0-9-]+\.)?localhost:3001$/,
+    methods: ["GET", "POST", "PUT", "DELETE"],
   })
 );
 app.use(cookieParser());
 app.use(express.json());
 
 app.use("/api/auth", authRoutes);
+
+app.use("/api/tenant", tenantRoutes);
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Hello from the RideRota server!");

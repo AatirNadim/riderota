@@ -1,6 +1,6 @@
 "use server";
 
-import { uploadToCloudinary } from "@riderota/utils";
+import { uploadToCloudinary, generateSlugFromName } from "@riderota/utils";
 
 const uploadAssetToCloudinary = async (base64Image: string) => {
   try {
@@ -12,4 +12,14 @@ const uploadAssetToCloudinary = async (base64Image: string) => {
   }
 };
 
-export { uploadAssetToCloudinary };
+const generateSlugUtil = (slug: string) => {
+  try {
+    const generatedSlug = generateSlugFromName(slug);
+    return generatedSlug;
+  } catch (error) {
+    console.error("Error generating slug:", error);
+    throw error;
+  }
+};
+
+export { uploadAssetToCloudinary, generateSlugUtil };

@@ -123,6 +123,7 @@ export function ProfileDetailsForm({ data, onComplete }: StepTwoFormProps) {
     isError,
     isIdle,
     isSuccess,
+    data: signupData,
   } = useSuperAdminSignup();
 
   const handleImageUpload = async (

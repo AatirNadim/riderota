@@ -30,7 +30,10 @@ import { toast } from "sonner";
 import { SignupData } from "@/lib/types";
 import { useState } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { useCheckWhetherTenantSlugExists } from "@/lib/queries/tenant.queries";
+import { checkWhetherTenantSlugExists } from "@/lib/queries/tenant.queries";
+
+import { generateSlugUtil } from "@/app/actions";
+import { useQuery } from "@tanstack/react-query";
 
 const formSchema = z.object({
   tenantName: z
@@ -72,11 +75,29 @@ export function TenantDetailsForm() {
   );
   const [checkedSlug, setCheckedSlug] = useState<string>("");
 
+  const tenantName = form.watch("tenantName");
+
+  // const {
+  //   data: slugData,
+  //   isFetching,
+  //   isError,
+  //   refetch: slugRefetch,
+  // } = useCheckWhetherTenantSlugExists(
+  //   generateSlugFromName(form.getValues("tenantName") || "")
+  // );
+
   const {
-    data: slugData,
+    data,
     isFetching,
     isError,
-  } = useCheckWhetherTenantSlugExists(form.get);
+    error,
+    refetch: slugRefetch,
+  } = useQuery({
+    queryKey: [tenantName],
+    queryFn: () =>
+      checkWhetherTenantSlugExists(generateSlugUtil(tenantName)),
+    enabled: false,
+  });
 
   const checkSlugAvailability = async () => {
     const tenantName = form.getValues("tenantName");
@@ -85,14 +106,18 @@ export function TenantDetailsForm() {
       return;
     }
 
-    const slug = tenantName.toLowerCase().replace(/\s+/g, "-");
+    const slug = generateSlugUtil(tenantName);
     setIsCheckingSlug(true);
     setCheckedSlug(slug);
 
     try {
       // Simulate API call to check slug availability
 
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      // await new Promise((resolve) => setTimeout(resolve, 1500));
+
+      const res = slugRefetch();
+
+      console.log("slug refetch to check validity", res);
 
       // In real implementation:
       // const response = await fetch('/api/tenant/check-slug', {
@@ -103,14 +128,14 @@ export function TenantDetailsForm() {
       // const { exists } = await response.json()
 
       // Simulate random availability for demo
-      const exists = Math.random() > 0.6;
-      setSlugStatus(exists ? "taken" : "available");
+      // const exists = Math.random() > 0.6;
+      // setSlugStatus(exists ? "taken" : "available");
 
-      if (exists) {
-        toast.error("This organization name is already taken");
-      } else {
-        toast.success("Organization name is available!");
-      }
+      // if (exists) {
+      //   toast.error("This organization name is already taken");
+      // } else {
+      //   toast.success("Organization name is available!");
+      // }
     } catch (error) {
       toast.error("Failed to check availability. Please try again.");
       setSlugStatus(null);
