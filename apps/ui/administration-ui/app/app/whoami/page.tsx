@@ -1,6 +1,6 @@
 "use client";
 
-import { useWhoAmI } from "@/lib/hooks/auth/queries";
+import { useWhoAmI } from "@/lib/queries/auth.queries";
 import React from "react";
 
 const WhoAmI = () => {
