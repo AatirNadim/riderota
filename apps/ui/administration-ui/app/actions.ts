@@ -12,7 +12,7 @@ const uploadAssetToCloudinary = async (base64Image: string) => {
   }
 };
 
-const generateSlugUtil = (slug: string) => {
+const generateSlugUtil = async (slug: string) => {
   try {
     const generatedSlug = generateSlugFromName(slug);
     return generatedSlug;

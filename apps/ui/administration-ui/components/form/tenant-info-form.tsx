@@ -94,8 +94,8 @@ export function TenantDetailsForm() {
     refetch: slugRefetch,
   } = useQuery({
     queryKey: [tenantName],
-    queryFn: () =>
-      checkWhetherTenantSlugExists(generateSlugUtil(tenantName)),
+    queryFn: async () =>
+      checkWhetherTenantSlugExists(await generateSlugUtil(tenantName)),
     enabled: false,
   });
 
@@ -106,36 +106,17 @@ export function TenantDetailsForm() {
       return;
     }
 
-    const slug = generateSlugUtil(tenantName);
+    const slug = await generateSlugUtil(tenantName);
     setIsCheckingSlug(true);
     setCheckedSlug(slug);
 
     try {
-      // Simulate API call to check slug availability
+      const res = await slugRefetch();
 
-      // await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      const res = slugRefetch();
+      if (res.data?.exists) setSlugStatus("taken");
+      else setSlugStatus("available");
 
       console.log("slug refetch to check validity", res);
-
-      // In real implementation:
-      // const response = await fetch('/api/tenant/check-slug', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ slug }),
-      // })
-      // const { exists } = await response.json()
-
-      // Simulate random availability for demo
-      // const exists = Math.random() > 0.6;
-      // setSlugStatus(exists ? "taken" : "available");
-
-      // if (exists) {
-      //   toast.error("This organization name is already taken");
-      // } else {
-      //   toast.success("Organization name is available!");
-      // }
     } catch (error) {
       toast.error("Failed to check availability. Please try again.");
       setSlugStatus(null);

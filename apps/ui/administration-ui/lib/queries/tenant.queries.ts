@@ -4,7 +4,9 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { components, paths } from "@riderota/utils";
 import axiosClient from "@/lib/axios";
 
-export const checkWhetherTenantSlugExists = async (slug: string) => {
+export const checkWhetherTenantSlugExists = async (
+  slug: string
+): Promise<{ exists: boolean }> => {
   const pathHolder: keyof paths = `/api/tenant/slug/check-if-exists`;
 
   console.log("Checking slug availability:", slug);
