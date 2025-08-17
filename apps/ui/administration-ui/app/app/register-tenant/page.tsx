@@ -93,9 +93,9 @@ function TenantSetupWrapper() {
             </div>
             <span className="text-2xl font-bold text-primary-gradient">RideRota</span>
           </div>
-          <h1 className="text-[var(--neutral-900)] text-3xl font-bold mb-2 text-shadow-md">Setup Your Organization</h1>
+          <h1 className="text-[var(--neutral-900)] text-3xl font-bold mb-2 text-shadow-md">Setup Your Tenant</h1>
           <p className="text-lg" style={{ color: "var(--neutral-600)" }}>
-            Configure your organization details to complete the setup
+            Configure your tenant details to complete the setup
           </p>
         </motion.div>
 
@@ -109,10 +109,10 @@ function TenantSetupWrapper() {
                 </div>
               </div>
               <CardTitle className="text-xl" style={{ color: "var(--neutral-900)" }}>
-                Organization Details
+                Tenant Details
               </CardTitle>
               <CardDescription className="text-base">
-                Tell us about your organization to customize your RideRota experience
+                Tell us about your tenant to customize your RideRota experience
               </CardDescription>
             </CardHeader>
             <CardContent>

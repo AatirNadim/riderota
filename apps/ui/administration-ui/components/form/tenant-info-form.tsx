@@ -16,30 +16,29 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
-  ArrowLeft,
   Loader2,
   Building,
   MapPin,
-  ImageIcon,
   Info,
   Search,
   Check,
   X,
+  Camera,
 } from "lucide-react";
 import { toast } from "sonner";
-import { SignupData } from "@/lib/types";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { checkWhetherTenantSlugExists } from "@/lib/queries/tenant.queries";
 
-import { generateSlugUtil } from "@/app/actions";
+import { generateSlugUtil, uploadAssetToCloudinary } from "@/app/actions";
 import { useQuery } from "@tanstack/react-query";
+import Image from "next/image";
 
 const formSchema = z.object({
   tenantName: z
     .string()
-    .min(2, "Organization name must be at least 2 characters")
-    .max(50, "Organization name must be less than 50 characters")
+    .min(2, "Tenant name must be at least 2 characters")
+    .max(50, "Tenant name must be less than 50 characters")
     .regex(
       /^[a-zA-Z0-9]+(?: [a-zA-Z0-9]+)*$/,
       "Name must be alphanumeric with single spaces between words."
@@ -72,7 +71,7 @@ export function TenantDetailsForm() {
     },
   });
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading] = useState(false);
   const [isCheckingSlug, setIsCheckingSlug] = useState(false);
   const [slugStatus, setSlugStatus] = useState<"available" | "taken" | null>(
     null
@@ -81,22 +80,12 @@ export function TenantDetailsForm() {
 
   const tenantName = form.watch("tenantName");
 
-  // const {
-  //   data: slugData,
-  //   isFetching,
-  //   isError,
-  //   refetch: slugRefetch,
-  // } = useCheckWhetherTenantSlugExists(
-  //   generateSlugFromName(form.getValues("tenantName") || "")
-  // );
+  const [isUploading, setIsUploading] = useState(false);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
 
-  const {
-    data,
-    isFetching,
-    isError,
-    error,
-    refetch: slugRefetch,
-  } = useQuery({
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const { isFetching: slugValidating, refetch: slugRefetch } = useQuery({
     queryKey: [tenantName],
     queryFn: async () =>
       checkWhetherTenantSlugExists(await generateSlugUtil(tenantName)),
@@ -106,13 +95,13 @@ export function TenantDetailsForm() {
   const checkSlugAvailability = async () => {
     const isValid = await form.trigger("tenantName");
     if (!isValid) {
-      toast.error("Please fix the errors in the organization name.");
+      toast.error("Please fix the errors in the tenant name.");
       return;
     }
 
     const tenantName = form.getValues("tenantName");
     if (!tenantName || tenantName.length < 2) {
-      toast.error("Please enter an organization name first");
+      toast.error("Please enter a tenant name first");
       return;
     }
 
@@ -129,34 +118,76 @@ export function TenantDetailsForm() {
       console.log("slug refetch to check validity", res);
     } catch (error) {
       toast.error("Failed to check availability. Please try again.");
+      console.error("Slug availability check error:", error);
       setSlugStatus(null);
     } finally {
       setIsCheckingSlug(false);
     }
   };
 
+  const handleImageUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      return toast.error("Please select a valid image file.");
+    }
+    if (file.size > 4 * 1024 * 1024) {
+      // 4MB limit
+      return toast.error("Image size must be less than 4MB.");
+    }
+
+    const previewUrl = URL.createObjectURL(file);
+    setImagePreview(previewUrl);
+    setIsUploading(true);
+
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+
+    let base64Image: string | null = null;
+
+    reader.onload = async () => {
+      base64Image = reader.result as string;
+      if (!base64Image) {
+        setIsUploading(false);
+        return toast.error("Could not process the image. Please try again.");
+      }
+
+      // send the path of the file
+      try {
+        const assetUrl = await uploadAssetToCloudinary(base64Image);
+        console.log("Uploaded Image URL:", assetUrl);
+        form.setValue("tenantImageUrl", assetUrl, {
+          shouldValidate: true,
+        });
+
+        setIsUploading(false);
+
+        toast.success("Image uploaded successfully!");
+      } catch (error) {
+        setIsUploading(false);
+        console.error("Image upload error:", error);
+        return toast.error("Failed to upload image. Please try again.");
+      }
+    };
+  };
+
   const onSubmit = async (values: FormData) => {
     try {
-      // Simulate API call for tenant creation
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      // Process values
       const processedValues = {
         ...values,
         tenantImageUrl:
           values.tenantImageUrl === "" ? undefined : values.tenantImageUrl,
       };
 
-      // In real implementation, this would create the tenant and redirect to the tenant subdomain
-      // const response = await fetch('/api/tenant/create', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ ...data, ...processedValues }),
-      // })
+      console.log("Processed Tenant Data:", processedValues);
 
-      toast.success("Organization created successfully!");
+      toast.success("Tenant created successfully!");
     } catch (error) {
-      toast.error("Failed to create organization. Please try again.");
+      toast.error("Failed to create tenant. Please try again.");
+      console.error("Tenant creation error:", error);
     } finally {
     }
   };
@@ -179,7 +210,7 @@ export function TenantDetailsForm() {
                   className="text-sm font-medium flex items-center gap-2"
                   style={{ color: "var(--neutral-700)" }}
                 >
-                  Organization Name
+                  Tenant Name
                   <Popover>
                     <PopoverTrigger asChild>
                       <Button
@@ -194,14 +225,12 @@ export function TenantDetailsForm() {
                     </PopoverTrigger>
                     <PopoverContent className="w-80 p-4" side="top">
                       <div className="space-y-2">
-                        <h4 className="font-medium text-sm">
-                          Organization Slug
-                        </h4>
+                        <h4 className="font-medium text-sm">Tenant Slug</h4>
                         <p className="text-xs text-neutral-600">
-                          A unique slug will be created from your organization
-                          name. This slug will be used to create your subdomain
-                          (e.g., your-org.riderota.com) and must be unique
-                          across all organizations.
+                          A unique slug will be created from your tenant name.
+                          This slug will be used to create your subdomain (e.g.,
+                          your-org.riderota.com) and must be unique across all
+                          organizations.
                         </p>
                         <div className="text-xs text-neutral-500">
                           Special characters and spaces will be converted to
@@ -217,7 +246,7 @@ export function TenantDetailsForm() {
                       <div className="relative flex-1">
                         <Building className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-neutral-400" />
                         <Input
-                          placeholder="Enter your organization name"
+                          placeholder="Enter your tenant name"
                           {...field}
                           className="h-11 pl-10"
                           disabled={isLoading || isCheckingSlug}
@@ -297,8 +326,8 @@ export function TenantDetailsForm() {
                             }`}
                           >
                             {slugStatus === "available"
-                              ? "This organization name is available!"
-                              : "This organization name is already taken"}
+                              ? "This tenant name is available!"
+                              : "This tenant name is already taken"}
                           </div>
                         </div>
                       </motion.div>
@@ -326,53 +355,45 @@ export function TenantDetailsForm() {
           <FormField
             control={form.control}
             name="tenantImageUrl"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel
-                  className="text-sm font-medium"
-                  style={{ color: "var(--neutral-700)" }}
-                >
-                  Organization Logo URL{" "}
-                  <span className="text-neutral-400">(Optional)</span>
+            render={() => (
+              <FormItem className="flex flex-col items-center">
+                <FormLabel className="text-sm font-medium text-neutral-700">
+                  Tenant Logo (Optional)
                 </FormLabel>
                 <FormControl>
-                  <div className="space-y-3">
-                    <div className="relative">
-                      <ImageIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-neutral-400" />
-                      <Input
-                        placeholder="https://example.com/your-logo.png"
-                        {...field}
-                        className="h-11 pl-10"
-                        disabled={isLoading}
-                      />
+                  <div className="relative mt-2">
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      onChange={handleImageUpload}
+                      className="hidden"
+                      accept="image/png, image/jpeg, image/gif"
+                      disabled={isUploading}
+                    />
+                    <div
+                      className="w-28 h-28 rounded-full bg-neutral-100 border-2 border-dashed border-neutral-300 flex items-center justify-center cursor-pointer overflow-hidden hover:border-primary-500 transition-colors"
+                      onClick={() => fileInputRef.current?.click()}
+                    >
+                      {isUploading ? (
+                        <Loader2 className="h-8 w-8 animate-spin text-neutral-500" />
+                      ) : imagePreview ? (
+                        <Image
+                          src={imagePreview}
+                          alt="Profile preview"
+                          width={112}
+                          height={112}
+                          className="object-cover w-full h-full"
+                        />
+                      ) : (
+                        <Camera className="h-8 w-8 text-neutral-500" />
+                      )}
                     </div>
-                    {field.value && (
-                      <div className="flex items-center space-x-3 p-3 bg-neutral-50 rounded-lg">
-                        <div className="w-12 h-12 rounded-lg bg-neutral-200 flex items-center justify-center overflow-hidden">
-                          {field.value ? (
-                            <img
-                              src={field.value || "/placeholder.svg"}
-                              alt="Organization logo preview"
-                              className="w-full h-full object-cover"
-                              onError={(e) => {
-                                const target = e.target as HTMLImageElement;
-                                target.style.display = "none";
-                                target.nextElementSibling?.classList.remove(
-                                  "hidden"
-                                );
-                              }}
-                            />
-                          ) : null}
-                          <Building className="w-6 h-6 text-neutral-400 hidden" />
-                        </div>
-                        <div className="text-sm text-neutral-600">
-                          Organization logo preview
-                        </div>
-                      </div>
-                    )}
                   </div>
                 </FormControl>
-                <FormMessage />
+                <FormMessage
+                  className="text-sm"
+                  style={{ color: "var(--error-500)" }}
+                />
               </FormItem>
             )}
           />
@@ -432,7 +453,7 @@ export function TenantDetailsForm() {
           />
 
           <div className="flex space-x-4 pt-4">
-            <motion.div
+            {/* <motion.div
               className="flex-1"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
@@ -447,7 +468,7 @@ export function TenantDetailsForm() {
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Back
               </Button>
-            </motion.div>
+            </motion.div> */}
             <motion.div
               className="flex-1"
               whileHover={{ scale: 1.02 }}
@@ -455,13 +476,18 @@ export function TenantDetailsForm() {
             >
               <Button
                 type="submit"
-                className="w-full h-11 bg-primary-gradient hover:shadow-custom-hover transition-all duration-300"
-                disabled={isLoading}
+                className="w-full h-11 bg-primary-gradient hover:shadow-custom-hover transition-all duration-300 font-bold"
+                disabled={
+                  isLoading ||
+                  isUploading ||
+                  // !form.formState.isValid ||
+                  slugValidating
+                }
               >
                 {isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Creating Organization...
+                    Creating Tenant...
                   </>
                 ) : (
                   <>Complete Setup</>

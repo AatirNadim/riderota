@@ -11,13 +11,13 @@ tags:
 paths:
   /api/auth/signup/superadmin:
     post:
-      summary: Superadmin and Organization Signup
+      summary: Superadmin and Tenant Signup
       tags: [Authentication & Onboarding]
       description: >
-        Creates a new superadmin user and their associated organization.
+        Creates a new superadmin user and their associated tenant.
         On success, returns access and refresh tokens via HttpOnly Set-Cookie headers.
       requestBody:
-        description: Superadmin aand new organization details.
+        description: Superadmin and new tenant details.
         required: true
         content:
           application/json:
@@ -26,7 +26,7 @@ paths:
       responses:
         "201":
           description: >
-            User and organization created successfully.
+            User and tenant created successfully.
             Tokens are returned in HttpOnly cookies.
           content:
             application/json:
@@ -35,7 +35,7 @@ paths:
         "400":
           description: Bad Request / Validation Error
         "409":
-          description: Conflict - A user or organization with these details already exists.
+          description: Conflict - A user or tenant with these details already exists.
 
   /api/auth/signup/admin:
     post:
@@ -473,7 +473,7 @@ components:
         tenantId:
           type: string
           nullable: true
-          description: "The ID of the tenant/organization the user belongs to."
+          description: "The ID of the tenant the user belongs to."
           example: "clxjq2a1b0001e8b4d3h8i9j0"
 
     GenericSuccessResponse:

@@ -469,65 +469,6 @@ export function ProfileDetailsForm({ data, onComplete }: StepTwoFormProps) {
           />
 
           {/* Profile Image URL Field */}
-          {/* <FormField
-            control={form.control}
-            name="profileImageUrl"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel
-                  className="text-sm font-medium"
-                  style={{ color: "var(--neutral-700)" }}
-                >
-                  Profile Image URL{" "}
-                  <span className="text-neutral-400">(Optional)</span>
-                </FormLabel>
-                <FormControl>
-                  <div className="space-y-3">
-                    <div className="relative">
-                      <ImageIcon
-                        className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5"
-                        style={{ color: "var(--neutral-400)" }}
-                      />
-                      <Input
-                        type="url"
-                        placeholder="https://example.com/your-photo.jpg"
-                        {...field}
-                        className="h-12 pl-10 text-base border-neutral-300 focus:border-primary-500 focus:ring-primary-500"
-                        disabled={isLoading}
-                      />
-                    </div>
-                    {profileImageUrl && (
-                      <div className="flex items-center space-x-3 p-3 bg-neutral-50 rounded-lg border">
-                        <div className="w-12 h-12 rounded-full bg-neutral-200 flex items-center justify-center overflow-hidden">
-                          <img
-                            src={profileImageUrl || "/placeholder.svg"}
-                            alt="Profile preview"
-                            className="w-full h-full object-cover"
-                            onError={(e) => {
-                              const target = e.target as HTMLImageElement;
-                              target.style.display = "none";
-                              target.nextElementSibling?.classList.remove(
-                                "hidden"
-                              );
-                            }}
-                          />
-                          <ImageIcon className="w-6 h-6 text-neutral-400 hidden" />
-                        </div>
-                        <div className="text-sm text-neutral-600">
-                          Profile image preview
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </FormControl>
-                <FormMessage
-                  className="text-sm"
-                  style={{ color: "var(--error-500)" }}
-                />
-              </FormItem>
-            )}
-          /> */}
-
           <FormField
             control={form.control}
             name="profileImageUrl"
