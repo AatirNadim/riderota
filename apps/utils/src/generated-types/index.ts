@@ -513,6 +513,59 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/tenant/slug/check-if-exists": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Check if a tenant slug exists */
+        get: {
+            parameters: {
+                query: {
+                    slug: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Endpoint ran successfully */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** @example true */
+                            exists?: boolean;
+                        };
+                    };
+                };
+                /** @description Error checking for slug */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** @example Error checking for slug. */
+                            message?: string;
+                        };
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -635,6 +688,11 @@ export interface components {
              * @example Innovate Inc.
              */
             name: string;
+            /**
+             * @description A unique identifier for the tenant.
+             * @example innovate-inc
+             */
+            slug?: string;
             /**
              * @description The name of the office associated with the tenant.
              * @example Innovate HQ

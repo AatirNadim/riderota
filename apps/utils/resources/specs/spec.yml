@@ -276,6 +276,37 @@ paths:
                     type: string
                     example: "An unexpected error occurred."
 
+  /api/tenant/slug/check-if-exists:
+    get:
+      summary: Check if a tenant slug exists
+      tags: [Tenant Management]
+      parameters:
+        - in: query
+          name: slug
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Endpoint ran successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  exists:
+                    type: boolean
+                    example: true
+        "404":
+          description: Error checking for slug
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Error checking for slug."
 
 components:
   schemas:
@@ -459,6 +490,10 @@ components:
           type: string
           description: "The name of the new tenant."
           example: "Innovate Inc."
+        slug:
+          type: string
+          description: "A unique identifier for the tenant."
+          example: "innovate-inc"
         office_name:
           type: string
           description: "The name of the office associated with the tenant."
@@ -490,8 +525,6 @@ components:
               type: string
               description: "The unique identifier for the super admin user."
               example: "user_456"
-
-
 
   responses:
     AuthSuccessResponse:
