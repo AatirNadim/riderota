@@ -35,6 +35,7 @@ import Image from "next/image";
 import { uploadAssetToCloudinary } from "@/app/actions";
 
 import { useSuperAdminSignup } from "@/lib/hooks/auth/queries";
+import { useUserStore } from "@/store/userStore";
 
 const stepTwoSchema = z
   .object({
@@ -95,6 +96,8 @@ export function ProfileDetailsForm({ data, onComplete }: StepTwoFormProps) {
   const [imagePreview, setImagePreview] = useState<string | null>(
     data.profileImageUrl || null
   );
+
+  const { updateUserData, userData } = useUserStore();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -220,6 +223,8 @@ export function ProfileDetailsForm({ data, onComplete }: StepTwoFormProps) {
       toast.success(
         "Account created successfully! Please check your email to verify your account."
       );
+
+      // updateUserData();
       onComplete(formData);
 
       // Redirect to next step or dashboard

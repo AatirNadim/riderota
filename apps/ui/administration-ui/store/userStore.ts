@@ -2,32 +2,35 @@ import { create } from "zustand";
 import { components } from "@riderota/utils";
 import { persist } from "zustand/middleware";
 
-type SignupData = components["schemas"]["SuperadminCreatePayload"];
+type UserData = components["schemas"]["UserDetails"];
 
-interface SignupState {
-  signupData: Partial<SignupData>;
-  updateSignupData: (data: Partial<SignupData>) => void;
-  resetSignupData: () => void;
+interface UserState {
+  userData: Partial<UserData>;
+  updateUserData: (data: Partial<UserData>) => void;
+  resetUserData: () => void;
 }
 
-const initialState: Partial<SignupData> = {
+const initialState: Partial<UserData> = {
   name: "",
   email: "",
-  password: "",
   phoneNo: "",
   age: undefined,
   profileImgUrl: undefined,
+  id: undefined,
+  role: undefined,
+  status: undefined,
+  tenantId: undefined,
 };
 
-export const useSignupStore = create<SignupState>()(
+export const useUserStore = create<UserState>()(
   persist(
     (set) => ({
-      signupData: initialState,
-      updateSignupData: (data) =>
+      userData: initialState,
+      updateUserData: (data) =>
         set((state) => ({
-          signupData: { ...state.signupData, ...data },
+          userData: { ...state.userData, ...data },
         })),
-      resetSignupData: () => set({ signupData: initialState }),
+      resetUserData: () => set({ userData: initialState }),
     }),
     {
       name: "signup-storage", // unique name
