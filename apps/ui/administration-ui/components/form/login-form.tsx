@@ -36,6 +36,9 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { useSuperAdminLogin } from "@/lib/queries/auth.queries";
+import { useUserStore } from "@/store/userStore";
+import { useRouter } from "next/navigation";
+import { UserRole } from "@riderota/utils";
 
 const loginSchema = z.object({
   email: z
@@ -51,6 +54,7 @@ type LoginFormData = z.infer<typeof loginSchema>;
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
   const {
     mutateAsync: login,
     isError,
@@ -58,6 +62,8 @@ export function LoginForm() {
     isIdle,
     error: loginError,
   } = useSuperAdminLogin();
+
+  const { updateUserData, resetUserData, userData } = useUserStore();
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -83,17 +89,26 @@ export function LoginForm() {
         password: data.password,
       });
 
-      console.log(res);
+      updateUserData(res);
+
+      // the user is an admin, the tenant must alredy exist since admin is invited by the superadmin into the tenant
+      if (res.role === UserRole.ADMIN) {
+        router.push(`/${res.tenantSlug}/admin/console`);
+      }
+
+      // else if the user is a superadmin
+      if (res.tenantSlug) {
+        console.log("User is part of a tenant:", res.tenantSlug);
+        router.push(`/${res.tenantSlug}/superadmin/console`);
+      } else {
+        router.push(`/register-tenant`);
+      }
+
+      console.log("login details fetched for the user", res);
 
       toast.success("Login successful! Welcome back.");
-
-      
-    } catch (error: any) {
-      if (error.userType) {
-        toast.error(error);
-      } else {
-        toast.error("Invalid email or password. Please try again.");
-      }
+    } catch (error) {
+      toast.error("Invalid email or password. Please try again.");
     } finally {
       setIsLoading(false);
     }

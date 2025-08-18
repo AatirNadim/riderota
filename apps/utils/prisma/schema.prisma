@@ -64,12 +64,12 @@ model User {
    * the organization details should be optional, since a superadmin can exist in the records
    * without having created an organization yet
    */
-  organization             Tenant?          @relation("UsersInOrg", fields: [tenantId], references: [id])
-  tenantId                 String?
+  organization             Tenant?          @relation("UsersInOrg", fields: [tenantSlug], references: [slug])
+  tenantSlug               String?
   organizationAsSuperadmin Tenant?          @relation("SuperadminForOrg")
   vehicle                  Vehicle?
 
-  @@index([tenantId])
+  @@index([tenantSlug])
 }
 
 model Vehicle {

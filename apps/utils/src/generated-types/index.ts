@@ -673,10 +673,10 @@ export interface components {
              */
             status?: "PENDING" | "MEMBER";
             /**
-             * @description The ID of the tenant the user belongs to.
-             * @example clxjq2a1b0001e8b4d3h8i9j0
+             * @description The slug of the tenant the user belongs to.
+             * @example innovate-inc
              */
-            tenantId?: string | null;
+            tenantSlug?: string | null;
         };
         GenericSuccessResponse: {
             /** @example Authentication successful. */
