@@ -14,6 +14,16 @@ const superAdminSignup = async (payload: SuperAdminCreatePayload) => {
   return data;
 };
 
+const superAdminLogin = async (
+  payload: components["schemas"]["LoginPayload"]
+) => {
+  const pathHolder: keyof paths = "/api/auth/login";
+
+  const { data } = await axiosClient.post(pathHolder, payload);
+  console.log("Superadmin logged in:", data);
+  return data;
+};
+
 const whoAmI = async () => {
   const pathHolder: keyof paths = "/api/auth/whoami";
 
@@ -22,15 +32,23 @@ const whoAmI = async () => {
   return data;
 };
 
-export const useWhoAmI = () => {
+const useWhoAmI = () => {
   return useQuery({
     queryKey: ["whoAmI"],
     queryFn: whoAmI,
   });
 };
 
-export const useSuperAdminSignup = () => {
+const useSuperAdminSignup = () => {
   return useMutation({
     mutationFn: superAdminSignup,
   });
 };
+
+const useSuperAdminLogin = () => {
+  return useMutation({
+    mutationFn: superAdminLogin,
+  });
+};
+
+export { useWhoAmI, useSuperAdminSignup, useSuperAdminLogin };

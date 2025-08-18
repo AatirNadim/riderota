@@ -42,8 +42,8 @@ class AuthController {
   login = async (
     req: Request,
     res: Response<
-      | paths["/api/auth/login"]["post"]["responses"]["200"]["content"]["application/json"]
-      | paths["/api/auth/login"]["post"]["responses"]["401"]["content"]["application/json"]
+      | paths["/api/auth/login/administration"]["post"]["responses"]["200"]["content"]["application/json"]
+      | paths["/api/auth/login/administration"]["post"]["responses"]["401"]["content"]["application/json"]
     >
   ) => {
     try {
@@ -64,7 +64,11 @@ class AuthController {
 
       res.status(200).json(user);
     } catch (error) {
-      res.status(401).json({ message: "Invalid email or password" });
+      if (error instanceof UserNotFoundError) {
+        res.status(401).json({ message: "Invalid email or password" });
+      } else {
+        res.status(500).json({ message: "Error logging in", error });
+      }
     }
   };
 

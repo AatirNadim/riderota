@@ -294,7 +294,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/auth/login": {
+    "/api/auth/login/administration": {
         parameters: {
             query?: never;
             header?: never;

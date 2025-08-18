@@ -153,7 +153,7 @@ paths:
         "401":
           description: Unauthorized - The user is not authenticated or the session has expired.
   # You would have a similar login endpoint
-  /api/auth/login:
+  /api/auth/login/administration:
     post:
       summary: User Login
       tags: [Authentication & Onboarding]

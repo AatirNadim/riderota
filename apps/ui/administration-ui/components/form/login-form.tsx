@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -35,6 +35,7 @@ import {
   Info,
 } from "lucide-react";
 import { toast } from "sonner";
+import { useSuperAdminLogin } from "@/lib/queries/auth.queries";
 
 const loginSchema = z.object({
   email: z
@@ -50,6 +51,13 @@ type LoginFormData = z.infer<typeof loginSchema>;
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const {
+    mutateAsync: login,
+    isError,
+    isPending: isLoggingIn,
+    isIdle,
+    error: loginError,
+  } = useSuperAdminLogin();
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -60,36 +68,26 @@ export function LoginForm() {
     mode: "onChange",
   });
 
+  useEffect(() => {
+    if (isError) {
+      console.error("Login error:", loginError);
+      toast.error(loginError?.message || "Login failed");
+    }
+  }, [isError, loginError]);
+
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      const res = await login({
+        email: data.email,
+        password: data.password,
+      });
 
-      // In real implementation:
-      // const response = await fetch('/api/auth/login', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify(data),
-      // })
-      // const result = await response.json()
-
-      // Simulate different user types for demo
-      const userTypes = ["superadmin", "admin", "driver", "employee"];
-      const randomUserType =
-        userTypes[Math.floor(Math.random() * userTypes.length)];
-
-      if (randomUserType !== "superadmin") {
-        // Simulate non-superadmin login attempt
-        throw new Error(
-          `Access denied. User type: ${randomUserType}. Only superadmins can access this portal.`
-        );
-      }
+      console.log(res);
 
       toast.success("Login successful! Welcome back.");
 
-      // Redirect to dashboard
-      // router.push('/dashboard')
+      
     } catch (error: any) {
       if (error.userType) {
         toast.error(error);
