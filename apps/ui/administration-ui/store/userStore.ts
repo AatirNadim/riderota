@@ -19,7 +19,7 @@ const initialState: Partial<UserData> = {
   id: undefined,
   role: undefined,
   status: undefined,
-  tenantId: undefined,
+  tenantSlug: undefined,
 };
 
 export const useUserStore = create<UserState>()(

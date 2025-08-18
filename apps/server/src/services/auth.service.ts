@@ -5,6 +5,7 @@ import {
   components,
   createTokens,
   refreshTokens,
+  UserRole,
   verifyAccessToken,
 } from "@riderota/utils";
 
@@ -52,7 +53,7 @@ export class AuthService {
     }
   }
 
-  async login(
+  async loginAdministration(
     email: string,
     password: string
   ): Promise<{
@@ -62,6 +63,10 @@ export class AuthService {
   }> {
     const user = await this.authRepo.getUserByEmail(email);
     if (!user) throw new UserNotFoundError();
+
+    if (user.role !== UserRole.ADMIN && user.role !== UserRole.SUPERADMIN) {
+      throw new Error("Unauthorized user is trying to access admin space");
+    }
 
     const isPasswordValid = bcrypt.compareSync(password, user.passwordHash);
     if (!isPasswordValid) throw new Error("Invalid password");

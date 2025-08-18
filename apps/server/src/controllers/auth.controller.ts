@@ -3,6 +3,7 @@ import { components, paths } from "@riderota/utils";
 import { AuthService } from "../services/auth.service";
 import { AuthRepo } from "../repositories/auth.repo";
 import { UserNotFoundError } from "../exceptions/user-not-found.exception";
+import { UserNotAuthorizedError } from "../exceptions/user-not-authorized.exception";
 
 type SuperAdminCreatePayload = components["schemas"]["SuperadminCreatePayload"];
 
@@ -39,19 +40,18 @@ class AuthController {
     }
   };
 
-  login = async (
+  loginAdministration = async (
     req: Request,
     res: Response<
       | paths["/api/auth/login/administration"]["post"]["responses"]["200"]["content"]["application/json"]
       | paths["/api/auth/login/administration"]["post"]["responses"]["401"]["content"]["application/json"]
+      | any
     >
   ) => {
     try {
       const { email, password } = req.body;
-      const { user, accessToken, refreshToken } = await this.authService.login(
-        email,
-        password
-      );
+      const { user, accessToken, refreshToken } =
+        await this.authService.loginAdministration(email, password);
 
       res.cookie("accessToken", accessToken, {
         httpOnly: true,
@@ -65,7 +65,9 @@ class AuthController {
       res.status(200).json(user);
     } catch (error) {
       if (error instanceof UserNotFoundError) {
-        res.status(401).json({ message: "Invalid email or password" });
+        res.status(401).json({ message: error.message });
+      } else if (error instanceof UserNotAuthorizedError) {
+        res.status(403).json({ message: error.message });
       } else {
         res.status(500).json({ message: "Error logging in", error });
       }

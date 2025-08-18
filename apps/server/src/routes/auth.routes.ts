@@ -6,7 +6,7 @@ const router = Router();
 
 router.post("/signup/superadmin", authController.superAdminSignupController);
 
-router.post("/login/administration", authController.login);
+router.post("/login/administration", authController.loginAdministration);
 
 router.get("/whoami", authController.whoAmIController);
 
