@@ -28,7 +28,7 @@ const createTenant = async (
   return data;
 };
 
-export const useCheckWhetherTenantSlugExists = (slug: string) => {
+const useCheckWhetherTenantSlugExists = (slug: string) => {
   return useQuery({
     queryKey: [`tenant-slug-${slug}`],
     queryFn: () => checkWhetherTenantSlugExists(slug),
@@ -36,9 +36,11 @@ export const useCheckWhetherTenantSlugExists = (slug: string) => {
   });
 };
 
-export const useCreateTenant = () => {
+const useCreateTenant = () => {
   return useMutation({
     mutationKey: [`create-tenant`],
     mutationFn: createTenant,
   });
 };
+
+export { useCheckWhetherTenantSlugExists, useCreateTenant };

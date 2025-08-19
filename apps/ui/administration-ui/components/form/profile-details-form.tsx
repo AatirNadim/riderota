@@ -36,6 +36,7 @@ import { uploadAssetToCloudinary } from "@/app/actions";
 
 import { useSuperAdminSignup } from "@/lib/queries/auth.queries";
 import { useUserStore } from "@/store/userStore";
+import { useRouter } from "next/navigation";
 
 const stepTwoSchema = z
   .object({
@@ -115,6 +116,7 @@ export function ProfileDetailsForm({ data, onComplete }: StepTwoFormProps) {
 
   const password = form.watch("password");
   const profileImageUrl = form.watch("profileImageUrl");
+  const router = useRouter();
 
   const {
     mutateAsync: signup,
@@ -221,9 +223,12 @@ export function ProfileDetailsForm({ data, onComplete }: StepTwoFormProps) {
 
       console.log("superadmin account created", res);
 
-      toast.success(
-        "Account created successfully! Please check your email to verify your account."
-      );
+      toast.success("Account created successfully!");
+
+      // persisting the current user information
+      updateUserData(res);
+
+      if (!res.tenantSlug) router.push("/register-tenant");
 
       // updateUserData();
       onComplete(formData);

@@ -1,44 +1,51 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { motion } from "framer-motion"
-import { AdminSidebar } from "../admin.sidebar"
-import { AdminHeader } from "../admin.header"
-import { AdminStats } from "../admin.stats"
-import { EmployeeRequests } from "../employee.requests"
-import { DriverManagement } from "../driver.management"
-import { RideAllocation } from "../ride-allocation"
-import { AllocationQueue } from "./allocation-queue"
-import { AdminComplaints } from "./admin-complaints"
-import { AdminProfile } from "./admin-profile"
-import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar"
-import { Toaster } from "@/components/ui/sonner"
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { AdminSidebar } from "../admin.sidebar";
+import { AdminHeader } from "../admin.header";
+import { AdminStats } from "../admin.stats";
+import { EmployeeRequests } from "../employee.requests";
+import { DriverManagement } from "../driver.management";
+import { RideAllocation } from "../ride-allocation";
+import { AllocationQueue } from "../admin/allocation-queue";
+import { AdminComplaints } from "../admin/admin.complaints";
+import { AdminProfile } from "../admin/admin.profile";
+import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
+import { Toaster } from "@/components/ui/sonner";
 
-export type AdminView = "overview" | "requests" | "drivers" | "allocation" | "queue" | "complaints" | "profile"
+export type AdminView =
+  | "overview"
+  | "requests"
+  | "drivers"
+  | "allocation"
+  | "queue"
+  | "complaints"
+  | "profile";
 
 export function AdminDashboard() {
-  const [currentView, setCurrentView] = useState<AdminView>("overview")
+  const [currentView, setCurrentView] = useState<AdminView>("overview");
 
   const renderContent = () => {
     switch (currentView) {
       case "overview":
-        return <AdminStats />
+        return <AdminStats />;
       case "requests":
-        return <EmployeeRequests />
+        return <EmployeeRequests />;
       case "drivers":
-        return <DriverManagement />
+        return <DriverManagement />;
       case "allocation":
-        return <RideAllocation />
+        return <RideAllocation />;
       case "queue":
-        return <AllocationQueue />
+        return <AllocationQueue />;
       case "complaints":
-        return <AdminComplaints />
+        return <AdminComplaints />;
       case "profile":
-        return <AdminProfile />
+        return <AdminProfile />;
       default:
-        return <AdminStats />
+        return <AdminStats />;
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-hero-gradient">
@@ -58,5 +65,5 @@ export function AdminDashboard() {
       </SidebarProvider>
       <Toaster />
     </div>
-  )
+  );
 }
