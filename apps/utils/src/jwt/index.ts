@@ -54,9 +54,17 @@ export const refreshTokens = <T>(oldRefreshToken: string): SessionInfo => {
   }
 
   try {
-    const decoded = jwt.verify(oldRefreshToken, secret) as T;
+    const decoded = jwt.verify(oldRefreshToken, secret) as T & {
+      iat: number;
+      exp: number;
+      aud?: string | string[];
+      iss?: string;
+      sub?: string;
+    };
 
-    return createTokens(decoded);
+    const { iat, exp, aud, iss, sub, ...payload } = decoded;
+
+    return createTokens(payload);
   } catch (error) {
     console.error("Refresh Token Error:", (error as Error).message);
     throw new Error("Invalid or expired refresh token.");
