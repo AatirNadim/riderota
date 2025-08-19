@@ -36,7 +36,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { useSuperAdminLogin } from "@/lib/queries/auth.queries";
-import { useUserStore } from "@/store/userStore";
+import { useUserStore } from "@/store/user.store";
 import { useRouter } from "next/navigation";
 import { UserRole } from "@riderota/utils";
 

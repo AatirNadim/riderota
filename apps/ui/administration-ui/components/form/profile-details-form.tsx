@@ -35,7 +35,7 @@ import Image from "next/image";
 import { uploadAssetToCloudinary } from "@/app/actions";
 
 import { useSuperAdminSignup } from "@/lib/queries/auth.queries";
-import { useUserStore } from "@/store/userStore";
+import { useUserStore } from "@/store/user.store";
 import { useRouter } from "next/navigation";
 
 const stepTwoSchema = z
