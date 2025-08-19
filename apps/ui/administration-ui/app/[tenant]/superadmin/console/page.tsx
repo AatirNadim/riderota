@@ -1,7 +1,7 @@
-import React from "react";
+"use client"
 
-const page = () => {
-  return <div>Superadmin Console</div>;
-};
+import { SuperAdminDashboard } from "@/components/dashboard/super-admin-dashboard"
 
-export default page;
+export default function DashboardPage() {
+  return <SuperAdminDashboard />
+}
