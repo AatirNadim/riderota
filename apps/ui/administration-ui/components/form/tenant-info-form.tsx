@@ -28,11 +28,17 @@ import {
 import { toast } from "sonner";
 import { useRef, useState } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { checkWhetherTenantSlugExists } from "@/lib/queries/tenant.queries";
+import {
+  checkWhetherTenantSlugExists,
+  useCreateTenant,
+} from "@/lib/queries/tenant.queries";
 
 import { generateSlugUtil, uploadAssetToCloudinary } from "@/app/actions";
 import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
+import { useUserStore } from "@/store/user.store";
+import { useTenantStore } from "@/store/tenant.store";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   tenantName: z
@@ -85,12 +91,25 @@ export function TenantDetailsForm() {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const router = useRouter();
+
+  const { updateUserData } = useUserStore();
+
+  const { updateTenantData } = useTenantStore();
+
   const { isFetching: slugValidating, refetch: slugRefetch } = useQuery({
     queryKey: [tenantName],
     queryFn: async () =>
       checkWhetherTenantSlugExists(await generateSlugUtil(tenantName)),
     enabled: false,
   });
+
+  const {
+    mutateAsync: createTenant,
+    isPending: isCreatingTenant,
+    isError: isCreatingError,
+    error: createError,
+  } = useCreateTenant();
 
   const checkSlugAvailability = async () => {
     const isValid = await form.trigger("tenantName");
@@ -184,7 +203,24 @@ export function TenantDetailsForm() {
 
       console.log("Processed Tenant Data:", processedValues);
 
+      const res = await createTenant({
+        name: processedValues.tenantName,
+        slug: checkedSlug,
+        office_location: processedValues.officeLocation,
+        office_name: processedValues.officeName,
+      });
+
+      updateTenantData(res);
+
+      updateUserData({
+        tenantSlug: checkedSlug,
+      });
+
+      toast.success("User data updated successfully!");
+
       toast.success("Tenant created successfully!");
+
+      router.push(`/${checkedSlug}/superadmin/console`);
     } catch (error) {
       toast.error("Failed to create tenant. Please try again.");
       console.error("Tenant creation error:", error);

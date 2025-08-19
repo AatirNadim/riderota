@@ -25,7 +25,7 @@ const createTenant = async (
   const pathHolder: keyof paths = `/api/tenant/create`;
 
   const { data } = await axiosClient.post(pathHolder, payload);
-  return data;
+  return data as components["schemas"]["TenantDetails"];
 };
 
 const useCheckWhetherTenantSlugExists = (slug: string) => {

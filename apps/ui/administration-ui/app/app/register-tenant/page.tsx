@@ -1,10 +1,16 @@
-"use client"
+"use client";
 
-import { motion } from "framer-motion"
-import Link from "next/link"
-import { Car, Building } from "lucide-react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { TenantDetailsForm } from "@/components/form/tenant-info-form"
+import { motion } from "framer-motion";
+import Link from "next/link";
+import { Car, Building } from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { TenantDetailsForm } from "@/components/form/tenant-info-form";
 
 function TenantSetupWrapper() {
   const containerVariants = {
@@ -17,7 +23,7 @@ function TenantSetupWrapper() {
         staggerChildren: 0.1,
       },
     },
-  }
+  };
 
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -26,7 +32,7 @@ function TenantSetupWrapper() {
       y: 0,
       transition: { duration: 0.5 },
     },
-  }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
@@ -46,7 +52,7 @@ function TenantSetupWrapper() {
             ease: "easeInOut",
           }}
         />
-        
+
         <motion.div
           className="absolute bottom-20 right-10 w-72 h-72 rounded-full mix-blend-multiply filter blur-xl opacity-20"
           style={{ background: "var(--secondary-300)" }}
@@ -91,9 +97,13 @@ function TenantSetupWrapper() {
             <div className="p-3 bg-primary-gradient rounded-xl shadow-lg">
               <Car className="h-8 w-8 text-white" />
             </div>
-            <span className="text-2xl font-bold text-primary-gradient">RideRota</span>
+            <span className="text-2xl font-bold text-primary-gradient">
+              RideRota
+            </span>
           </div>
-          <h1 className="text-[var(--neutral-900)] text-3xl font-bold mb-2 text-shadow-md">Setup Your Tenant</h1>
+          <h1 className="text-[var(--neutral-900)] text-3xl font-bold mb-2 text-shadow-md">
+            Setup Your Tenant
+          </h1>
           <p className="text-lg" style={{ color: "var(--neutral-600)" }}>
             Configure your tenant details to complete the setup
           </p>
@@ -104,11 +114,20 @@ function TenantSetupWrapper() {
           <Card className="border-0 shadow-custom bg-white/95 backdrop-blur-sm">
             <CardHeader className="text-center pb-6">
               <div className="flex items-center justify-center mb-4">
-                <div className="p-3 rounded-full" style={{ backgroundColor: "var(--primary-100)" }}>
-                  <Building className="h-6 w-6" style={{ color: "var(--primary-600)" }} />
+                <div
+                  className="p-3 rounded-full"
+                  style={{ backgroundColor: "var(--primary-100)" }}
+                >
+                  <Building
+                    className="h-6 w-6"
+                    style={{ color: "var(--primary-600)" }}
+                  />
                 </div>
               </div>
-              <CardTitle className="text-xl" style={{ color: "var(--neutral-900)" }}>
+              <CardTitle
+                className="text-xl"
+                style={{ color: "var(--neutral-900)" }}
+              >
                 Tenant Details
               </CardTitle>
               <CardDescription className="text-base">
@@ -125,7 +144,10 @@ function TenantSetupWrapper() {
         <motion.div className="text-center mt-8" variants={itemVariants}>
           <p className="text-sm" style={{ color: "var(--neutral-600)" }}>
             Need help with setup?{" "}
-            <Link href="/support" className="font-medium text-primary-600 hover:text-primary-700 underline">
+            <Link
+              href="/support"
+              className="font-medium text-primary-600 hover:text-primary-700 underline"
+            >
               Contact Support
             </Link>
           </p>
@@ -147,7 +169,7 @@ function TenantSetupWrapper() {
         </motion.div>
       </motion.div>
     </div>
-  )
+  );
 }
 
 export default TenantSetupWrapper;
