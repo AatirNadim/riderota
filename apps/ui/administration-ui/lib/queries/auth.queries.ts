@@ -35,6 +35,14 @@ const whoAmI = async () => {
   return data;
 };
 
+const logout = async () => {
+  const pathHolder: keyof paths = "/api/auth/clearSession";
+
+  const { data } = await axiosClient.post(pathHolder);
+  console.log("User logged out:", data);
+  return data;
+};
+
 const useWhoAmI = () => {
   return useQuery({
     queryKey: ["whoAmI"],
@@ -54,4 +62,10 @@ const useSuperAdminLogin = () => {
   });
 };
 
-export { useWhoAmI, useSuperAdminSignup, useSuperAdminLogin };
+const useLogout = () => {
+  return useMutation({
+    mutationFn: logout,
+  });
+};
+
+export { useWhoAmI, useSuperAdminSignup, useSuperAdminLogin, useLogout };
