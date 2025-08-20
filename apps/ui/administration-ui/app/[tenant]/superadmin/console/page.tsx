@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { SuperAdminDashboard } from "@/components/dashboard/super-admin-dashboard"
+import { SuperAdminDashboard } from "@/components/dashboard/superadmin.dashboard";
 
 export default function DashboardPage() {
-  return <SuperAdminDashboard />
+  return <SuperAdminDashboard />;
 }

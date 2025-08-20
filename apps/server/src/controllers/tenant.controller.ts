@@ -12,9 +12,13 @@ class TenantController {
     req: Request<{}, {}, components["schemas"]["TenantCreatePayload"]>,
     res: Response
   ) => {
-    // Logic for creating a tenant
-
-    const tenantDetails = this.tenantService.createTenant(req, res);
+    try {
+      const tenantDetails = await this.tenantService.createTenant(req, res);
+      res.status(201).json(tenantDetails);
+    } catch (error) {
+      console.error("Error creating tenant:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
   };
 
   checkIfSlugExists = async (req: Request, res: Response) => {

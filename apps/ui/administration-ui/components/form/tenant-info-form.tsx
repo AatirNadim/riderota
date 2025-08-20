@@ -195,13 +195,19 @@ export function TenantDetailsForm() {
 
   const onSubmit = async (values: FormData) => {
     try {
+      if (checkedSlug.length < 2) {
+        toast.error(
+          "Please enter a valid tenant name and make sure to test its availability."
+        );
+        return;
+      }
       const processedValues = {
         ...values,
         tenantImageUrl:
           values.tenantImageUrl === "" ? undefined : values.tenantImageUrl,
       };
 
-      console.log("Processed Tenant Data:", processedValues);
+      console.log("Processed Tenant Data:", processedValues, checkedSlug);
 
       const res = await createTenant({
         name: processedValues.tenantName,
@@ -219,8 +225,9 @@ export function TenantDetailsForm() {
       toast.success("User data updated successfully!");
 
       toast.success("Tenant created successfully!");
-
-      router.push(`/${checkedSlug}/superadmin/console`);
+      
+      const newUrl = `${window.location.protocol}//${checkedSlug}.riderota.com/superadmin/console`;
+      window.location.assign(newUrl);
     } catch (error) {
       toast.error("Failed to create tenant. Please try again.");
       console.error("Tenant creation error:", error);

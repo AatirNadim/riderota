@@ -28,7 +28,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`antialiased`}>
         <QueryProvider>{children}</QueryProvider>
-        <Toaster duration={1000} position="top-right" richColors />
+        <Toaster duration={1000} position="top-right" richColors closeButton />
       </body>
     </html>
   );

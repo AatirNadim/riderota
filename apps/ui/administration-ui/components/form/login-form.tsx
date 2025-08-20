@@ -185,7 +185,7 @@ export function LoginForm() {
             Welcome Back
           </h1>
           <p className="text-lg" style={{ color: "var(--neutral-600)" }}>
-            Sign in to your SuperAdmin account
+            Sign in to your Administration account
           </p>
         </motion.div>
 
@@ -197,12 +197,8 @@ export function LoginForm() {
               className="text-sm"
               style={{ color: "var(--primary-700)" }}
             >
-              <strong>SuperAdmin Portal:</strong> Only superadmins can access
-              this login page. Admins should use their respective tenant login
-              portals at{" "}
-              <span className="font-mono text-xs">
-                your-org.riderota.com/admin/login
-              </span>
+              <strong>Administration Portal:</strong> Only authorized
+              administrators can access this login page.
             </AlertDescription>
           </Alert>
         </motion.div>
@@ -215,7 +211,7 @@ export function LoginForm() {
                 className="text-xl"
                 style={{ color: "var(--neutral-900)" }}
               >
-                SuperAdmin Login
+                Administration Login
               </CardTitle>
               <CardDescription className="text-base">
                 Enter your credentials to access the admin dashboard

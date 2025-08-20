@@ -12,10 +12,11 @@ const Page = () => {
   console.log("userData", userData);
 
   if (userData.tenantSlug) {
+    const newBasePath = `${window.location.protocol}//${userData.tenantSlug}.riderota.com/`;
     if (userData.role === "SUPERADMIN") {
-      router.push(`/${userData.tenantSlug}/superadmin/console`);
+      window.location.replace(`${newBasePath}/superadmin/console`);
     } else {
-      router.push(`/${userData.tenantSlug}/admin/console`);
+      window.location.replace(`${newBasePath}/admin/console`);
     }
   } else if (userData.id && !userData.tenantSlug) {
     router.push("/register-tenant");

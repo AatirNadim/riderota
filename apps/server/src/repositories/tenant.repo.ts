@@ -36,7 +36,7 @@ class TenantRepo {
 
       console.log("user details for checking existing tenant --> ", user);
 
-      return user?.tenantId !== null && user?.tenantId !== undefined;
+      return user?.tenantSlug !== null && user?.tenantSlug !== undefined;
     } catch (error) {
       console.error("Error checking if tenant exists for user:", error);
       throw error;
@@ -60,11 +60,11 @@ class TenantRepo {
       await prisma.user.update({
         where: { id: userId },
         data: {
-          tenantId: newTenant.id,
+          tenantSlug: newTenant.slug,
         },
       });
 
-      console.log("User updated with new tenant ID --> ", userId);
+      console.log("User updated with new tenant slug --> ", userId);
 
       return newTenant;
     } catch (error) {
