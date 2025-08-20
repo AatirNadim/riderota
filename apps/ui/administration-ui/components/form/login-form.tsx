@@ -91,18 +91,7 @@ export function LoginForm() {
 
       updateUserData(res);
 
-      // the user is an admin, the tenant must alredy exist since admin is invited by the superadmin into the tenant
-      // if (res.role === UserRole.ADMIN) {
-      //   router.push(`/${res.tenantSlug}/admin/console`);
-      // }
-
-      // // else if the user is a superadmin
-      // if (res.tenantSlug) {
-      //   console.log("User is part of a tenant:", res.tenantSlug);
-      //   router.push(`/${res.tenantSlug}/superadmin/console`);
-      // } else {
-      //   router.push(`/register-tenant`);
-      // }
+      
 
       console.log("login details fetched for the user", res);
 

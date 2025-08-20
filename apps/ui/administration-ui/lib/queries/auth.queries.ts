@@ -19,12 +19,9 @@ const superAdminLogin = async (
 ) => {
   const pathHolder: keyof paths = "/api/auth/login/administration";
 
-  const data: components["schemas"]["UserDetails"] = await axiosClient.post(
-    pathHolder,
-    payload
-  );
+  const { data } = await axiosClient.post(pathHolder, payload);
   console.log("Superadmin logged in:", data);
-  return data;
+  return data as components["schemas"]["UserDetails"];
 };
 
 const whoAmI = async () => {
