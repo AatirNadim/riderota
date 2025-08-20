@@ -26,10 +26,13 @@ class AuthController {
       res.cookie("accessToken", accessToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
+        domain: process.env.NEXT_PUBLIC_BASE_DOMAIN
+
       });
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
+        domain: process.env.NEXT_PUBLIC_BASE_DOMAIN
       });
 
       res.status(201).json({
@@ -83,9 +86,12 @@ class AuthController {
       console.log("Received request to get user information");
       const userDetails = await this.authService.getUserFromRequest(req, res);
       if (!userDetails) throw new UserNotFoundError();
-      const tenantDetails = await this.tenantService.getTenantDetails(
-        userDetails.tenantId
-      );
+      let tenantDetails = null;
+      if(userDetails.tenantSlug) {
+        tenantDetails = await this.tenantService.getTenantDetails(
+          userDetails.tenantSlug
+        );
+      }
       res.json({ userDetails, tenantDetails });
     } catch (error) {
       console.error("Error fetching user information:", error);

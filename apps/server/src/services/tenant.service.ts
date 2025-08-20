@@ -33,8 +33,8 @@ class TenantService {
     return this.tenantRepo.checkIfSlugExists(slug);
   }
 
-  async getTenantDetails(tenantId: string) {
-    return this.tenantRepo.getTenantDetails(tenantId);
+  async getTenantDetails(tenantSlug: string) {
+    return this.tenantRepo.getTenantDetails(tenantSlug);
   }
 
 }

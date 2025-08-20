@@ -73,10 +73,10 @@ class TenantRepo {
     }
   }
 
-  async getTenantDetails(tenantId: string) {
+  async getTenantDetails(tenantSlug: string) {
     try {
       const tenant = await prisma.tenant.findUnique({
-        where: { id: tenantId },
+        where: { slug: tenantSlug },
       });
       return tenant;
     } catch (error) {
@@ -84,7 +84,6 @@ class TenantRepo {
       throw error;
     }
   }
-
 }
 
 export default TenantRepo;

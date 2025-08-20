@@ -75,7 +75,7 @@ export class AuthService {
     return { user, accessToken, refreshToken };
   }
 
-  async getUserFromRequest(req: Request, res: Response): Promise<any> {
+  async getUserFromRequest(req: Request, res: Response) {
     const { userId } = await this.validateAndRefreshTokens(req, res);
 
     console.log("Fetching user details for ID:", userId);
