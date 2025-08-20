@@ -14,7 +14,7 @@ const superAdminSignup = async (payload: SuperAdminCreatePayload) => {
   return data as components["schemas"]["UserDetails"];
 };
 
-const superAdminLogin = async (
+const administrationLogin = async (
   payload: components["schemas"]["LoginPayload"]
 ) => {
   const pathHolder: keyof paths = "/api/auth/login/administration";
@@ -53,9 +53,9 @@ const useSuperAdminSignup = () => {
   });
 };
 
-const useSuperAdminLogin = () => {
+const useAdministrationLogin = () => {
   return useMutation({
-    mutationFn: superAdminLogin,
+    mutationFn: administrationLogin,
   });
 };
 
@@ -65,4 +65,4 @@ const useLogout = () => {
   });
 };
 
-export { useWhoAmI, useSuperAdminSignup, useSuperAdminLogin, useLogout };
+export { useWhoAmI, useSuperAdminSignup, useAdministrationLogin, useLogout };

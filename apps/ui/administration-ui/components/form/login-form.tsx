@@ -35,7 +35,7 @@ import {
   Info,
 } from "lucide-react";
 import { toast } from "sonner";
-import { useSuperAdminLogin } from "@/lib/queries/auth.queries";
+import { useAdministrationLogin } from "@/lib/queries/auth.queries";
 import { useUserStore } from "@/store/user.store";
 import { useRouter } from "next/navigation";
 import { UserRole } from "@riderota/utils";
@@ -61,7 +61,7 @@ export function LoginForm() {
     isPending: isLoggingIn,
     isIdle,
     error: loginError,
-  } = useSuperAdminLogin();
+  } = useAdministrationLogin();
 
   const { updateUserData, resetUserData, userData } = useUserStore();
 
@@ -91,7 +91,13 @@ export function LoginForm() {
 
       updateUserData(res);
 
-      
+      if (res.role === "SUPERADMIN") {
+        if (res.tenantSlug)
+          router.push(`/${res.tenantSlug}/superadmin/console`);
+        else router.push("/register-tenant");
+      }
+
+      router.push(`/${res.tenantSlug}/admin/console`);
 
       console.log("login details fetched for the user", res);
 
