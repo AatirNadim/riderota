@@ -54,15 +54,6 @@ export function BasicInfoForm({ data, onNext }: StepOneFormProps) {
   const onSubmit = async (formData: StepOneFormData) => {
     setIsLoading(true);
     try {
-      // Simulate API call to check if email exists
-      // await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // In real implementation, check if email already exists
-      // const response = await fetch('/api/auth/check-email', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ email: formData.email }),
-      // })
 
       toast.success("Basic information saved!");
       onNext(formData);

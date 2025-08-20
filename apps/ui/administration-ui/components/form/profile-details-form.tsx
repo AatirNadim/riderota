@@ -225,16 +225,8 @@ export function ProfileDetailsForm({ data, onComplete }: StepTwoFormProps) {
 
       toast.success("Account created successfully!");
 
-      // persisting the current user information
       updateUserData(res);
-
-      if (!res.tenantSlug) router.push("/register-tenant");
-
-      // updateUserData();
       onComplete(formData);
-
-      // Redirect to next step or dashboard
-      // router.push('/signup/success')
     } catch (error) {
       toast.error("Failed to create account. Please try again.");
     } finally {

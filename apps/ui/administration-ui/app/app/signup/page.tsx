@@ -16,10 +16,24 @@ import { BasicInfoForm } from "@/components/form/basic-info-form";
 import { ProfileDetailsForm } from "@/components/form/profile-details-form";
 import Link from "next/link";
 import { SignupData } from "@/lib/types";
+import { useRouter } from "next/navigation";
+import { useUserStore } from "@/store/user.store";
 
 function MultiStepSignupForm() {
   const [currentStep, setCurrentStep] = useState(1);
   const [signupData, setSignupData] = useState<Partial<SignupData>>({});
+  const router = useRouter();
+  const { userData } = useUserStore();
+
+  if (userData.tenantSlug) {
+    if (userData.role === "SUPERADMIN") {
+      router.push(`/${userData.tenantSlug}/superadmin/console`);
+    } else {
+      router.push(`/${userData.tenantSlug}/admin/console`);
+    }
+  } else if (userData.id && !userData.tenantSlug) {
+    router.push("/register-tenant");
+  }
 
   const updateSignupData = (data: Partial<SignupData>) => {
     setSignupData((prev) => ({ ...prev, ...data }));
@@ -196,9 +210,10 @@ function MultiStepSignupForm() {
                     data={signupData}
                     onComplete={(data) => {
                       updateSignupData(data);
+                      router.push("/register-tenant");
                       // Handle final submission
                     }}
-                  />
+                />
                 )}
               </AnimatePresence>
 
