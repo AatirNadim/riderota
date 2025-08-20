@@ -32,6 +32,11 @@ class TenantService {
   async checkIfSlugExists(slug: string) {
     return this.tenantRepo.checkIfSlugExists(slug);
   }
+
+  async getTenantDetails(tenantId: string) {
+    return this.tenantRepo.getTenantDetails(tenantId);
+  }
+
 }
 
 export default TenantService;

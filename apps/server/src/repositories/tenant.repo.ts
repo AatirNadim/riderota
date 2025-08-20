@@ -72,6 +72,19 @@ class TenantRepo {
       throw error;
     }
   }
+
+  async getTenantDetails(tenantId: string) {
+    try {
+      const tenant = await prisma.tenant.findUnique({
+        where: { id: tenantId },
+      });
+      return tenant;
+    } catch (error) {
+      console.error("Error fetching tenant details:", error);
+      throw error;
+    }
+  }
+
 }
 
 export default TenantRepo;

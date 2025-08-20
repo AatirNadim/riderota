@@ -274,7 +274,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["UserDetails"];
+                        "application/json": components["schemas"]["AdministrationDetails"];
                     };
                 };
                 /** @description Unauthorized - The user is not authenticated or the session has expired. */
@@ -721,6 +721,11 @@ export interface components {
              * @example user_456
              */
             superAdminId?: string;
+        };
+        /** @description Public details of a user involved in the administration */
+        AdministrationDetails: {
+            userDetails?: components["schemas"]["UserDetails"];
+            tenantDetails?: components["schemas"]["TenantDetails"];
         };
     };
     responses: {

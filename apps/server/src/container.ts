@@ -14,5 +14,5 @@ const authService = new AuthService(authRepo);
 const tenantService = new TenantService(tenantRepo, authService); // Inject authService here
 
 // Controllers (depend on services)
-export const authController = new AuthController(authService);
+export const authController = new AuthController(authService, tenantService);
 export const tenantController = new TenantController(tenantService);

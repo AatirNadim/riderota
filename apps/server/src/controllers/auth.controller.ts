@@ -4,11 +4,15 @@ import { AuthService } from "../services/auth.service";
 import { AuthRepo } from "../repositories/auth.repo";
 import { UserNotFoundError } from "../exceptions/user-not-found.exception";
 import { UserNotAuthorizedError } from "../exceptions/user-not-authorized.exception";
+import TenantService from "../services/tenant.service";
 
 type SuperAdminCreatePayload = components["schemas"]["SuperadminCreatePayload"];
 
 class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private tenantService: TenantService
+  ) {}
 
   superAdminSignupController = async (
     req: Request<{}, {}, SuperAdminCreatePayload>,
@@ -77,9 +81,12 @@ class AuthController {
   whoAmIController = async (req: Request, res: Response) => {
     try {
       console.log("Received request to get user information");
-      const user = await this.authService.getUserFromRequest(req, res);
-      if (!user) throw new UserNotFoundError();
-      res.json(user);
+      const userDetails = await this.authService.getUserFromRequest(req, res);
+      if (!userDetails) throw new UserNotFoundError();
+      const tenantDetails = await this.tenantService.getTenantDetails(
+        userDetails.tenantId
+      );
+      res.json({ userDetails, tenantDetails });
     } catch (error) {
       console.error("Error fetching user information:", error);
       if (error instanceof UserNotFoundError) {

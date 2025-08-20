@@ -149,7 +149,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UserDetails"
+                $ref: "#/components/schemas/AdministrationDetails"
         "401":
           description: Unauthorized - The user is not authenticated or the session has expired.
   # You would have a similar login endpoint
@@ -526,6 +526,15 @@ components:
               type: string
               description: "The unique identifier for the super admin user."
               example: "user_456"
+
+    AdministrationDetails:
+      type: object
+      description: "Public details of a user involved in the administration"
+      properties:
+        userDetails:
+          $ref: "#/components/schemas/UserDetails"
+        tenantDetails:
+          $ref: "#/components/schemas/TenantDetails"
 
   responses:
     AuthSuccessResponse:
