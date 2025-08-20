@@ -10,6 +10,7 @@ import {
 } from "@riderota/utils";
 
 import bcrypt from "bcryptjs";
+import { cookieOptions } from "../constants";
 
 type ValidatedSession = {
   userId: string;
@@ -114,8 +115,8 @@ export class AuthService {
 
         // Important: Set the new tokens in the response cookies
 
-        res.cookie("accessToken", newAccessToken, { httpOnly: true });
-        res.cookie("refreshToken", newRefreshToken, { httpOnly: true });
+        res.cookie("accessToken", newAccessToken, cookieOptions);
+        res.cookie("refreshToken", newRefreshToken, cookieOptions);
         return {
           userId: payload.id,
           accessToken: newAccessToken,

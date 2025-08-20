@@ -5,6 +5,7 @@ import { AuthRepo } from "../repositories/auth.repo";
 import { UserNotFoundError } from "../exceptions/user-not-found.exception";
 import { UserNotAuthorizedError } from "../exceptions/user-not-authorized.exception";
 import TenantService from "../services/tenant.service";
+import { cookieOptions } from "../constants";
 
 type SuperAdminCreatePayload = components["schemas"]["SuperadminCreatePayload"];
 
@@ -23,17 +24,8 @@ class AuthController {
       const { userDetails, accessToken, refreshToken } =
         await this.authService.superAdminSignup(req.body);
 
-      res.cookie("accessToken", accessToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        domain: process.env.NEXT_PUBLIC_BASE_DOMAIN
-
-      });
-      res.cookie("refreshToken", refreshToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        domain: process.env.NEXT_PUBLIC_BASE_DOMAIN
-      });
+      res.cookie("accessToken", accessToken, cookieOptions);
+      res.cookie("refreshToken", refreshToken, cookieOptions);
 
       res.status(201).json({
         message: "Superadmin created successfully",
@@ -60,14 +52,8 @@ class AuthController {
       const { user, accessToken, refreshToken } =
         await this.authService.loginAdministration(email, password);
 
-      res.cookie("accessToken", accessToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-      });
-      res.cookie("refreshToken", refreshToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-      });
+      res.cookie("accessToken", accessToken, cookieOptions);
+      res.cookie("refreshToken", refreshToken, cookieOptions);
 
       res.status(200).json(user);
     } catch (error) {
@@ -87,7 +73,7 @@ class AuthController {
       const userDetails = await this.authService.getUserFromRequest(req, res);
       if (!userDetails) throw new UserNotFoundError();
       let tenantDetails = null;
-      if(userDetails.tenantSlug) {
+      if (userDetails.tenantSlug) {
         tenantDetails = await this.tenantService.getTenantDetails(
           userDetails.tenantSlug
         );
