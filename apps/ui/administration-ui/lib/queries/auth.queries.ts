@@ -44,6 +44,8 @@ const useWhoAmI = () => {
   return useQuery({
     queryKey: ["whoAmI"],
     queryFn: whoAmI,
+    staleTime: 0,
+    gcTime: 0,
   });
 };
 

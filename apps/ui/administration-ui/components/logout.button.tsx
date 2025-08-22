@@ -2,9 +2,11 @@ import React from "react";
 import { Button } from "./ui/button";
 import { useUserStore } from "@/store/user.store";
 import { useLogout } from "@/lib/queries/auth.queries";
+import { useTenantStore } from "@/store/tenant.store";
 
 function Logout() {
   const { resetUserData } = useUserStore();
+  const { resetTenantData } = useTenantStore();
 
   const { mutateAsync: logout, isError, isPending, error } = useLogout();
 
@@ -12,6 +14,7 @@ function Logout() {
     try {
       await logout();
       resetUserData();
+      resetTenantData();
     } catch (err) {
       console.error("error logging out");
     }

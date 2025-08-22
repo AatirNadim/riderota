@@ -91,13 +91,13 @@ export function LoginForm() {
 
       updateUserData(res);
 
-      if (res.role === "SUPERADMIN") {
-        if (res.tenantSlug)
-          router.push(`/${res.tenantSlug}/superadmin/console`);
-        else router.push("/register-tenant");
-      }
+      // if (res.role === "SUPERADMIN") {
+      //   if (res.tenantSlug)
+      //     router.push(`/${res.tenantSlug}/superadmin/console`);
+      //   else router.push("/register-tenant");
+      // }
 
-      router.push(`/${res.tenantSlug}/admin/console`);
+      // router.push(`/${res.tenantSlug}/admin/console`);
 
       console.log("login details fetched for the user", res);
 

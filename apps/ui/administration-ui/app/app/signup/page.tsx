@@ -26,7 +26,9 @@ function MultiStepSignupForm() {
   const { userData } = useUserStore();
 
   if (userData.tenantSlug) {
-    const newBasePath = `${window.location.protocol}//${userData.tenantSlug}.riderota.com/`;
+    const newBasePath = `${window.location.protocol}//${userData.tenantSlug}.${
+      process.env.NEXT_PUBLIC_BASE_DOMAIN || "localhost:3001"
+    }/`;
     if (userData.role === "SUPERADMIN") {
       window.location.replace(`${newBasePath}/superadmin/console`);
     } else {

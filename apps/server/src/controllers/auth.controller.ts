@@ -55,6 +55,8 @@ class AuthController {
       res.cookie("accessToken", accessToken, cookieOptions);
       res.cookie("refreshToken", refreshToken, cookieOptions);
 
+      console.log("setting the cookies", res);
+
       res.status(200).json(user);
     } catch (error) {
       if (error instanceof UserNotFoundError) {
