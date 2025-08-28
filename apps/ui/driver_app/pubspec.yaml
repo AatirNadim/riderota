@@ -38,6 +38,7 @@ dependencies:
   go_router: ^16.2.0
   dio: ^5.9.0
   dotenv: ^4.2.0
+  ez_validator: ^0.3.6
 
 dev_dependencies:
   flutter_test:
