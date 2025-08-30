@@ -68,6 +68,9 @@ model User {
   tenantSlug               String?
   organizationAsSuperadmin Tenant?          @relation("SuperadminForOrg")
   vehicle                  Vehicle?
+  RideTaskDriver           RideTask[]       @relation(name: "RideTaskDriver")
+  RideTaskPassenger        RideTask[]       @relation(name: "RideTaskPassenger")
+  RideTask                 RideTask[]
 
   @@index([tenantSlug])
 }
@@ -84,6 +87,22 @@ model Vehicle {
   driverId String @unique
 }
 
+model RideTask {
+  id               String         @id @default(cuid())
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  status           RideTaskStatus
+  driver           User           @relation(name: "RideTaskDriver", fields: [driverId], references: [id])
+  driverId         String
+  passenger        User           @relation(name: "RideTaskPassenger", fields: [passengerId], references: [id])
+  passengerId      String
+  rideStartOtpHash String
+  rideEndOtpHash   String?
+  rideExpires      DateTime?      @default(now()) // OTP expiration time
+  User             User?          @relation(fields: [userId], references: [id])
+  userId           String?
+}
+
 enum UserRole {
   SUPERADMIN
   ADMIN
@@ -94,4 +113,11 @@ enum UserRole {
 enum MembershipStatus {
   PENDING // The user has requested to join but is not yet approved.
   MEMBER // The user is an active, approved member of the organization.
+}
+
+enum RideTaskStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
 }

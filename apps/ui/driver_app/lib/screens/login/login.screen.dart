@@ -35,7 +35,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   validator: (value) => EzValidator.validate(value, [
                     const RequiredValidation(message: 'Email is required'),
                     const EmailValidation(
-                        message: 'Please enter a valid email'),
+                      message: 'Please enter a valid email',
+                    ),
                   ]),
                 ),
                 const SizedBox(height: 20),
@@ -62,7 +63,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   validator: (value) => EzValidator.validate(value, [
                     const RequiredValidation(message: 'Password is required'),
                     const MinLengthValidation(
-                        8, 'Password must be at least 8 characters'),
+                      8,
+                      'Password must be at least 8 characters',
+                    ),
                   ]),
                 ),
                 const SizedBox(height: 32),
@@ -81,7 +84,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                          content: Text('Please correct the errors in the form'),
+                          content: Text(
+                            'Please correct the errors in the form',
+                          ),
                           backgroundColor: Colors.red,
                         ),
                       );
