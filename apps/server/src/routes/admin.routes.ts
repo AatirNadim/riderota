@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { paths } from "@riderota/utils";
+import { adminController } from "../container";
 
 const router = Router();
 
