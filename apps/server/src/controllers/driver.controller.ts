@@ -2,7 +2,7 @@ import { components } from "@riderota/utils";
 import { Request, Response } from "express";
 import { DriverService } from "../services/driver.service";
 
-class DriverController {
+export class DriverController {
   constructor(private driverService: DriverService) {}
 
   getRideTasks = async (req: Request, res: Response) => {
