@@ -566,6 +566,259 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/task/createRideTask": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create a new ride task */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["RideTaskCreatePayload"];
+                };
+            };
+            responses: {
+                /** @description Ride task created successfully */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["RideTaskDetails"];
+                    };
+                };
+                /** @description Bad request, validation error */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** @example Invalid input data */
+                            message?: string;
+                        };
+                    };
+                };
+                /** @description Internal server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** @example An unexpected error occurred. */
+                            message?: string;
+                        };
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/driver/task/generateRideStartOtp": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Send OTP to start a ride */
+        get: {
+            parameters: {
+                query: {
+                    rideTaskId: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OTP sent successfully */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** @example OTP sent successfully. */
+                            message?: string;
+                        };
+                    };
+                };
+                /** @description Bad request, validation error */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** @example Invalid input data */
+                            message?: string;
+                        };
+                    };
+                };
+                /** @description Internal server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** @example An unexpected error occurred. */
+                            message?: string;
+                        };
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/driver/task/getRideTasks": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get ride tasks for the driver */
+        get: {
+            parameters: {
+                query: {
+                    /** @description The unique identifier for the driver. */
+                    driverId: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Ride tasks retrieved successfully */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["RideTaskForDriver"][];
+                    };
+                };
+                /** @description No ride tasks found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** @example No ride tasks found. */
+                            message?: string;
+                        };
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/driver/task/generateRideEndOtp": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Generate OTP to end a ride; requires driver authentication. */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": {
+                        /**
+                         * @description The unique identifier for the ride task.
+                         * @example ride_task_123
+                         */
+                        rideTaskId?: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description OTP generated and sent successfully */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** @example OTP generated and sent successfully. */
+                            message?: string;
+                        };
+                    };
+                };
+                /** @description Bad request, validation error */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** @example Invalid input data */
+                            message?: string;
+                        };
+                    };
+                };
+                /** @description Internal server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** @example An unexpected error occurred. */
+                            message?: string;
+                        };
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -726,6 +979,70 @@ export interface components {
         AdministrationDetails: {
             userDetails?: components["schemas"]["UserDetails"];
             tenantDetails?: components["schemas"]["TenantDetails"];
+        };
+        RideTaskCreatePayload: {
+            /** @description The unique identifier for the driver. */
+            driverId?: string;
+            /** @description The unique identifier for the passenger. */
+            passengerId?: string;
+            /**
+             * @description The OTP hash for starting the ride.
+             * @example otp_hash_start
+             */
+            rideStartOtpHash?: string;
+            /**
+             * @description The OTP hash for ending the ride.
+             * @example otp_hash_end
+             */
+            rideEndOtpHash?: string;
+            /**
+             * Format: date-time
+             * @description The expiration time for the ride.
+             * @example 2023-01-01T12:00:00Z
+             */
+            rideExpires?: string;
+            /**
+             * @description The starting location for the ride.
+             * @example 123 Main St, Anytown, USA
+             */
+            from?: string;
+            /**
+             * @description The destination location for the ride.
+             * @example 456 Elm St, Othertown, USA
+             */
+            to?: string;
+        };
+        RideTaskDetails: {
+            /** @description The unique identifier for the ride task. */
+            id?: string;
+        };
+        RideTaskForDriver: {
+            /**
+             * @description The unique identifier for the ride task.
+             * @example ride_task_123
+             */
+            id?: string;
+            /**
+             * @description The name of the passenger.
+             * @example John Doe
+             */
+            passengerName?: string;
+            /**
+             * Format: date-time
+             * @description The expiration time for the ride.
+             * @example 2023-01-01T12:00:00Z
+             */
+            rideExpires?: string;
+            /**
+             * @description The starting location for the ride.
+             * @example 123 Main St, Anytown, USA
+             */
+            from?: string;
+            /**
+             * @description The destination location for the ride.
+             * @example 456 Elm St, Othertown, USA
+             */
+            to?: string;
         };
     };
     responses: {

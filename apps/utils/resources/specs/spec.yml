@@ -346,21 +346,17 @@ paths:
                     type: string
                     example: "An unexpected error occurred."
 
-  /api/admin/task/generateRideStartOtp:
-    post:
+  /api/driver/task/generateRideStartOtp:
+    get:
       summary: Send OTP to start a ride
-      tags: [Admin]
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                rideTaskId:
-                  type: string
-                  description: "The unique identifier for the ride task."
-                  example: "ride_task_123"
+      tags: [Driver]
+      parameters:
+        - in: query
+          name: rideTaskId
+          required: true
+          schema:
+            type: string
+            example: "ride_task_123"
       responses:
         "200":
           description: OTP sent successfully
