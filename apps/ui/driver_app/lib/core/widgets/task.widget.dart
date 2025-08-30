@@ -4,7 +4,7 @@ class TaskWidget extends StatelessWidget {
   final String title;
   final String description;
 
-  TaskWidget({required this.title, required this.description});
+  const TaskWidget({super.key, required this.title, required this.description});
 
   @override
   Widget build(BuildContext context) {
