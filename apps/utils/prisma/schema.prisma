@@ -70,7 +70,6 @@ model User {
   vehicle                  Vehicle?
   RideTaskDriver           RideTask[]       @relation(name: "RideTaskDriver")
   RideTaskPassenger        RideTask[]       @relation(name: "RideTaskPassenger")
-  RideTask                 RideTask[]
 
   @@index([tenantSlug])
 }
@@ -98,9 +97,9 @@ model RideTask {
   passengerId      String
   rideStartOtpHash String
   rideEndOtpHash   String?
-  rideExpires      DateTime?      @default(now()) // OTP expiration time
-  User             User?          @relation(fields: [userId], references: [id])
-  userId           String?
+  rideExpires      DateTime
+  from             String
+  to               String
 }
 
 enum UserRole {
@@ -120,4 +119,5 @@ enum RideTaskStatus {
   IN_PROGRESS
   COMPLETED
   CANCELLED
+  EXPIRED
 }

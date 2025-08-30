@@ -308,6 +308,170 @@ paths:
                     type: string
                     example: "Error checking for slug."
 
+  /api/admin/task/createRideTask:
+    post:
+      summary: Create a new ride task
+      tags: [Admin]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RideTaskCreatePayload"
+      responses:
+        "201":
+          description: Ride task created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RideTaskDetails"
+        "400":
+          description: Bad request, validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid input data"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "An unexpected error occurred."
+
+  /api/admin/task/generateRideStartOtp:
+    post:
+      summary: Send OTP to start a ride
+      tags: [Admin]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                rideTaskId:
+                  type: string
+                  description: "The unique identifier for the ride task."
+                  example: "ride_task_123"
+      responses:
+        "200":
+          description: OTP sent successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "OTP sent successfully."
+        "400":
+          description: Bad request, validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid input data"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "An unexpected error occurred."
+
+  /api/driver/task/getRideTasks:
+    get:
+      summary: Get ride tasks for the driver
+      tags: [Driver]
+      parameters:
+        - name: driverId
+          in: query
+          required: true
+          description: "The unique identifier for the driver."
+          schema:
+            type: string
+            example: "driver_123"
+      responses:
+        "200":
+          description: Ride tasks retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RideTaskForDriver"
+        "404":
+          description: No ride tasks found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "No ride tasks found."
+
+  /api/driver/task/generateRideEndOtp:
+    post:
+      summary: Generate OTP to end a ride; requires driver authentication.
+      tags: [Driver]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                rideTaskId:
+                  type: string
+                  description: "The unique identifier for the ride task."
+                  example: "ride_task_123"
+      responses:
+        "200":
+          description: OTP generated and sent successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "OTP generated and sent successfully."
+        "400":
+          description: Bad request, validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid input data"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "An unexpected error occurred."
+
 components:
   schemas:
     UserInvitePayload:
@@ -535,6 +699,69 @@ components:
           $ref: "#/components/schemas/UserDetails"
         tenantDetails:
           $ref: "#/components/schemas/TenantDetails"
+
+    RideTaskCreatePayload:
+      type: object
+      properties:
+        driverId:
+          type: string
+          description: "The unique identifier for the driver."
+        passengerId:
+          type: string
+          description: "The unique identifier for the passenger."
+        rideStartOtpHash:
+          type: string
+          description: "The OTP hash for starting the ride."
+          example: "otp_hash_start"
+        rideEndOtpHash:
+          type: string
+          description: "The OTP hash for ending the ride."
+          example: "otp_hash_end"
+        rideExpires:
+          type: string
+          format: date-time
+          description: "The expiration time for the ride."
+          example: "2023-01-01T12:00:00Z"
+        from:
+          type: string
+          description: "The starting location for the ride."
+          example: "123 Main St, Anytown, USA"
+        to:
+          type: string
+          description: "The destination location for the ride."
+          example: "456 Elm St, Othertown, USA"
+
+    RideTaskDetails:
+      type: object
+      properties:
+        id:
+          type: string
+          description: "The unique identifier for the ride task."
+
+    RideTaskForDriver:
+      type: object
+      properties:
+        id:
+          type: string
+          description: "The unique identifier for the ride task."
+          example: "ride_task_123"
+        passengerName:
+          type: string
+          description: "The name of the passenger."
+          example: "John Doe"
+        rideExpires:
+          type: string
+          format: date-time
+          description: "The expiration time for the ride."
+          example: "2023-01-01T12:00:00Z"
+        from:
+          type: string
+          description: "The starting location for the ride."
+          example: "123 Main St, Anytown, USA"
+        to:
+          type: string
+          description: "The destination location for the ride."
+          example: "456 Elm St, Othertown, USA"
 
   responses:
     AuthSuccessResponse:
