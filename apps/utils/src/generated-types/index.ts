@@ -819,6 +819,59 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/users/invite": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Invite a new user to the platform */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            /** @description User email and type */
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["UserInvitePayload"];
+                };
+            };
+            responses: {
+                /** @description User entry created and invitation sent successfully */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Bad Request / Validation Error */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Conflict - A user with these details already exists. */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -826,15 +879,25 @@ export interface components {
         UserInvitePayload: {
             /**
              * @description The type of user to invite.
-             * @example admin
+             * @example EMPLOYEE
              * @enum {string}
              */
-            userType?: "admin" | "driver" | "employee";
+            userType: "SUPERADMIN" | "ADMIN" | "DRIVER" | "EMPLOYEE";
             /**
              * Format: email
              * @example admin@example.com
              */
             email: string;
+            /**
+             * @description The slug of the tenant the user will belong to.
+             * @example innovate-inc
+             */
+            tenantSlug: string;
+            /**
+             * @description An optional welcome message to include in the invitation email.
+             * @example Welcome to our platform! We're excited to have you on board.
+             */
+            welcomeMessage?: string;
         };
         UserBase: {
             /** @example John Doe */

@@ -468,6 +468,25 @@ paths:
                     type: string
                     example: "An unexpected error occurred."
 
+  /api/users/invite:
+    post:
+      summary: Invite a new user to the platform
+      tags: [User Management]
+      requestBody:
+        description: User email and type
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserInvitePayload"
+      responses:
+        "201":
+          description: User entry created and invitation sent successfully
+        "400":
+          description: Bad Request / Validation Error
+        "409":
+          description: Conflict - A user with these details already exists.
+
 components:
   schemas:
     UserInvitePayload:
@@ -475,15 +494,25 @@ components:
       properties:
         userType:
           type: string
-          enum: [admin, driver, employee]
+          enum: [SUPERADMIN, ADMIN, DRIVER, EMPLOYEE]
           description: "The type of user to invite."
-          example: "admin"
+          example: "EMPLOYEE"
         email:
           type: string
           format: email
           example: "admin@example.com"
+        tenantSlug:
+          type: string
+          description: "The slug of the tenant the user will belong to."
+          example: "innovate-inc"
+        welcomeMessage:
+          type: string
+          description: "An optional welcome message to include in the invitation email."
+          example: "Welcome to our platform! We're excited to have you on board."
       required:
         - email
+        - userType
+        - tenantSlug
 
     # --- Base Types ---
     UserBase:

@@ -1,48 +1,62 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
-import { motion } from "framer-motion"
-import { Button } from "@/components/ui/button"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Mail, User, Phone, Send, Loader2 } from "lucide-react"
-import { toast } from "sonner"
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Mail, User, Phone, Send, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 const inviteAdminSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  phoneNo: z.string().min(10, "Phone number must be at least 10 digits"),
-  department: z.string().min(1, "Please select a department"),
-  permissions: z.string().min(1, "Please select permission level"),
+  // name: z.string().min(2, "Name must be at least 2 characters"),
+  // phoneNo: z.string().min(10, "Phone number must be at least 10 digits"),
+  // department: z.string().min(1, "Please select a department"),
+  // permissions: z.string().min(1, "Please select permission level"),
   message: z.string().optional(),
-})
+});
 
-type InviteAdminFormData = z.infer<typeof inviteAdminSchema>
+type InviteAdminFormData = z.infer<typeof inviteAdminSchema>;
 
 export function InviteAdminForm() {
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<InviteAdminFormData>({
     resolver: zodResolver(inviteAdminSchema),
     defaultValues: {
       email: "",
-      name: "",
-      phoneNo: "",
-      department: "",
-      permissions: "",
+      // name: "",
+      // phoneNo: "",
+      // department: "",
+      // permissions: "",
       message: "",
     },
-  })
+  });
 
   const onSubmit = async (data: InviteAdminFormData) => {
-    setIsLoading(true)
+    setIsLoading(true);
+    console.log("Submitting admin invitation with data:", data);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 2000))
+      // await new Promise((resolve) => setTimeout(resolve, 2000))
 
       // In real implementation:
       // const response = await fetch('/api/admin/invite', {
@@ -51,14 +65,16 @@ export function InviteAdminForm() {
       //   body: JSON.stringify(data),
       // })
 
-      toast.success(`Admin invitation sent to ${data.email}`)
-      form.reset()
+      console.log("Admin invitation data:", data);
+
+      toast.success(`Admin invitation sent to ${data.email}`);
+      form.reset();
     } catch (error) {
-      toast.error("Failed to send invitation. Please try again.")
+      toast.error("Failed to send invitation. Please try again.");
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <Form {...form}>
@@ -69,13 +85,21 @@ export function InviteAdminForm() {
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm font-medium" style={{ color: "var(--neutral-700)" }}>
+                <FormLabel
+                  className="text-sm font-medium"
+                  style={{ color: "var(--neutral-700)" }}
+                >
                   Email Address
                 </FormLabel>
                 <FormControl>
                   <div className="relative">
                     <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-neutral-400" />
-                    <Input placeholder="admin@company.com" {...field} className="pl-10" disabled={isLoading} />
+                    <Input
+                      placeholder="admin@company.com"
+                      {...field}
+                      className="pl-10"
+                      disabled={isLoading}
+                    />
                   </div>
                 </FormControl>
                 <FormMessage />
@@ -83,7 +107,7 @@ export function InviteAdminForm() {
             )}
           />
 
-          <FormField
+          {/* <FormField
             control={form.control}
             name="name"
             render={({ field }) => (
@@ -171,7 +195,7 @@ export function InviteAdminForm() {
                 <FormMessage />
               </FormItem>
             )}
-          />
+          /> */}
         </div>
 
         <FormField
@@ -179,8 +203,12 @@ export function InviteAdminForm() {
           name="message"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-sm font-medium" style={{ color: "var(--neutral-700)" }}>
-                Welcome Message <span className="text-neutral-400">(Optional)</span>
+              <FormLabel
+                className="text-sm font-medium"
+                style={{ color: "var(--neutral-700)" }}
+              >
+                Welcome Message{" "}
+                <span className="text-neutral-400">(Optional)</span>
               </FormLabel>
               <FormControl>
                 <Textarea
@@ -200,6 +228,12 @@ export function InviteAdminForm() {
             type="submit"
             className="w-full bg-primary-gradient hover:shadow-custom-hover transition-all duration-300"
             disabled={isLoading}
+            onClick={() =>
+              console.log(
+                "Submitting admin invitation with data:",
+                form.getValues()
+              )
+            }
           >
             {isLoading ? (
               <>
@@ -216,5 +250,5 @@ export function InviteAdminForm() {
         </motion.div>
       </form>
     </Form>
-  )
+  );
 }

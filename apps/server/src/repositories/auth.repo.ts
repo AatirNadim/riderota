@@ -14,7 +14,6 @@ export class AuthRepo {
         phoneNo: userData.phoneNo,
         age: userData.age,
         profileImgUrl: userData.profileImgUrl,
-        status: MembershipStatus.MEMBER,
       },
     });
 
@@ -34,4 +33,20 @@ export class AuthRepo {
       where: { email },
     });
   }
+
+  createInvitedUserEntry = async (
+    email: string,
+    role: UserRole,
+    tenantSlug: string,
+    welcomeMessage?: string
+  ) => {
+    return prisma.invitations.create({
+      data: {
+        email,
+        userType: role,
+        welcomeMessage,
+        tenantSlug,
+      },
+    });
+  };
 }

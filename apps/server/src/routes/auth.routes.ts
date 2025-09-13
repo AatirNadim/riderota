@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { authController } from "../container";
+import { paths } from "@riderota/utils";
 
 const router = Router();
 
@@ -14,5 +15,7 @@ router.get("/health-check", (_, res) => {
 });
 
 router.post("/clearSession", authController.clearSession);
+
+router.post("/api/users/invite" as keyof paths, authController.inviteUser); // To satisfy TS compiler
 
 export default router;

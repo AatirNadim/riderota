@@ -7,10 +7,12 @@ import {
   refreshTokens,
   UserRole,
   verifyAccessToken,
+  prisma,
 } from "@riderota/utils";
 
 import bcrypt from "bcryptjs";
 import { cookieOptions } from "../constants";
+import { sendInvite } from "./resend.service";
 
 type ValidatedSession = {
   userId: string;
@@ -84,6 +86,54 @@ export class AuthService {
       await this.authRepo.getUserById(userId);
     return user;
   }
+
+  inviteUser = async (
+    data: components["schemas"]["UserInvitePayload"]
+  ): Promise<{ id: string }> => {
+    try {
+      const existingUser = await this.authRepo.getUserByEmail(data.email);
+
+      if (existingUser) {
+        throw new Error("User with this email already exists");
+      }
+
+      const { id } = await this.authRepo.createInvitedUserEntry(
+        data.email,
+        data.userType,
+        data.tenantSlug,
+        data.welcomeMessage
+      );
+      console.log("User invited successfully:", id);
+
+      const tenantDetails = await prisma.tenant.findFirst({
+        where: { slug: data.tenantSlug },
+        select: { name: true, superadminId: true },
+      });
+
+      const userDetails = await prisma.user.findFirst({
+        where: { id: tenantDetails?.superadminId },
+        select: { email: true },
+      });
+
+      if (!tenantDetails || !userDetails) {
+        throw new Error("Tenant or Superadmin details not found");
+      }
+
+      sendInvite(
+        userDetails.email,
+        data.email,
+        data.userType,
+        tenantDetails.name,
+        `https://your-app.com/invite/${id}`,
+        data.welcomeMessage
+      );
+
+      return { id };
+    } catch (error) {
+      console.error("Error inviting user:", error);
+      throw error;
+    }
+  };
 
   private async validateAndRefreshTokens(
     req: Request,

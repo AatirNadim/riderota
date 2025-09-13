@@ -94,6 +94,19 @@ class AuthController {
     }
   };
 
+  inviteUser = async (req: Request, res: Response) => {
+    try {
+      // const { email, userType, welcomeMessage } = req.body;
+      const invitationResult = await this.authService.inviteUser(req.body);
+      res
+        .status(200)
+        .json({ message: "Invitation sent successfully", ...invitationResult });
+    } catch (error) {
+      console.error("Error inviting user:", error);
+      res.status(500).json({ message: "Error inviting user", error });
+    }
+  };
+
   clearSession = async (req: Request, res: Response) => {
     try {
       res.clearCookie("accessToken");
