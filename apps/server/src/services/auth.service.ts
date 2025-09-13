@@ -85,7 +85,7 @@ export class AuthService {
     return user;
   }
 
-  async validateAndRefreshTokens(
+  private async validateAndRefreshTokens(
     req: Request,
     res: Response
   ): Promise<ValidatedSession> {

@@ -7,7 +7,7 @@ const WhoAmI = () => {
   const { data, isLoading, error } = useWhoAmI();
 
   if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error fetching user information</div>;
+  if (error) return <div>Error fetching user information for tenant page</div>;
 
   return (
     <div>
