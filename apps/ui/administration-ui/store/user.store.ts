@@ -14,12 +14,12 @@ const initialState: Partial<UserData> = {
   name: "",
   email: "",
   phoneNo: "",
-  age: undefined,
-  profileImgUrl: undefined,
+  age: null,
+  profileImgUrl: null,
   id: undefined,
   role: undefined,
   status: undefined,
-  tenantSlug: undefined,
+  tenantSlug: null,
 };
 
 export const useUserStore = create<UserState>()(

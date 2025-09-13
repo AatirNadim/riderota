@@ -36,7 +36,7 @@ const logout = async () => {
   const pathHolder: keyof paths = "/api/auth/clearSession";
 
   const { data } = await axiosClient.post(pathHolder);
-  console.log("User logged out:", data);
+  // console.log("User logged out:", data);
   return data;
 };
 

@@ -1,11 +1,32 @@
-"use client"
+"use client";
 
-import { motion } from "framer-motion"
-import { SidebarTrigger } from "@/components/ui/sidebar"
-import { Separator } from "@/components/ui/separator"
-import { Bell, Search } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { motion } from "framer-motion";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import { Separator } from "@/components/ui/separator";
+import {
+  Bell,
+  ChevronDown,
+  LogOut,
+  Search,
+  Settings,
+  User,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { useUserStore } from "@/store/user.store";
+import { useRouter } from "next/navigation";
+import { useLogout } from "@/lib/queries/auth.queries";
+import { DashboardView } from "./dashboard/superadmin.dashboard";
+import { toast } from "sonner";
 // import type { DashboardView } from "./super-admin-dashboard"
 
 const viewTitles: Record<DashboardView, string> = {
@@ -14,13 +35,39 @@ const viewTitles: Record<DashboardView, string> = {
   users: "User Management",
   complaints: "Complaints Dashboard",
   profile: "Profile Settings",
-}
+};
 
 interface DashboardHeaderProps {
-  currentView: DashboardView
+  currentView: DashboardView;
 }
 
 export function DashboardHeader({ currentView }: DashboardHeaderProps) {
+  const { userData, resetUserData } = useUserStore();
+  const router = useRouter();
+  const { mutate: logout } = useLogout();
+
+  const getInitials = (name: string | undefined) => {
+    if (!name) return "U";
+    return name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase();
+  };
+
+  const handleLogout = () => {
+    logout(undefined, {
+      onSuccess: () => {
+        resetUserData();
+        router.push("/login");
+        toast.success("You have been logged out.");
+      },
+      onError: () => {
+        toast.error("Logout failed. Please try again.");
+      },
+    });
+  };
+
   return (
     <motion.header
       className="flex h-16 shrink-0 items-center gap-2 border-b border-neutral-200 bg-white/80 backdrop-blur-md px-4"
@@ -32,7 +79,10 @@ export function DashboardHeader({ currentView }: DashboardHeaderProps) {
       <Separator orientation="vertical" className="mr-2 h-4" />
 
       <div className="flex-1">
-        <h1 className="text-lg font-semibold" style={{ color: "var(--neutral-900)" }}>
+        <h1
+          className="text-lg font-semibold"
+          style={{ color: "var(--neutral-900)" }}
+        >
           {viewTitles[currentView]}
         </h1>
       </div>
@@ -40,7 +90,10 @@ export function DashboardHeader({ currentView }: DashboardHeaderProps) {
       <div className="flex items-center gap-2">
         <div className="relative hidden md:block">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-neutral-400" />
-          <Input placeholder="Search..." className="w-64 pl-9 h-9 bg-white border-neutral-300" />
+          <Input
+            placeholder="Search..."
+            className="w-64 pl-9 h-9 bg-white border-neutral-300"
+          />
         </div>
 
         <Button variant="ghost" size="sm" className="relative">
@@ -48,7 +101,7 @@ export function DashboardHeader({ currentView }: DashboardHeaderProps) {
           <span className="absolute -top-1 -right-1 h-3 w-3 bg-error-500 rounded-full text-xs"></span>
         </Button>
 
-        <div className="flex items-center space-x-2 ml-4">
+        {/* <div className="flex items-center space-x-2 ml-4">
           <div className="w-8 h-8 rounded-full bg-primary-gradient flex items-center justify-center">
             <span className="text-white text-sm font-semibold">SA</span>
           </div>
@@ -60,8 +113,54 @@ export function DashboardHeader({ currentView }: DashboardHeaderProps) {
               admin@riderota.com
             </p>
           </div>
-        </div>
+        </div> */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              className="flex items-center space-x-2 ml-4 h-10"
+            >
+              <Avatar className="w-8 h-8">
+                <AvatarImage src={userData.profileImgUrl || undefined} alt={userData.name} />
+                <AvatarFallback className="bg-primary-gradient text-white text-sm font-semibold">
+                  {getInitials(userData.name)}
+                </AvatarFallback>
+              </Avatar>
+              <div className="hidden md:flex items-center">
+                <span
+                  className="text-sm font-medium"
+                  style={{ color: "var(--neutral-900)" }}
+                >
+                  {userData.name || "User"}
+                </span>
+                <ChevronDown className="h-4 w-4 ml-1 text-neutral-500" />
+              </div>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuLabel>
+              <p className="font-semibold">{userData.name || "User"}</p>
+              <p className="text-xs text-neutral-500 font-normal">
+                {userData.email}
+              </p>
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>
+              <User className="mr-2 h-4 w-4" />
+              <span>Profile</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <Settings className="mr-2 h-4 w-4" />
+              <span>Settings</span>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={handleLogout}>
+              <LogOut className="mr-2 h-4 w-4" />
+              <span>Logout</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </motion.header>
-  )
+  );
 }
