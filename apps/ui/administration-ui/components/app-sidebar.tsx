@@ -1,6 +1,14 @@
-"use client"
+"use client";
 
-import { Car, BarChart3, UserPlus, Users, MessageSquareWarning, Settings, LogOut } from "lucide-react"
+import {
+  Car,
+  BarChart3,
+  UserPlus,
+  Users,
+  MessageSquareWarning,
+  Settings,
+  LogOut,
+} from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -12,9 +20,9 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
-} from "@/components/ui/sidebar"
-import { Button } from "@/components/ui/button"
-// import type { DashboardView } from "./super-admin-dashboard"
+} from "@/components/ui/sidebar";
+import { Button } from "@/components/ui/button";
+import type { DashboardView } from "./dashboard/superadmin.dashboard";
 
 const menuItems = [
   {
@@ -42,11 +50,11 @@ const menuItems = [
     icon: Settings,
     view: "profile" as DashboardView,
   },
-]
+];
 
 interface AppSidebarProps {
-  currentView: DashboardView
-  onViewChange: (view: DashboardView) => void
+  currentView: DashboardView;
+  onViewChange: (view: DashboardView) => void;
 }
 
 export function AppSidebar({ currentView, onViewChange }: AppSidebarProps) {
@@ -58,7 +66,9 @@ export function AppSidebar({ currentView, onViewChange }: AppSidebarProps) {
             <Car className="h-6 w-6 text-white" />
           </div>
           <div>
-            <span className="text-xl font-bold text-primary-gradient">RideRota</span>
+            <span className="text-xl font-bold text-primary-gradient">
+              RideRota
+            </span>
             <p className="text-xs text-neutral-500">SuperAdmin Console</p>
           </div>
         </div>
@@ -97,5 +107,5 @@ export function AppSidebar({ currentView, onViewChange }: AppSidebarProps) {
 
       <SidebarRail />
     </Sidebar>
-  )
+  );
 }
