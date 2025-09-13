@@ -59,6 +59,7 @@ class AuthController {
 
       res.status(200).json(user);
     } catch (error) {
+      console.log("Error during login:", error);
       if (error instanceof UserNotFoundError) {
         res.status(401).json({ message: error.message });
       } else if (error instanceof UserNotAuthorizedError) {

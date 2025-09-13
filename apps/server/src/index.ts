@@ -11,8 +11,7 @@ const port = process.env.PORT || 4000;
 app.use(
   cors({
     credentials: true,
-    origin:
-      process.env.CLIENT_URL || /^http:\/\/([a-z0-9-]+\.)?localhost:3001$/,
+    origin: process.env.CLIENT_URL || /^http:\/\/([a-z0-9-]+\.)?lvh.me:3001$/,
     methods: ["GET", "POST", "PUT", "DELETE"],
   })
 );

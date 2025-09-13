@@ -1,11 +1,10 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { hostname } from "zod/v4/mini";
 
 export function middleware(request: NextRequest) {
   const url = request.nextUrl.clone();
   const domain = (request.headers.get("host") || "").replace(/:\d+$/, ""); // Remove port if present
 
-  const ROOT_DOMAIN = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "localhost";
+  const ROOT_DOMAIN = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "lvh.me";
 
   if (!domain) {
     return new Response("Domain not found.", { status: 400 });
