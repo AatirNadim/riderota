@@ -8,6 +8,7 @@ import {
   UserRole,
   verifyAccessToken,
   prisma,
+  encryptPayload,
 } from "@riderota/utils";
 
 import bcrypt from "bcryptjs";
@@ -119,12 +120,14 @@ export class AuthService {
         throw new Error("Tenant or Superadmin details not found");
       }
 
+      const inviteToken = await encryptPayload({ inviteId: id });
+
       sendInvite(
         userDetails.email,
         data.email,
         data.userType,
         tenantDetails.name,
-        `https://your-app.com/invite/${id}`,
+        `http://${data.tenantSlug}.lvh.me:3001/users/invite/${inviteToken}`,
         data.welcomeMessage
       );
 

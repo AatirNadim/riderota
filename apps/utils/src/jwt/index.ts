@@ -19,6 +19,9 @@ export const createTokens = (payload: any): SessionInfo => {
     throw new Error("JWT secrets are not defined in environment variables.");
   }
 
+  console.log("access token secret:", accessTokenSecret);
+  console.log("refresh token secret:", refreshTokenSecret);
+
   const accessToken = jwt.sign(payload, accessTokenSecret, {
     expiresIn: accessTokenExpiresIn,
   });
@@ -69,4 +72,20 @@ export const refreshTokens = <T>(oldRefreshToken: string): SessionInfo => {
     console.error("Refresh Token Error:", (error as Error).message);
     throw new Error("Invalid or expired refresh token.");
   }
+};
+
+export const encryptPayload = async (payload: any) => {
+  const payloadEncryptionSecret = process.env.PAYLOAD_ENCRYPTION_SECRET;
+  const tokenExpiresIn = (process.env.PAYLOAD_ENCRYPTION_EXPIRATION ||
+    "7d") as StringValue;
+
+  if (!payloadEncryptionSecret) {
+    throw new Error(
+      "PAYLOAD_ENCRYPTION_SECRET is not defined in environment variables."
+    );
+  }
+
+  return jwt.sign(payload, payloadEncryptionSecret, {
+    expiresIn: tokenExpiresIn,
+  });
 };
