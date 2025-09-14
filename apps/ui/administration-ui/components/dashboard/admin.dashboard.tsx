@@ -63,7 +63,7 @@ export function AdminDashboard() {
           </motion.main>
         </SidebarInset>
       </SidebarProvider>
-      <Toaster />
+      {/* <Toaster /> */}
     </div>
   );
 }
