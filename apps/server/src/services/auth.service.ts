@@ -10,6 +10,7 @@ import {
   prisma,
   encryptPayload,
   validateEncryptedPayload,
+  paths,
 } from "@riderota/utils";
 
 import bcrypt from "bcryptjs";
@@ -140,7 +141,11 @@ export class AuthService {
     }
   };
 
-  validateInviteToken = async (token: string) => {
+  validateInviteToken = async (
+    token: string
+  ): Promise<
+    paths["/api/users/validate-invite"]["get"]["responses"]["200"]["content"]["application/json"]
+  > => {
     try {
       const res = validateEncryptedPayload(token);
 
@@ -148,16 +153,19 @@ export class AuthService {
         throw new Error("Invalid or expired invite token");
       }
 
+      console.log("Decrypted invite token data:", res.data);
+
       const payload = await prisma.invitations.findFirst({
         where: { id: res.data?.id },
       });
+
+      console.log("Invite payload:", payload);
 
       if (!payload) {
         throw new Error("Invite not found for the given token");
       }
 
       const inviteExpired = new Date() > payload.expiresAt;
-      const inviteDetails = {};
       if (inviteExpired) {
         throw new InviteTokenExpiredError("Invite token has expired.");
       }
@@ -166,6 +174,7 @@ export class AuthService {
         email: payload.email,
         userType: payload.userType,
         tenantSlug: payload.tenantSlug,
+        expired: false,
       };
     } catch (error) {
       console.error("Error validating invite token:", error);
