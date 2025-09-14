@@ -6,6 +6,7 @@ import { UserNotFoundError } from "../exceptions/user-not-found.exception";
 import { UserNotAuthorizedError } from "../exceptions/user-not-authorized.exception";
 import TenantService from "../services/tenant.service";
 import { cookieOptions } from "../constants";
+import { InviteTokenExpiredError } from "../exceptions/invite-token-expired.exception";
 
 type SuperAdminCreatePayload = components["schemas"]["SuperadminCreatePayload"];
 
@@ -104,6 +105,23 @@ class AuthController {
     } catch (error) {
       console.error("Error inviting user:", error);
       res.status(500).json({ message: "Error inviting user", error });
+    }
+  };
+
+  validateInviteToken = async (req: Request, res: Response) => {
+    try {
+      const { token } = req.body;
+      const validationResponse = await this.authService.validateInviteToken(
+        token
+      );
+      res.status(200).json(validationResponse);
+    } catch (error) {
+      if (error instanceof InviteTokenExpiredError) {
+        res.status(400).json({ expired: true, message: error.message });
+        return;
+      }
+      console.error("Error validating invite token:", error);
+      res.status(500).json({ message: "Error validating invite token", error });
     }
   };
 

@@ -9,11 +9,13 @@ import {
   verifyAccessToken,
   prisma,
   encryptPayload,
+  validateEncryptedPayload,
 } from "@riderota/utils";
 
 import bcrypt from "bcryptjs";
 import { cookieOptions } from "../constants";
 import { sendInvite } from "./resend.service";
+import { InviteTokenExpiredError } from "../exceptions/invite-token-expired.exception";
 
 type ValidatedSession = {
   userId: string;
@@ -120,7 +122,7 @@ export class AuthService {
         throw new Error("Tenant or Superadmin details not found");
       }
 
-      const inviteToken = await encryptPayload({ inviteId: id });
+      const inviteToken = encryptPayload({ inviteId: id });
 
       sendInvite(
         userDetails.email,
@@ -134,6 +136,39 @@ export class AuthService {
       return { id };
     } catch (error) {
       console.error("Error inviting user:", error);
+      throw error;
+    }
+  };
+
+  validateInviteToken = async (token: string) => {
+    try {
+      const res = validateEncryptedPayload(token);
+
+      if (res.expired) {
+        throw new Error("Invalid or expired invite token");
+      }
+
+      const payload = await prisma.invitations.findFirst({
+        where: { id: res.data?.id },
+      });
+
+      if (!payload) {
+        throw new Error("Invite not found for the given token");
+      }
+
+      const inviteExpired = new Date() > payload.expiresAt;
+      const inviteDetails = {};
+      if (inviteExpired) {
+        throw new InviteTokenExpiredError("Invite token has expired.");
+      }
+
+      return {
+        email: payload.email,
+        userType: payload.userType,
+        tenantSlug: payload.tenantSlug,
+      };
+    } catch (error) {
+      console.error("Error validating invite token:", error);
       throw error;
     }
   };

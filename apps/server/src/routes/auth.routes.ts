@@ -16,6 +16,8 @@ router.get("/health-check", (_, res) => {
 
 router.post("/clearSession", authController.clearSession);
 
-router.post("/api/users/invite" as keyof paths, authController.inviteUser); // To satisfy TS compiler
+router.post("/api/users/invite" as keyof paths, authController.inviteUser);
+
+router.post("/api/users/validate-invite" as keyof paths, authController.validateInviteToken);
 
 export default router;

@@ -74,7 +74,7 @@ export const refreshTokens = <T>(oldRefreshToken: string): SessionInfo => {
   }
 };
 
-export const encryptPayload = async (payload: any) => {
+export const encryptPayload = (payload: any) => {
   const payloadEncryptionSecret = process.env.PAYLOAD_ENCRYPTION_SECRET;
   const tokenExpiresIn = (process.env.PAYLOAD_ENCRYPTION_EXPIRATION ||
     "7d") as StringValue;
@@ -88,4 +88,28 @@ export const encryptPayload = async (payload: any) => {
   return jwt.sign(payload, payloadEncryptionSecret, {
     expiresIn: tokenExpiresIn,
   });
+};
+
+export const validateEncryptedPayload = (token: string) => {
+  const secret = process.env.PAYLOAD_ENCRYPTION_SECRET;
+  if (!secret) {
+    throw new Error(
+      "PAYLOAD_ENCRYPTION_SECRET is not defined in environment variables."
+    );
+  }
+
+  try {
+    const data = jwt.verify(token, secret);
+
+    console.log("\n\nDecrypted payload information --> \n\n", data);
+    return { data, expired: false };
+  } catch (error) {
+    console.error(
+      "Encrypted Payload Verification Error:",
+      (error as Error).message
+    );
+    // throw new Error("Invalid or expired token.");
+
+    return { data: null, expired: true };
+  }
 };

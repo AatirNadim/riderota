@@ -487,6 +487,32 @@ paths:
         "409":
           description: Conflict - A user with these details already exists.
 
+  /api/users/validate-invite:
+    get:
+      summary: Validate an invitation token
+      tags: [User Management]
+      parameters:
+        - in: query
+          name: token
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Invitation token is valid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidateInviteResponse"
+        "400":
+          description: Invalid or expired invite token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidateInviteResponse"
+        "404":
+          description: Invite not found for the given token
+
 components:
   schemas:
     UserInvitePayload:
@@ -513,6 +539,32 @@ components:
         - email
         - userType
         - tenantSlug
+
+    ValidateInviteResponse:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          example: "user@example.com"
+        userType:
+          type: string
+          enum: [SUPERADMIN, ADMIN, DRIVER, EMPLOYEE]
+          description: "The type of user invited."
+          example: "EMPLOYEE"
+        tenantSlug:
+          type: string
+          description: "The slug of the tenant the user will belong to."
+          example: "innovate-inc"
+        expired:
+          type: boolean
+          description: "Indicates if the invite token has expired."
+          example: false
+      required:
+        - email
+        - userType
+        - tenantSlug
+        - expired
 
     # --- Base Types ---
     UserBase:
