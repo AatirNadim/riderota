@@ -75,6 +75,7 @@ export const refreshTokens = <T>(oldRefreshToken: string): SessionInfo => {
 };
 
 export const encryptPayload = (payload: any) => {
+  console.log("\n\nEncrypting payload:", payload, "\n\n");
   const payloadEncryptionSecret = process.env.PAYLOAD_ENCRYPTION_SECRET;
   const tokenExpiresIn = (process.env.PAYLOAD_ENCRYPTION_EXPIRATION ||
     "7d") as StringValue;

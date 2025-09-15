@@ -40,6 +40,16 @@ const logout = async () => {
   return data;
 };
 
+const inviteUser = async (
+  payload: components["schemas"]["UserInvitePayload"]
+) => {
+  const pathHolder: keyof paths = "/api/auth/users/invite";
+
+  const { data } = await axiosClient.post(pathHolder, payload);
+  console.log("User invited:", data);
+  return data;
+};
+
 const useWhoAmI = () => {
   return useQuery({
     queryKey: ["whoAmI"],
@@ -61,10 +71,22 @@ const useAdministrationLogin = () => {
   });
 };
 
+const useInviteUser = () => {
+  return useMutation({
+    mutationFn: inviteUser,
+  });
+};
+
 const useLogout = () => {
   return useMutation({
     mutationFn: logout,
   });
 };
 
-export { useWhoAmI, useSuperAdminSignup, useAdministrationLogin, useLogout };
+export {
+  useWhoAmI,
+  useSuperAdminSignup,
+  useAdministrationLogin,
+  useLogout,
+  useInviteUser,
+};

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -25,6 +25,8 @@ import {
 } from "@/components/ui/select";
 import { Mail, User, Phone, Send, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { useInviteUser } from "@/lib/queries/auth.queries";
+import { UserRole } from "@/lib/types";
 
 const inviteAdminSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -32,13 +34,26 @@ const inviteAdminSchema = z.object({
   // phoneNo: z.string().min(10, "Phone number must be at least 10 digits"),
   // department: z.string().min(1, "Please select a department"),
   // permissions: z.string().min(1, "Please select permission level"),
-  message: z.string().optional(),
+  welcomeMessage: z.string().optional(),
 });
 
 type InviteAdminFormData = z.infer<typeof inviteAdminSchema>;
 
 export function InviteAdminForm() {
   const [isLoading, setIsLoading] = useState(false);
+
+  const {
+    mutateAsync: inviteUser,
+    isError,
+    isIdle,
+    isPending,
+  } = useInviteUser();
+
+  const tenantSlug = useRef(
+    typeof window !== "undefined"
+      ? window.location.hostname.split(".")[0] || "demo"
+      : "demo"
+  ).current;
 
   const form = useForm<InviteAdminFormData>({
     resolver: zodResolver(inviteAdminSchema),
@@ -48,7 +63,7 @@ export function InviteAdminForm() {
       // phoneNo: "",
       // department: "",
       // permissions: "",
-      message: "",
+      welcomeMessage: "",
     },
   });
 
@@ -65,8 +80,13 @@ export function InviteAdminForm() {
       //   body: JSON.stringify(data),
       // })
 
-      console.log("Admin invitation data:", data);
+      console.log("Admin invitation data:", {
+        ...data,
+        userType: UserRole.ADMIN,
+        tenantSlug,
+      });
 
+      await inviteUser({ ...data, userType: UserRole.ADMIN, tenantSlug });
       toast.success(`Admin invitation sent to ${data.email}`);
       form.reset();
     } catch (error) {
@@ -200,7 +220,7 @@ export function InviteAdminForm() {
 
         <FormField
           control={form.control}
-          name="message"
+          name="welcomeMessage"
           render={({ field }) => (
             <FormItem>
               <FormLabel

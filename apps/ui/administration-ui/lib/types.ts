@@ -9,3 +9,10 @@ export interface SignupData {
   age?: number;
   profileImageUrl?: string;
 }
+
+export enum UserRole {
+  ADMIN = "ADMIN",
+  DRIVER = "DRIVER",
+  EMPLOYEE = "EMPLOYEE",
+  SUPERADMIN = "SUPERADMIN",
+}

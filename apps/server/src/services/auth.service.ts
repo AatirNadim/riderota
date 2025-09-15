@@ -95,6 +95,8 @@ export class AuthService {
     data: components["schemas"]["UserInvitePayload"]
   ): Promise<{ id: string }> => {
     try {
+      console.log("\n\nInviting user with data:", data, "\n\n");
+
       const existingUser = await this.authRepo.getUserByEmail(data.email);
 
       if (existingUser) {
@@ -107,32 +109,40 @@ export class AuthService {
         data.tenantSlug,
         data.welcomeMessage
       );
-      console.log("User invited successfully:", id);
+      console.log("\n\nUser invited successfully:", id, "\n\n");
 
       const tenantDetails = await prisma.tenant.findFirst({
         where: { slug: data.tenantSlug },
         select: { name: true, superadminId: true },
       });
 
-      const userDetails = await prisma.user.findFirst({
+      console.log("Tenant details for invitation:", tenantDetails);
+
+      const superAdminDetails = await prisma.user.findFirst({
         where: { id: tenantDetails?.superadminId },
         select: { email: true },
       });
 
-      if (!tenantDetails || !userDetails) {
+      console.log("superadmin details for invitation:", superAdminDetails);
+
+      if (!tenantDetails || !superAdminDetails) {
         throw new Error("Tenant or Superadmin details not found");
       }
 
       const inviteToken = encryptPayload({ inviteId: id });
 
-      sendInvite(
-        userDetails.email,
+      console.log("Generated invite token:", inviteToken, "\n\nsending invite");
+
+      await sendInvite(
+        superAdminDetails.email,
         data.email,
         data.userType,
         tenantDetails.name,
         `http://${data.tenantSlug}.lvh.me:3001/users/invite/${inviteToken}`,
         data.welcomeMessage
       );
+
+      console.log("Invite sent successfully to:", data.email);
 
       return { id };
     } catch (error) {

@@ -819,7 +819,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/users/invite": {
+    "/api/auth/users/invite": {
         parameters: {
             query?: never;
             header?: never;

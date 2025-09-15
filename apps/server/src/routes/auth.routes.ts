@@ -16,8 +16,11 @@ router.get("/health-check", (_, res) => {
 
 router.post("/clearSession", authController.clearSession);
 
-router.post("/api/users/invite" as keyof paths, authController.inviteUser);
+router.post("/users/invite" as keyof paths, authController.inviteUser);
 
-router.post("/api/users/validate-invite" as keyof paths, authController.validateInviteToken);
+router.post(
+  "/users/validate-invite" as keyof paths,
+  authController.validateInviteToken
+);
 
 export default router;
