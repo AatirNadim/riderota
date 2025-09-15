@@ -12,6 +12,8 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Mail, User, Phone, CreditCard, Send, Loader2 } from "lucide-react"
 import { toast } from "sonner"
+import { useInviteUser } from "@/lib/queries/auth.queries"
+import { UserRole } from "@/lib/types"
 
 const inviteDriverSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -25,7 +27,7 @@ const inviteDriverSchema = z.object({
 
 type InviteDriverFormData = z.infer<typeof inviteDriverSchema>
 
-export function InviteDriverForm() {
+export function InviteDriverForm({ tenantSlug }: { tenantSlug: string }) {
   const [isLoading, setIsLoading] = useState(false)
 
   const form = useForm<InviteDriverFormData>({
@@ -41,10 +43,20 @@ export function InviteDriverForm() {
     },
   })
 
+  const {
+    mutateAsync: inviteUser,
+    isError,
+    isIdle,
+    isPending,
+  } = useInviteUser();
+
   const onSubmit = async (data: InviteDriverFormData) => {
     setIsLoading(true)
     try {
-      await new Promise((resolve) => setTimeout(resolve, 2000))
+      // await new Promise((resolve) => setTimeout(resolve, 2000))
+      
+
+      await inviteUser({ ...data, userType: UserRole.DRIVER, tenantSlug });
 
       toast.success(`Driver invitation sent to ${data.email}`)
       form.reset()

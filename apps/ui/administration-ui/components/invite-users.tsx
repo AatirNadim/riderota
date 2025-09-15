@@ -6,8 +6,16 @@ import { InviteAdminForm } from "./form/invite-admin.form";
 import { InviteDriverForm } from "./form/invite-driver.form";
 import { InviteEmployeeForm } from "./form/invite-employee.form";
 import { UserCheck, Car, Users } from "lucide-react";
+import { useRef } from "react";
 
 export function InviteUsers() {
+
+  const tenantSlug = useRef(
+    typeof window !== "undefined"
+      ? window.location.hostname.split(".")[0] || "demo"
+      : "demo"
+  ).current;
+
   const containerVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: {
@@ -86,7 +94,7 @@ export function InviteUsers() {
                     assignments
                   </p>
                 </div>
-                <InviteAdminForm />
+                <InviteAdminForm tenantSlug={tenantSlug} />
               </TabsContent>
 
               <TabsContent value="driver" className="space-y-4">
@@ -105,7 +113,7 @@ export function InviteUsers() {
                     availability
                   </p>
                 </div>
-                <InviteDriverForm />
+                <InviteDriverForm tenantSlug={tenantSlug} />
               </TabsContent>
 
               <TabsContent value="employee" className="space-y-4">
@@ -124,7 +132,7 @@ export function InviteUsers() {
                     history
                   </p>
                 </div>
-                <InviteEmployeeForm />
+                <InviteEmployeeForm tenantSlug={tenantSlug} />
               </TabsContent>
             </Tabs>
           </CardContent>

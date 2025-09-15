@@ -39,7 +39,7 @@ const inviteAdminSchema = z.object({
 
 type InviteAdminFormData = z.infer<typeof inviteAdminSchema>;
 
-export function InviteAdminForm() {
+export function InviteAdminForm({ tenantSlug }: { tenantSlug: string }) {
   const [isLoading, setIsLoading] = useState(false);
 
   const {
@@ -48,12 +48,6 @@ export function InviteAdminForm() {
     isIdle,
     isPending,
   } = useInviteUser();
-
-  const tenantSlug = useRef(
-    typeof window !== "undefined"
-      ? window.location.hostname.split(".")[0] || "demo"
-      : "demo"
-  ).current;
 
   const form = useForm<InviteAdminFormData>({
     resolver: zodResolver(inviteAdminSchema),

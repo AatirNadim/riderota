@@ -1,17 +1,40 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
-import { motion } from "framer-motion"
-import { Button } from "@/components/ui/button"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Mail, User, Phone, Building, MapPin, Send, Loader2 } from "lucide-react"
-import { toast } from "sonner"
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Mail,
+  User,
+  Phone,
+  Building,
+  MapPin,
+  Send,
+  Loader2,
+} from "lucide-react";
+import { toast } from "sonner";
+import { useInviteUser } from "@/lib/queries/auth.queries";
+import { UserRole } from "@/lib/types";
 
 const inviteEmployeeSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -19,14 +42,23 @@ const inviteEmployeeSchema = z.object({
   phoneNo: z.string().min(10, "Phone number must be at least 10 digits"),
   employeeId: z.string().min(3, "Employee ID must be at least 3 characters"),
   department: z.string().min(1, "Please select a department"),
-  workLocation: z.string().min(5, "Work location must be at least 5 characters"),
+  workLocation: z
+    .string()
+    .min(5, "Work location must be at least 5 characters"),
   message: z.string().optional(),
-})
+});
 
-type InviteEmployeeFormData = z.infer<typeof inviteEmployeeSchema>
+type InviteEmployeeFormData = z.infer<typeof inviteEmployeeSchema>;
 
-export function InviteEmployeeForm() {
-  const [isLoading, setIsLoading] = useState(false)
+export function InviteEmployeeForm({ tenantSlug }: { tenantSlug: string }) {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const {
+    mutateAsync: inviteUser,
+    isError,
+    isIdle,
+    isPending,
+  } = useInviteUser();
 
   const form = useForm<InviteEmployeeFormData>({
     resolver: zodResolver(inviteEmployeeSchema),
@@ -39,21 +71,21 @@ export function InviteEmployeeForm() {
       workLocation: "",
       message: "",
     },
-  })
+  });
 
   const onSubmit = async (data: InviteEmployeeFormData) => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 2000))
+      await inviteUser({ ...data, userType: UserRole.EMPLOYEE, tenantSlug });
 
-      toast.success(`Employee invitation sent to ${data.email}`)
-      form.reset()
+      toast.success(`Employee invitation sent to ${data.email}`);
+      form.reset();
     } catch (error) {
-      toast.error("Failed to send invitation. Please try again.")
+      toast.error("Failed to send invitation. Please try again.");
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <Form {...form}>
@@ -64,13 +96,21 @@ export function InviteEmployeeForm() {
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm font-medium" style={{ color: "var(--neutral-700)" }}>
+                <FormLabel
+                  className="text-sm font-medium"
+                  style={{ color: "var(--neutral-700)" }}
+                >
                   Email Address
                 </FormLabel>
                 <FormControl>
                   <div className="relative">
                     <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-neutral-400" />
-                    <Input placeholder="employee@company.com" {...field} className="pl-10" disabled={isLoading} />
+                    <Input
+                      placeholder="employee@company.com"
+                      {...field}
+                      className="pl-10"
+                      disabled={isLoading}
+                    />
                   </div>
                 </FormControl>
                 <FormMessage />
@@ -83,13 +123,21 @@ export function InviteEmployeeForm() {
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm font-medium" style={{ color: "var(--neutral-700)" }}>
+                <FormLabel
+                  className="text-sm font-medium"
+                  style={{ color: "var(--neutral-700)" }}
+                >
                   Full Name
                 </FormLabel>
                 <FormControl>
                   <div className="relative">
                     <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-neutral-400" />
-                    <Input placeholder="John Doe" {...field} className="pl-10" disabled={isLoading} />
+                    <Input
+                      placeholder="John Doe"
+                      {...field}
+                      className="pl-10"
+                      disabled={isLoading}
+                    />
                   </div>
                 </FormControl>
                 <FormMessage />
@@ -102,13 +150,21 @@ export function InviteEmployeeForm() {
             name="phoneNo"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm font-medium" style={{ color: "var(--neutral-700)" }}>
+                <FormLabel
+                  className="text-sm font-medium"
+                  style={{ color: "var(--neutral-700)" }}
+                >
                   Phone Number
                 </FormLabel>
                 <FormControl>
                   <div className="relative">
                     <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-neutral-400" />
-                    <Input placeholder="+1 (555) 123-4567" {...field} className="pl-10" disabled={isLoading} />
+                    <Input
+                      placeholder="+1 (555) 123-4567"
+                      {...field}
+                      className="pl-10"
+                      disabled={isLoading}
+                    />
                   </div>
                 </FormControl>
                 <FormMessage />
@@ -121,13 +177,21 @@ export function InviteEmployeeForm() {
             name="employeeId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm font-medium" style={{ color: "var(--neutral-700)" }}>
+                <FormLabel
+                  className="text-sm font-medium"
+                  style={{ color: "var(--neutral-700)" }}
+                >
                   Employee ID
                 </FormLabel>
                 <FormControl>
                   <div className="relative">
                     <Building className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-neutral-400" />
-                    <Input placeholder="EMP001" {...field} className="pl-10" disabled={isLoading} />
+                    <Input
+                      placeholder="EMP001"
+                      {...field}
+                      className="pl-10"
+                      disabled={isLoading}
+                    />
                   </div>
                 </FormControl>
                 <FormMessage />
@@ -140,10 +204,17 @@ export function InviteEmployeeForm() {
             name="department"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm font-medium" style={{ color: "var(--neutral-700)" }}>
+                <FormLabel
+                  className="text-sm font-medium"
+                  style={{ color: "var(--neutral-700)" }}
+                >
                   Department
                 </FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isLoading}>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  disabled={isLoading}
+                >
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select department" />
@@ -168,13 +239,21 @@ export function InviteEmployeeForm() {
             name="workLocation"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm font-medium" style={{ color: "var(--neutral-700)" }}>
+                <FormLabel
+                  className="text-sm font-medium"
+                  style={{ color: "var(--neutral-700)" }}
+                >
                   Work Location
                 </FormLabel>
                 <FormControl>
                   <div className="relative">
                     <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-neutral-400" />
-                    <Input placeholder="Building A, Floor 3" {...field} className="pl-10" disabled={isLoading} />
+                    <Input
+                      placeholder="Building A, Floor 3"
+                      {...field}
+                      className="pl-10"
+                      disabled={isLoading}
+                    />
                   </div>
                 </FormControl>
                 <FormMessage />
@@ -188,8 +267,12 @@ export function InviteEmployeeForm() {
           name="message"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-sm font-medium" style={{ color: "var(--neutral-700)" }}>
-                Welcome Message <span className="text-neutral-400">(Optional)</span>
+              <FormLabel
+                className="text-sm font-medium"
+                style={{ color: "var(--neutral-700)" }}
+              >
+                Welcome Message{" "}
+                <span className="text-neutral-400">(Optional)</span>
               </FormLabel>
               <FormControl>
                 <Textarea
@@ -225,5 +308,5 @@ export function InviteEmployeeForm() {
         </motion.div>
       </form>
     </Form>
-  )
+  );
 }
