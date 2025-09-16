@@ -549,7 +549,7 @@ components:
     UserInvitePayload:
       type: object
       properties:
-        userType:
+        role:
           type: string
           enum: [SUPERADMIN, ADMIN, DRIVER, EMPLOYEE]
           description: "The type of user to invite."
@@ -568,7 +568,7 @@ components:
           example: "Welcome to our platform! We're excited to have you on board."
       required:
         - email
-        - userType
+        - role
         - tenantSlug
 
     ValidateInviteResponse:
@@ -578,7 +578,7 @@ components:
           type: string
           format: email
           example: "user@example.com"
-        userType:
+        role:
           type: string
           enum: [SUPERADMIN, ADMIN, DRIVER, EMPLOYEE]
           description: "The type of user invited."
@@ -593,7 +593,7 @@ components:
           example: false
       required:
         - email
-        - userType
+        - role
         - tenantSlug
         - expired
 
@@ -619,15 +619,21 @@ components:
           format: uri
           nullable: true
           example: "https://example.com/profile.jpg"
-        userType:
+        role:
           type: string
           enum: [SUPERADMIN, ADMIN, DRIVER, EMPLOYEE]
           description: "The type of user."
           example: "EMPLOYEE"
+        tenantSlug:
+          type: string
+          description: "The slug of the tenant the user will belong to."
+          example: "innovate-inc"
       required:
         - name
         - phoneNo
         - email
+        - role
+        - tenantSlug
 
     UserCreatePayload:
       allOf:

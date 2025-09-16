@@ -212,12 +212,15 @@ export class AuthService {
       //   throw new InviteTokenExpiredError("Invitation token has expired.");
       // }
 
+      console.log("Onboarding user with data:", data);
+
       const existingUser = await this.authRepo.getUserByEmail(data.email);
       if (existingUser) {
         throw new Error("User with this email already exists");
       }
+      console.log("No existing user found with email:", data.email);
 
-      const passwordHash = bcrypt.hashSync(data.password, this.salt);
+      data.password = bcrypt.hashSync(data.password, this.salt);
 
       const newUserId = await this.authRepo.createUser(data);
 

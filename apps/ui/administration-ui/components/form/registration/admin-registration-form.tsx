@@ -41,22 +41,22 @@ import {
   EyeOff,
 } from "lucide-react";
 import { toast } from "sonner";
+import { useOnboardUser } from "@/lib/queries/auth.queries";
+import { UserRole } from "@/lib/types";
+import { components } from "@riderota/utils";
 
 const adminRegistrationSchema = z
   .object({
-    firstName: z.string().min(2, "First name must be at least 2 characters"),
-    lastName: z.string().min(2, "Last name must be at least 2 characters"),
-    phoneNumber: z.string().min(10, "Phone number must be at least 10 digits"),
-    department: z.string().min(1, "Please select a department"),
-    employeeId: z.string().min(3, "Employee ID must be at least 3 characters"),
-    address: z.string().min(10, "Address must be at least 10 characters"),
-    emergencyContact: z
-      .string()
-      .min(10, "Emergency contact must be at least 10 digits"),
-    emergencyContactName: z
-      .string()
-      .min(2, "Emergency contact name is required"),
-    bio: z.string().optional(),
+    name: z.string().min(2, "First name must be at least 2 characters"),
+    phoneNo: z.string().min(10, "Phone number must be at least 10 digits"),
+    // address: z.string().min(10, "Address must be at least 10 characters"),
+    // emergencyContact: z
+    //   .string()
+    //   .min(10, "Emergency contact must be at least 10 digits"),
+    // emergencyContactName: z
+    //   .string()
+    //   .min(2, "Emergency contact name is required"),
+    // bio: z.string().optional(),
     password: z.string().min(8, "Password must be at least 8 characters"),
     confirmPassword: z.string().min(8, "Please confirm your password"),
   })
@@ -76,31 +76,36 @@ interface AdminRegistrationFormProps {
     expiresAt: string;
   };
   onSuccess: (userData: any) => void;
+  tenantSlug: string;
 }
 
 export function AdminRegistrationForm({
   inviteData,
   onSuccess,
+  tenantSlug,
 }: AdminRegistrationFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+  const {
+    mutateAsync: onboardUser,
+    isPending,
+    isIdle,
+    isError,
+  } = useOnboardUser();
+
   const form = useForm<AdminRegistrationData>({
     resolver: zodResolver(adminRegistrationSchema),
     defaultValues: {
-      firstName: "",
-      lastName: "",
-      phoneNumber: "",
-      department: "",
-      employeeId: "",
-      address: "",
-      emergencyContact: "",
-      emergencyContactName: "",
-      bio: "",
+      name: "",
+      email: "",
+      phoneNo: "",
+      age: 0,
+      profileImgUrl: "",
+      role: UserRole.ADMIN,
       password: "",
-      confirmPassword: "",
-    },
+    } as components["schemas"]["AdminCreatePayload"],
   });
 
   const onSubmit = async (data: AdminRegistrationData) => {
@@ -108,15 +113,20 @@ export function AdminRegistrationForm({
       setIsLoading(true);
 
       // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      // await new Promise((resolve) => setTimeout(resolve, 2000));
 
-      const userData = {
-        ...data,
-        email: inviteData.email,
-        userType: "admin",
-        tenantName: inviteData.tenantName,
-        registeredAt: new Date().toISOString(),
+      const userData: components["schemas"]["AdminCreatePayload"] = {
+        name: data.name,
+        phoneNo: data.phoneNo,
+        password: data.password,
+        email: "larryburlonce@gmail.com",
+        role: UserRole.ADMIN,
+        tenantSlug,
       };
+
+      console.log("User data to be sent for onboarding:", userData);
+
+      const res = await onboardUser(userData);
 
       toast.success("Registration completed successfully!");
       onSuccess(userData);
@@ -193,32 +203,12 @@ export function AdminRegistrationForm({
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
-                    name="firstName"
+                    name="name"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>First Name</FormLabel>
+                        <FormLabel>Name</FormLabel>
                         <FormControl>
-                          <Input
-                            placeholder="Enter your first name"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="lastName"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Last Name</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="Enter your last name"
-                            {...field}
-                          />
+                          <Input placeholder="Enter your name" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -229,7 +219,7 @@ export function AdminRegistrationForm({
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
-                    name="phoneNumber"
+                    name="phoneNo"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Phone Number</FormLabel>
@@ -266,7 +256,7 @@ export function AdminRegistrationForm({
                   /> */}
                 </div>
 
-                <FormField
+                {/* <FormField
                   control={form.control}
                   name="address"
                   render={({ field }) => (
@@ -322,9 +312,9 @@ export function AdminRegistrationForm({
                       </FormItem>
                     )}
                   />
-                </div>
+                </div> */}
 
-                <FormField
+                {/* <FormField
                   control={form.control}
                   name="bio"
                   render={({ field }) => (
@@ -340,7 +330,7 @@ export function AdminRegistrationForm({
                       <FormMessage />
                     </FormItem>
                   )}
-                />
+                /> */}
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <FormField

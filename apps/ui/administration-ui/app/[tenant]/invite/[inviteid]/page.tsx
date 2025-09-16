@@ -37,7 +37,7 @@ export default function InvitePage() {
     userType: UserRole.ADMIN,
     inviteData: {
       email: "john.doe@example.com",
-      tenantName: "Acme Corporation",
+      tenantName: "First Tenant",
       tenantSlug: "currentTenant",
       invitedBy: "Sarah Johnson",
       expiresAt: "2024-12-31T23:59:59Z",

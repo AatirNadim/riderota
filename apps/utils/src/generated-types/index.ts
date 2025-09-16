@@ -994,7 +994,7 @@ export interface components {
              * @example EMPLOYEE
              * @enum {string}
              */
-            userType: "SUPERADMIN" | "ADMIN" | "DRIVER" | "EMPLOYEE";
+            role: "SUPERADMIN" | "ADMIN" | "DRIVER" | "EMPLOYEE";
             /**
              * Format: email
              * @example admin@example.com
@@ -1022,7 +1022,7 @@ export interface components {
              * @example EMPLOYEE
              * @enum {string}
              */
-            userType: "SUPERADMIN" | "ADMIN" | "DRIVER" | "EMPLOYEE";
+            role: "SUPERADMIN" | "ADMIN" | "DRIVER" | "EMPLOYEE";
             /**
              * @description The slug of the tenant the user will belong to.
              * @example innovate-inc
@@ -1056,7 +1056,12 @@ export interface components {
              * @example EMPLOYEE
              * @enum {string}
              */
-            userType?: "SUPERADMIN" | "ADMIN" | "DRIVER" | "EMPLOYEE";
+            role: "SUPERADMIN" | "ADMIN" | "DRIVER" | "EMPLOYEE";
+            /**
+             * @description The slug of the tenant the user will belong to.
+             * @example innovate-inc
+             */
+            tenantSlug: string;
         };
         UserCreatePayload: components["schemas"]["UserBase"] & {
             /**

@@ -157,7 +157,7 @@ export function RegistrationSuccess({
                       className="text-sm"
                       style={{ color: "var(--neutral-600)" }}
                     >
-                      {userData.firstName} {userData.lastName}
+                      {userData.name}
                     </p>
                   </div>
                 </div>
@@ -193,7 +193,7 @@ export function RegistrationSuccess({
                       className="text-sm"
                       style={{ color: "var(--neutral-600)" }}
                     >
-                      {userData.phoneNumber}
+                      {userData.phoneNo}
                     </p>
                   </div>
                 </div>
