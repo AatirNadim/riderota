@@ -693,30 +693,35 @@ components:
         - $ref: "#/components/schemas/UserCreatePayload"
         - type: object
           properties:
-            carMake:
-              type: string
-              example: "Toyota"
-            carName:
-              type: string
-              example: "Camry"
-            carColor:
-              type: string
-              example: "Blue"
-            carPlate:
-              type: string
-              example: "RIDE-123"
-            numberOfSeats:
-              type: integer
-              example: 4
-            carDescription:
-              type: string
-              nullable: true
+            vehicleDetails:
+              $ref: "#/components/schemas/VehicleDetails"
           required:
-            - carMake
-            - carName
-            - carColor
-            - carPlate
-            - numberOfSeats
+            - vehicleDetails
+
+    VehicleDetails:
+      type: object
+      properties:
+        make:
+          type: string
+          example: "Toyota"
+        model:
+          type: string
+          example: "Camry"
+        color:
+          type: string
+          example: "Blue"
+        licensePlate:
+          type: string
+          example: "RIDE-123"
+        capacity:
+          type: integer
+          example: 4
+      required:
+        - make
+        - model
+        - color
+        - licensePlate
+        - capacity
 
     UserDetails:
       type: object

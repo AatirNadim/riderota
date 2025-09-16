@@ -1089,17 +1089,19 @@ export interface components {
             location: string;
         };
         DriverCreatePayload: components["schemas"]["UserCreatePayload"] & {
+            vehicleDetails: components["schemas"]["VehicleDetails"];
+        };
+        VehicleDetails: {
             /** @example Toyota */
-            carMake: string;
+            make: string;
             /** @example Camry */
-            carName: string;
+            model: string;
             /** @example Blue */
-            carColor: string;
+            color: string;
             /** @example RIDE-123 */
-            carPlate: string;
+            licensePlate: string;
             /** @example 4 */
-            numberOfSeats: number;
-            carDescription?: string | null;
+            capacity: number;
         };
         /** @description Public details of a user. */
         UserDetails: {

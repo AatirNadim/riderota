@@ -34,7 +34,7 @@ export default function InvitePage() {
     isValid: true,
     isExpired: false, // 20% chance of expired for demo
     isTenantMismatch: false, // 10% chance of tenant mismatch for demo
-    userType: UserRole.ADMIN,
+    userType: UserRole.DRIVER,
     inviteData: {
       email: "john.doe@example.com",
       tenantName: "First Tenant",
@@ -157,6 +157,7 @@ export default function InvitePage() {
     const commonProps = {
       inviteData: validation.inviteData!,
       onSuccess: handleRegistrationSuccess,
+      tenantSlug: params.tenant as string,
     };
 
     switch (validation.userType) {
