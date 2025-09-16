@@ -34,7 +34,7 @@ export default function InvitePage() {
     isValid: true,
     isExpired: false, // 20% chance of expired for demo
     isTenantMismatch: false, // 10% chance of tenant mismatch for demo
-    userType: UserRole.DRIVER,
+    userType: UserRole.EMPLOYEE,
     inviteData: {
       email: "john.doe@example.com",
       tenantName: "First Tenant",

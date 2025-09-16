@@ -4,10 +4,24 @@ import { components } from "@riderota/utils";
 export class AuthRepo {
   async createUser(userData: any): Promise<string> {
     console.log("\n\nCreating user with data:", userData, "\n\n");
+
     const passwordHash = userData.password as string;
     const vehicleDetails = userData.vehicleDetails;
+    const addressDetails = userData.address;
+
     delete userData.password;
     delete userData.vehicleDetails;
+    delete userData.address;
+
+    if (addressDetails) {
+      console.log("\n\nCreating address details for the employee:", "\n\n");
+      const { id } = await prisma.address.create({
+        data: addressDetails,
+      });
+      console.log("\n\nAddress details created for the employee:", id, "\n\n");
+      userData.addressId = id;
+    }
+
     const { id } = await prisma.user.create({
       data: {
         passwordHash,

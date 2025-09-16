@@ -1082,11 +1082,7 @@ export interface components {
         SuperadminCreatePayload: components["schemas"]["UserCreatePayload"];
         AdminCreatePayload: components["schemas"]["UserCreatePayload"];
         EmployeeCreatePayload: components["schemas"]["UserCreatePayload"] & {
-            /**
-             * @description The employee's home address or pickup location.
-             * @example 123 Main St, Anytown, USA
-             */
-            location: string;
+            address: components["schemas"]["AddressDetails"];
         };
         DriverCreatePayload: components["schemas"]["UserCreatePayload"] & {
             vehicleDetails: components["schemas"]["VehicleDetails"];
@@ -1141,6 +1137,13 @@ export interface components {
              * @example innovate-inc
              */
             tenantSlug?: string | null;
+        };
+        AddressDetails: {
+            addressLine1: string;
+            addressLine2?: string;
+            city: string;
+            zipCode: string;
+            landMark?: string;
         };
         GenericSuccessResponse: {
             /** @example Authentication successful. */

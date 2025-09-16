@@ -1,106 +1,170 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { motion } from "framer-motion"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Textarea } from "@/components/ui/textarea"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Users, Building, Mail, Phone, MapPin, Briefcase, Calendar, Eye, EyeOff } from "lucide-react"
-import { toast } from "sonner"
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Users,
+  Building,
+  Mail,
+  Phone,
+  MapPin,
+  Briefcase,
+  Calendar,
+  Eye,
+  EyeOff,
+} from "lucide-react";
+import { toast } from "sonner";
+import { useOnboardUser } from "@/lib/queries/auth.queries";
+import { components } from "@riderota/utils";
+import { UserRole } from "@/lib/types";
 
 const employeeRegistrationSchema = z
   .object({
-    firstName: z.string().min(2, "First name must be at least 2 characters"),
-    lastName: z.string().min(2, "Last name must be at least 2 characters"),
-    phoneNumber: z.string().min(10, "Phone number must be at least 10 digits"),
-    dateOfBirth: z.string().min(1, "Date of birth is required"),
-    address: z.string().min(10, "Address must be at least 10 characters"),
-    department: z.string().min(1, "Please select a department"),
-    designation: z.string().min(2, "Designation is required"),
-    employeeId: z.string().min(3, "Employee ID must be at least 3 characters"),
-    workLocation: z.string().min(5, "Work location is required"),
-    shiftTiming: z.string().min(1, "Please select shift timing"),
-    emergencyContact: z.string().min(10, "Emergency contact must be at least 10 digits"),
-    emergencyContactName: z.string().min(2, "Emergency contact name is required"),
-    emergencyContactRelation: z.string().min(2, "Emergency contact relation is required"),
-    medicalConditions: z.string().optional(),
+    name: z.string().min(2, "First name must be at least 2 characters"),
+    phoneNo: z.string().min(10, "Phone number must be at least 10 digits"),
+    // dateOfBirth: z.string().min(1, "Date of birth is required"),
+    // address: z.string().min(10, "Address must be at least 10 characters"),
+    // department: z.string().min(1, "Please select a department"),
+    // designation: z.string().min(2, "Designation is required"),
+    // employeeId: z.string().min(3, "Employee ID must be at least 3 characters"),
+    // workLocation: z.string().min(5, "Work location is required"),
+    // shiftTiming: z.string().min(1, "Please select shift timing"),
+    // emergencyContact: z
+    //   .string()
+    //   .min(10, "Emergency contact must be at least 10 digits"),
+    // emergencyContactName: z
+    //   .string()
+    //   .min(2, "Emergency contact name is required"),
+    // emergencyContactRelation: z
+    //   .string()
+    //   .min(2, "Emergency contact relation is required"),
+    // medicalConditions: z.string().optional(),
+    addressLine1: z.string().min(10, "Address must be at least 10 characters"),
+    addressLine2: z.string().optional().or(z.literal("")),
+    city: z.string().min(2, "City is required"),
+    zipCode: z.string().min(5, "Zip code must be at least 5 characters"),
+    landMark: z.string().optional().or(z.literal("")),
     password: z.string().min(8, "Password must be at least 8 characters"),
     confirmPassword: z.string().min(8, "Please confirm your password"),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",
     path: ["confirmPassword"],
-  })
+  });
 
-type EmployeeRegistrationData = z.infer<typeof employeeRegistrationSchema>
+type EmployeeRegistrationData = z.infer<typeof employeeRegistrationSchema>;
 
 interface EmployeeRegistrationFormProps {
   inviteData: {
-    email: string
-    tenantName: string
-    tenantSlug: string
-    invitedBy: string
-    expiresAt: string
-  }
-  onSuccess: (userData: any) => void
+    email: string;
+    tenantName: string;
+    tenantSlug: string;
+    invitedBy: string;
+    expiresAt: string;
+  };
+  onSuccess: (userData: any) => void;
+  tenantSlug: string;
 }
 
-export function EmployeeRegistrationForm({ inviteData, onSuccess }: EmployeeRegistrationFormProps) {
-  const [isLoading, setIsLoading] = useState(false)
-  const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+export function EmployeeRegistrationForm({
+  inviteData,
+  onSuccess,
+  tenantSlug,
+}: EmployeeRegistrationFormProps) {
+  const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const {
+    mutateAsync: onboardUser,
+    isIdle,
+    isPending,
+    isError,
+  } = useOnboardUser();
 
   const form = useForm<EmployeeRegistrationData>({
     resolver: zodResolver(employeeRegistrationSchema),
     defaultValues: {
-      firstName: "",
-      lastName: "",
-      phoneNumber: "",
-      dateOfBirth: "",
-      address: "",
-      department: "",
-      designation: "",
-      employeeId: "",
-      workLocation: "",
-      shiftTiming: "",
-      emergencyContact: "",
-      emergencyContactName: "",
-      emergencyContactRelation: "",
-      medicalConditions: "",
+      name: "",
+      phoneNo: "",
+      // address: "",
+      // department: "",
+      // designation: "",
+      // employeeId: "",
+      // workLocation: "",
+      // shiftTiming: "",
+      // emergencyContact: "",
+      // emergencyContactName: "",
+      // emergencyContactRelation: "",
+      // medicalConditions: "",
+      addressLine1: "",
+      addressLine2: "",
+      city: "",
+      zipCode: "",
+      landMark: "",
       password: "",
       confirmPassword: "",
     },
-  })
+  });
 
   const onSubmit = async (data: EmployeeRegistrationData) => {
     try {
-      setIsLoading(true)
+      setIsLoading(true);
 
       // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000))
+      await new Promise((resolve) => setTimeout(resolve, 2000));
 
-      const userData = {
-        ...data,
-        email: inviteData.email,
-        userType: "employee",
-        tenantName: inviteData.tenantName,
-        registeredAt: new Date().toISOString(),
-      }
+      const userData: components["schemas"]["EmployeeCreatePayload"] = {
+        email: "employee@gmail.com",
+        name: data.name,
+        password: data.password,
+        phoneNo: data.phoneNo,
+        role: UserRole.EMPLOYEE,
+        tenantSlug,
+        address: {
+          addressLine1: data.addressLine1,
+          city: data.city,
+          zipCode: data.zipCode,
+          addressLine2: data.addressLine2,
+          landMark: data.landMark,
+        },
+      };
 
-      toast.success("Registration completed successfully!")
-      onSuccess(userData)
+      toast.success("Registration completed successfully!");
+      onSuccess(userData);
     } catch (error) {
-      toast.error("Registration failed. Please try again.")
+      toast.error("Registration failed. Please try again.");
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
@@ -122,25 +186,37 @@ export function EmployeeRegistrationForm({ inviteData, onSuccess }: EmployeeRegi
             </motion.div>
 
             <div>
-              <CardTitle className="text-2xl font-bold" style={{ color: "var(--neutral-900)" }}>
+              <CardTitle
+                className="text-2xl font-bold"
+                style={{ color: "var(--neutral-900)" }}
+              >
                 Complete Your Employee Registration
               </CardTitle>
               <CardDescription className="text-base mt-2">
                 You've been invited to join{" "}
-                <span className="font-semibold text-primary-600">{inviteData.tenantName}</span> as an Employee
+                <span className="font-semibold text-primary-600">
+                  {inviteData.tenantName}
+                </span>{" "}
+                as an Employee
               </CardDescription>
             </div>
 
             <div className="bg-primary-50 rounded-lg p-4 text-left">
               <div className="flex items-center space-x-3 mb-2">
                 <Mail className="w-4 h-4 text-primary-600" />
-                <span className="text-sm font-medium" style={{ color: "var(--neutral-700)" }}>
+                <span
+                  className="text-sm font-medium"
+                  style={{ color: "var(--neutral-700)" }}
+                >
                   Email: {inviteData.email}
                 </span>
               </div>
               <div className="flex items-center space-x-3">
                 <Building className="w-4 h-4 text-primary-600" />
-                <span className="text-sm font-medium" style={{ color: "var(--neutral-700)" }}>
+                <span
+                  className="text-sm font-medium"
+                  style={{ color: "var(--neutral-700)" }}
+                >
                   Invited by: {inviteData.invitedBy}
                 </span>
               </div>
@@ -149,36 +225,28 @@ export function EmployeeRegistrationForm({ inviteData, onSuccess }: EmployeeRegi
 
           <CardContent>
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-6"
+              >
                 {/* Personal Information */}
                 <div className="space-y-4">
-                  <h3 className="text-lg font-semibold" style={{ color: "var(--neutral-900)" }}>
+                  <h3
+                    className="text-lg font-semibold"
+                    style={{ color: "var(--neutral-900)" }}
+                  >
                     Personal Information
                   </h3>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <FormField
                       control={form.control}
-                      name="firstName"
+                      name="name"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>First Name</FormLabel>
+                          <FormLabel>Name</FormLabel>
                           <FormControl>
-                            <Input placeholder="Enter your first name" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="lastName"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Last Name</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Enter your last name" {...field} />
+                            <Input placeholder="Enter your name" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -189,21 +257,25 @@ export function EmployeeRegistrationForm({ inviteData, onSuccess }: EmployeeRegi
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <FormField
                       control={form.control}
-                      name="phoneNumber"
+                      name="phoneNo"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Phone Number</FormLabel>
                           <FormControl>
                             <div className="relative">
                               <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-neutral-400" />
-                              <Input placeholder="+1 (555) 123-4567" className="pl-10" {...field} />
+                              <Input
+                                placeholder="+1 (555) 123-4567"
+                                className="pl-10"
+                                {...field}
+                              />
                             </div>
                           </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
-
+                    {/* 
                     <FormField
                       control={form.control}
                       name="dateOfBirth"
@@ -219,20 +291,20 @@ export function EmployeeRegistrationForm({ inviteData, onSuccess }: EmployeeRegi
                           <FormMessage />
                         </FormItem>
                       )}
-                    />
+                    /> */}
                   </div>
 
                   <FormField
                     control={form.control}
-                    name="address"
+                    name="addressLine1"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Home Address</FormLabel>
+                        <FormLabel>Address Line 1</FormLabel>
                         <FormControl>
                           <div className="relative">
                             <MapPin className="absolute left-3 top-3 w-4 h-4 text-neutral-400" />
                             <Textarea
-                              placeholder="Enter your full home address"
+                              placeholder="Enter your address"
                               className="pl-10 min-h-[80px]"
                               {...field}
                             />
@@ -242,11 +314,78 @@ export function EmployeeRegistrationForm({ inviteData, onSuccess }: EmployeeRegi
                       </FormItem>
                     )}
                   />
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="addressLine2"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Address Line 2</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Apartment, suite, etc. (optional)"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="city"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>City</FormLabel>
+                          <FormControl>
+                            <Input placeholder="City" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="zipCode"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Zip Code</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Zip Code" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="landMark"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Landmark</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Nearby landmark (optional)"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
                 </div>
 
                 {/* Work Information */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold" style={{ color: "var(--neutral-900)" }}>
+                {/* <div className="space-y-4">
+                  <h3
+                    className="text-lg font-semibold"
+                    style={{ color: "var(--neutral-900)" }}
+                  >
                     Work Information
                   </h3>
 
@@ -260,7 +399,11 @@ export function EmployeeRegistrationForm({ inviteData, onSuccess }: EmployeeRegi
                           <FormControl>
                             <div className="relative">
                               <Briefcase className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-neutral-400" />
-                              <Input placeholder="EMP001" className="pl-10" {...field} />
+                              <Input
+                                placeholder="EMP001"
+                                className="pl-10"
+                                {...field}
+                              />
                             </div>
                           </FormControl>
                           <FormMessage />
@@ -275,7 +418,10 @@ export function EmployeeRegistrationForm({ inviteData, onSuccess }: EmployeeRegi
                         <FormItem>
                           <FormLabel>Designation</FormLabel>
                           <FormControl>
-                            <Input placeholder="e.g., Software Engineer, Manager" {...field} />
+                            <Input
+                              placeholder="e.g., Software Engineer, Manager"
+                              {...field}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -289,20 +435,29 @@ export function EmployeeRegistrationForm({ inviteData, onSuccess }: EmployeeRegi
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Department</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
                           <FormControl>
                             <SelectTrigger>
                               <SelectValue placeholder="Select your department" />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="engineering">Engineering</SelectItem>
+                            <SelectItem value="engineering">
+                              Engineering
+                            </SelectItem>
                             <SelectItem value="hr">Human Resources</SelectItem>
                             <SelectItem value="finance">Finance</SelectItem>
                             <SelectItem value="marketing">Marketing</SelectItem>
                             <SelectItem value="sales">Sales</SelectItem>
-                            <SelectItem value="operations">Operations</SelectItem>
-                            <SelectItem value="support">Customer Support</SelectItem>
+                            <SelectItem value="operations">
+                              Operations
+                            </SelectItem>
+                            <SelectItem value="support">
+                              Customer Support
+                            </SelectItem>
                             <SelectItem value="design">Design</SelectItem>
                           </SelectContent>
                         </Select>
@@ -338,28 +493,42 @@ export function EmployeeRegistrationForm({ inviteData, onSuccess }: EmployeeRegi
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Shift Timing</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
                           <FormControl>
                             <SelectTrigger>
                               <SelectValue placeholder="Select your shift timing" />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="morning">Morning (9:00 AM - 6:00 PM)</SelectItem>
-                            <SelectItem value="evening">Evening (2:00 PM - 11:00 PM)</SelectItem>
-                            <SelectItem value="night">Night (11:00 PM - 8:00 AM)</SelectItem>
-                            <SelectItem value="flexible">Flexible Hours</SelectItem>
+                            <SelectItem value="morning">
+                              Morning (9:00 AM - 6:00 PM)
+                            </SelectItem>
+                            <SelectItem value="evening">
+                              Evening (2:00 PM - 11:00 PM)
+                            </SelectItem>
+                            <SelectItem value="night">
+                              Night (11:00 PM - 8:00 AM)
+                            </SelectItem>
+                            <SelectItem value="flexible">
+                              Flexible Hours
+                            </SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
-                </div>
+                </div> */}
 
                 {/* Emergency Contact */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold" style={{ color: "var(--neutral-900)" }}>
+                {/* <div className="space-y-4">
+                  <h3
+                    className="text-lg font-semibold"
+                    style={{ color: "var(--neutral-900)" }}
+                  >
                     Emergency Contact
                   </h3>
 
@@ -371,7 +540,10 @@ export function EmployeeRegistrationForm({ inviteData, onSuccess }: EmployeeRegi
                         <FormItem>
                           <FormLabel>Emergency Contact Name</FormLabel>
                           <FormControl>
-                            <Input placeholder="Contact person name" {...field} />
+                            <Input
+                              placeholder="Contact person name"
+                              {...field}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -385,7 +557,10 @@ export function EmployeeRegistrationForm({ inviteData, onSuccess }: EmployeeRegi
                         <FormItem>
                           <FormLabel>Relationship</FormLabel>
                           <FormControl>
-                            <Input placeholder="e.g., Spouse, Parent, Sibling" {...field} />
+                            <Input
+                              placeholder="e.g., Spouse, Parent, Sibling"
+                              {...field}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -402,18 +577,25 @@ export function EmployeeRegistrationForm({ inviteData, onSuccess }: EmployeeRegi
                         <FormControl>
                           <div className="relative">
                             <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-neutral-400" />
-                            <Input placeholder="+1 (555) 987-6543" className="pl-10" {...field} />
+                            <Input
+                              placeholder="+1 (555) 987-6543"
+                              className="pl-10"
+                              {...field}
+                            />
                           </div>
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
-                </div>
+                </div> */}
 
                 {/* Medical Information */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold" style={{ color: "var(--neutral-900)" }}>
+                {/* <div className="space-y-4">
+                  <h3
+                    className="text-lg font-semibold"
+                    style={{ color: "var(--neutral-900)" }}
+                  >
                     Medical Information (Optional)
                   </h3>
 
@@ -434,11 +616,14 @@ export function EmployeeRegistrationForm({ inviteData, onSuccess }: EmployeeRegi
                       </FormItem>
                     )}
                   />
-                </div>
+                </div> */}
 
                 {/* Password */}
                 <div className="space-y-4">
-                  <h3 className="text-lg font-semibold" style={{ color: "var(--neutral-900)" }}>
+                  <h3
+                    className="text-lg font-semibold"
+                    style={{ color: "var(--neutral-900)" }}
+                  >
                     Account Security
                   </h3>
 
@@ -489,7 +674,9 @@ export function EmployeeRegistrationForm({ inviteData, onSuccess }: EmployeeRegi
                               />
                               <button
                                 type="button"
-                                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                onClick={() =>
+                                  setShowConfirmPassword(!showConfirmPassword)
+                                }
                                 className="absolute right-3 top-1/2 transform -translate-y-1/2"
                               >
                                 {showConfirmPassword ? (
@@ -507,7 +694,10 @@ export function EmployeeRegistrationForm({ inviteData, onSuccess }: EmployeeRegi
                   </div>
                 </div>
 
-                <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                <motion.div
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
                   <Button
                     type="submit"
                     disabled={isLoading}
@@ -529,5 +719,5 @@ export function EmployeeRegistrationForm({ inviteData, onSuccess }: EmployeeRegi
         </Card>
       </motion.div>
     </div>
-  )
+  );
 }

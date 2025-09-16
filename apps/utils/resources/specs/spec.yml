@@ -681,12 +681,10 @@ components:
         - $ref: "#/components/schemas/UserCreatePayload"
         - type: object
           properties:
-            location:
-              type: string
-              description: "The employee's home address or pickup location."
-              example: "123 Main St, Anytown, USA"
+            address:
+              $ref: "#/components/schemas/AddressDetails"
           required:
-            - location
+            - address
 
     DriverCreatePayload:
       allOf:
@@ -763,6 +761,24 @@ components:
           nullable: true
           description: "The slug of the tenant the user belongs to."
           example: "innovate-inc"
+
+    AddressDetails:
+      type: object
+      properties:
+        addressLine1:
+          type: string
+        addressLine2:
+          type: string
+        city:
+          type: string
+        zipCode:
+          type: string
+        landMark:
+          type: string
+      required:
+        - addressLine1
+        - city
+        - zipCode
 
     GenericSuccessResponse:
       type: object
