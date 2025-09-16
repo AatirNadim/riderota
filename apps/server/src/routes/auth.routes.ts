@@ -8,6 +8,8 @@ router.post("/signup/superadmin", authController.superAdminSignupController);
 
 router.post("/login/administration", authController.loginAdministration);
 
+router.post("/users/onboard" as keyof paths, authController.onboardUser);
+
 router.get("/whoami", authController.whoAmIController);
 
 router.get("/health-check", (_, res) => {

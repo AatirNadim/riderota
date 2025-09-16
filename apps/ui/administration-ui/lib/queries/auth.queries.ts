@@ -50,6 +50,16 @@ const inviteUser = async (
   return data;
 };
 
+const onboardUser = async (
+  payload: paths["/api/auth/users/onboard"]["post"]["requestBody"]["content"]["application/json"]
+) => {
+  const pathHolder: keyof paths = "/api/auth/users/onboard";
+
+  const { data } = await axiosClient.post(pathHolder, payload);
+  console.log("User onboarded:", data);
+  return data as string;
+};
+
 const useWhoAmI = () => {
   return useQuery({
     queryKey: ["whoAmI"],
@@ -77,6 +87,12 @@ const useInviteUser = () => {
   });
 };
 
+const useOnboardUser = () => {
+  return useMutation({
+    mutationFn: onboardUser,
+  });
+};
+
 const useLogout = () => {
   return useMutation({
     mutationFn: logout,
@@ -89,4 +105,5 @@ export {
   useAdministrationLogin,
   useLogout,
   useInviteUser,
+  useOnboardUser,
 };

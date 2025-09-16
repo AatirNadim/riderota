@@ -513,6 +513,37 @@ paths:
         "404":
           description: Invite not found for the given token
 
+  /api/auth/users/onboard:
+    post:
+      summary: Onboard a user from an invitation
+      tags: [User Management]
+      requestBody:
+        description: User details for onboarding
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: "#/components/schemas/AdminCreatePayload"
+                - $ref: "#/components/schemas/DriverCreatePayload"
+                - $ref: "#/components/schemas/EmployeeCreatePayload"
+
+      responses:
+        "201":
+          description: User onboarded successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User onboarded successfully."
+        "400":
+          description: Bad Request / Validation Error
+        "409":
+          description: Conflict - A user with these details already exists.
+
 components:
   schemas:
     UserInvitePayload:
@@ -588,6 +619,11 @@ components:
           format: uri
           nullable: true
           example: "https://example.com/profile.jpg"
+        userType:
+          type: string
+          enum: [SUPERADMIN, ADMIN, DRIVER, EMPLOYEE]
+          description: "The type of user."
+          example: "EMPLOYEE"
       required:
         - name
         - phoneNo

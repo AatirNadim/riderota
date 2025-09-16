@@ -11,12 +11,13 @@ import { ExpiredInvitePage } from "@/components/invite/expired-invite";
 import { WrongTenantPage } from "@/components/invite/wrong-tenant";
 import { RegistrationSuccess } from "@/components/invite/registration-success";
 import { Toaster } from "@/components/ui/sonner";
+import { UserRole } from "@/lib/types";
 
 interface InviteValidation {
   isValid: boolean;
   isExpired: boolean;
   isTenantMismatch: boolean;
-  userType: "admin" | "driver" | "employee" | null;
+  userType: UserRole | null;
   inviteData: {
     email: string;
     tenantName: string;
@@ -28,15 +29,27 @@ interface InviteValidation {
 
 export default function InvitePage() {
   const params = useParams();
-  const inviteId = params.inviteId as string;
-  const [validation, setValidation] = useState<InviteValidation | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  // const inviteId = params.inviteId as string;
+  const [validation, setValidation] = useState<InviteValidation | null>({
+    isValid: true,
+    isExpired: false, // 20% chance of expired for demo
+    isTenantMismatch: false, // 10% chance of tenant mismatch for demo
+    userType: UserRole.ADMIN,
+    inviteData: {
+      email: "john.doe@example.com",
+      tenantName: "Acme Corporation",
+      tenantSlug: "currentTenant",
+      invitedBy: "Sarah Johnson",
+      expiresAt: "2024-12-31T23:59:59Z",
+    },
+  });
+  const [isLoading, setIsLoading] = useState(false);
   const [registrationComplete, setRegistrationComplete] = useState(false);
   const [registeredUserData, setRegisteredUserData] = useState<any>(null);
 
-  useEffect(() => {
-    validateInvite();
-  }, [inviteId]);
+  // useEffect(() => {
+  //   validateInvite();
+  // }, [inviteId]);
 
   const validateInvite = async () => {
     try {
@@ -53,7 +66,7 @@ export default function InvitePage() {
         isValid: true,
         isExpired: Math.random() > 0.8, // 20% chance of expired for demo
         isTenantMismatch: Math.random() > 0.9, // 10% chance of tenant mismatch for demo
-        userType: ["admin", "driver", "employee"][
+        userType: [UserRole.ADMIN, UserRole.DRIVER, UserRole.EMPLOYEE][
           Math.floor(Math.random() * 3)
         ] as any,
         inviteData: {
@@ -79,6 +92,8 @@ export default function InvitePage() {
       setIsLoading(false);
     }
   };
+
+  console.log("Validation State:", validation);
 
   const handleRegistrationSuccess = (userData: any) => {
     setRegisteredUserData(userData);
@@ -145,11 +160,11 @@ export default function InvitePage() {
     };
 
     switch (validation.userType) {
-      case "admin":
+      case UserRole.ADMIN:
         return <AdminRegistrationForm {...commonProps} />;
-      case "driver":
+      case UserRole.DRIVER:
         return <DriverRegistrationForm {...commonProps} />;
-      case "employee":
+      case UserRole.EMPLOYEE:
         return <EmployeeRegistrationForm {...commonProps} />;
       default:
         return <ExpiredInvitePage />;

@@ -926,6 +926,64 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/auth/users/onboard": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Onboard a user from an invitation */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            /** @description User details for onboarding */
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["AdminCreatePayload"] | components["schemas"]["DriverCreatePayload"] | components["schemas"]["EmployeeCreatePayload"];
+                };
+            };
+            responses: {
+                /** @description User onboarded successfully */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** @example User onboarded successfully. */
+                            message?: string;
+                        };
+                    };
+                };
+                /** @description Bad Request / Validation Error */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Conflict - A user with these details already exists. */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -993,6 +1051,12 @@ export interface components {
              * @example https://example.com/profile.jpg
              */
             profileImgUrl?: string | null;
+            /**
+             * @description The type of user.
+             * @example EMPLOYEE
+             * @enum {string}
+             */
+            userType?: "SUPERADMIN" | "ADMIN" | "DRIVER" | "EMPLOYEE";
         };
         UserCreatePayload: components["schemas"]["UserBase"] & {
             /**

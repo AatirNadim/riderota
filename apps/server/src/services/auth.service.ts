@@ -43,7 +43,7 @@ export class AuthService {
 
       data.password = bcrypt.hashSync(data.password, this.salt);
 
-      const userDetails = await this.authRepo.createSuperAdminInDb(data);
+      const userDetails = await this.authRepo.createUser(data);
       console.log("Superadmin created successfully");
 
       const { accessToken, refreshToken } = createTokens({
@@ -188,6 +188,48 @@ export class AuthService {
       };
     } catch (error) {
       console.error("Error validating invite token:", error);
+      throw error;
+    }
+  };
+
+  onboardUser = async (
+    data: paths["/api/auth/users/onboard"]["post"]["requestBody"]["content"]["application/json"]
+  ): Promise<string> => {
+    try {
+      // const invite = await prisma.invitations.findFirst({
+      //   where: { id: data.inviteId },
+      // });
+
+      // if (!invite) {
+      //   throw new Error("Invalid invitation ID");
+      // }
+
+      // if (invite.used) {
+      //   throw new Error("This invitation has already been used");
+      // }
+
+      // if (new Date() > invite.expiresAt) {
+      //   throw new InviteTokenExpiredError("Invitation token has expired.");
+      // }
+
+      const existingUser = await this.authRepo.getUserByEmail(data.email);
+      if (existingUser) {
+        throw new Error("User with this email already exists");
+      }
+
+      const passwordHash = bcrypt.hashSync(data.password, this.salt);
+
+      const newUserId = await this.authRepo.createUser(data);
+
+      // await prisma.invitations.update({
+      //   where: { id: invite.id },
+      //   data: { used: true },
+      // });
+
+      console.log("User onboarded successfully:", newUserId);
+      return newUserId;
+    } catch (error) {
+      console.error("Error onboarding user:", error);
       throw error;
     }
   };

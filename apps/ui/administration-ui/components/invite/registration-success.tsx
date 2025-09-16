@@ -1,68 +1,89 @@
-"use client"
+"use client";
 
-import { motion } from "framer-motion"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { CheckCircle, ArrowRight, Building, User, Mail, Phone, Car, Users, UserCheck } from "lucide-react"
+import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  CheckCircle,
+  ArrowRight,
+  Building,
+  User,
+  Mail,
+  Phone,
+  Car,
+  Users,
+  UserCheck,
+} from "lucide-react";
+import { UserRole } from "@/lib/types";
 
 interface RegistrationSuccessProps {
-  userData: any
-  userType: "admin" | "driver" | "employee"
+  userData: any;
+  userType: UserRole;
   tenantData: {
-    email: string
-    tenantName: string
-    tenantSlug: string
-    invitedBy: string
-    expiresAt: string
-  }
+    email: string;
+    tenantName: string;
+    tenantSlug: string;
+    invitedBy: string;
+    expiresAt: string;
+  };
 }
 
-export function RegistrationSuccess({ userData, userType, tenantData }: RegistrationSuccessProps) {
-  const tenantUrl = `https://${tenantData.tenantSlug}.riderota.com`
+export function RegistrationSuccess({
+  userData,
+  userType,
+  tenantData,
+}: RegistrationSuccessProps) {
+  const tenantUrl = `https://${tenantData.tenantSlug}.riderota.com`;
 
   const handleContinue = () => {
     // In real implementation, this would redirect to the appropriate dashboard
-    window.location.href = `${tenantUrl}/${userType}`
-  }
+    window.location.href = `${tenantUrl}/${userType}`;
+  };
 
   const getUserTypeIcon = () => {
     switch (userType) {
-      case "admin":
-        return <UserCheck className="w-8 h-8 text-white" />
-      case "driver":
-        return <Car className="w-8 h-8 text-white" />
-      case "employee":
-        return <Users className="w-8 h-8 text-white" />
+      case UserRole.ADMIN:
+        return <UserCheck className="w-8 h-8 text-white" />;
+      case UserRole.DRIVER:
+        return <Car className="w-8 h-8 text-white" />;
+      case UserRole.EMPLOYEE:
+        return <Users className="w-8 h-8 text-white" />;
       default:
-        return <User className="w-8 h-8 text-white" />
+        return <User className="w-8 h-8 text-white" />;
     }
-  }
+  };
 
   const getUserTypeTitle = () => {
     switch (userType) {
-      case "admin":
-        return "Admin Registration Complete!"
-      case "driver":
-        return "Driver Registration Complete!"
-      case "employee":
-        return "Employee Registration Complete!"
+      case UserRole.ADMIN:
+        return "Admin Registration Complete!";
+      case UserRole.DRIVER:
+        return "Driver Registration Complete!";
+      case UserRole.EMPLOYEE:
+        return "Employee Registration Complete!";
       default:
-        return "Registration Complete!"
+        return "Registration Complete!";
     }
-  }
+  };
 
   const getDashboardName = () => {
     switch (userType) {
-      case "admin":
-        return "Admin Dashboard"
-      case "driver":
-        return "Driver Dashboard"
-      case "employee":
-        return "Employee Dashboard"
+      case UserRole.ADMIN:
+        return "Admin Dashboard";
+      case UserRole.DRIVER:
+        return "Driver Dashboard";
+      case UserRole.EMPLOYEE:
+        return "Employee Dashboard";
       default:
-        return "Dashboard"
+        return "Dashboard";
     }
-  }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
@@ -88,11 +109,17 @@ export function RegistrationSuccess({ userData, userType, tenantData }: Registra
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3, duration: 0.6 }}
             >
-              <CardTitle className="text-2xl font-bold mb-2" style={{ color: "var(--neutral-900)" }}>
+              <CardTitle
+                className="text-2xl font-bold mb-2"
+                style={{ color: "var(--neutral-900)" }}
+              >
                 {getUserTypeTitle()}
               </CardTitle>
               <CardDescription className="text-base">
-                Welcome to <span className="font-semibold text-primary-600">{tenantData.tenantName}</span>
+                Welcome to{" "}
+                <span className="font-semibold text-primary-600">
+                  {tenantData.tenantName}
+                </span>
               </CardDescription>
             </motion.div>
           </CardHeader>
@@ -108,7 +135,10 @@ export function RegistrationSuccess({ userData, userType, tenantData }: Registra
                 <div className="w-10 h-10 bg-primary-gradient rounded-full flex items-center justify-center">
                   {getUserTypeIcon()}
                 </div>
-                <h3 className="font-semibold text-lg" style={{ color: "var(--neutral-900)" }}>
+                <h3
+                  className="font-semibold text-lg"
+                  style={{ color: "var(--neutral-900)" }}
+                >
                   Your Profile Details
                 </h3>
               </div>
@@ -117,10 +147,16 @@ export function RegistrationSuccess({ userData, userType, tenantData }: Registra
                 <div className="flex items-center space-x-3">
                   <User className="w-5 h-5 text-primary-600" />
                   <div>
-                    <p className="text-sm font-medium" style={{ color: "var(--neutral-700)" }}>
+                    <p
+                      className="text-sm font-medium"
+                      style={{ color: "var(--neutral-700)" }}
+                    >
                       Name
                     </p>
-                    <p className="text-sm" style={{ color: "var(--neutral-600)" }}>
+                    <p
+                      className="text-sm"
+                      style={{ color: "var(--neutral-600)" }}
+                    >
                       {userData.firstName} {userData.lastName}
                     </p>
                   </div>
@@ -129,10 +165,16 @@ export function RegistrationSuccess({ userData, userType, tenantData }: Registra
                 <div className="flex items-center space-x-3">
                   <Mail className="w-5 h-5 text-primary-600" />
                   <div>
-                    <p className="text-sm font-medium" style={{ color: "var(--neutral-700)" }}>
+                    <p
+                      className="text-sm font-medium"
+                      style={{ color: "var(--neutral-700)" }}
+                    >
                       Email
                     </p>
-                    <p className="text-sm" style={{ color: "var(--neutral-600)" }}>
+                    <p
+                      className="text-sm"
+                      style={{ color: "var(--neutral-600)" }}
+                    >
                       {userData.email}
                     </p>
                   </div>
@@ -141,10 +183,16 @@ export function RegistrationSuccess({ userData, userType, tenantData }: Registra
                 <div className="flex items-center space-x-3">
                   <Phone className="w-5 h-5 text-primary-600" />
                   <div>
-                    <p className="text-sm font-medium" style={{ color: "var(--neutral-700)" }}>
+                    <p
+                      className="text-sm font-medium"
+                      style={{ color: "var(--neutral-700)" }}
+                    >
                       Phone
                     </p>
-                    <p className="text-sm" style={{ color: "var(--neutral-600)" }}>
+                    <p
+                      className="text-sm"
+                      style={{ color: "var(--neutral-600)" }}
+                    >
                       {userData.phoneNumber}
                     </p>
                   </div>
@@ -153,39 +201,59 @@ export function RegistrationSuccess({ userData, userType, tenantData }: Registra
                 <div className="flex items-center space-x-3">
                   <Building className="w-5 h-5 text-primary-600" />
                   <div>
-                    <p className="text-sm font-medium" style={{ color: "var(--neutral-700)" }}>
-                      {userType === "driver" ? "Role" : "Department"}
+                    <p
+                      className="text-sm font-medium"
+                      style={{ color: "var(--neutral-700)" }}
+                    >
+                      {userType === UserRole.DRIVER ? "Role" : "Department"}
                     </p>
-                    <p className="text-sm" style={{ color: "var(--neutral-600)" }}>
-                      {userType === "driver" ? "Driver" : userData.department}
+                    <p
+                      className="text-sm"
+                      style={{ color: "var(--neutral-600)" }}
+                    >
+                      {userType === UserRole.DRIVER
+                        ? "Driver"
+                        : userData.department}
                     </p>
                   </div>
                 </div>
 
-                {userType !== "driver" && userData.employeeId && (
+                {userType !== UserRole.DRIVER && userData.employeeId && (
                   <div className="flex items-center space-x-3">
                     <div className="w-5 h-5 flex items-center justify-center">
                       <div className="w-3 h-3 bg-primary-600 rounded-full" />
                     </div>
                     <div>
-                      <p className="text-sm font-medium" style={{ color: "var(--neutral-700)" }}>
+                      <p
+                        className="text-sm font-medium"
+                        style={{ color: "var(--neutral-700)" }}
+                      >
                         Employee ID
                       </p>
-                      <p className="text-sm" style={{ color: "var(--neutral-600)" }}>
+                      <p
+                        className="text-sm"
+                        style={{ color: "var(--neutral-600)" }}
+                      >
                         {userData.employeeId}
                       </p>
                     </div>
                   </div>
                 )}
 
-                {userType === "driver" && userData.vehicleMake && (
+                {userType === UserRole.DRIVER && userData.vehicleMake && (
                   <div className="flex items-center space-x-3">
                     <Car className="w-5 h-5 text-primary-600" />
                     <div>
-                      <p className="text-sm font-medium" style={{ color: "var(--neutral-700)" }}>
+                      <p
+                        className="text-sm font-medium"
+                        style={{ color: "var(--neutral-700)" }}
+                      >
                         Vehicle
                       </p>
-                      <p className="text-sm" style={{ color: "var(--neutral-600)" }}>
+                      <p
+                        className="text-sm"
+                        style={{ color: "var(--neutral-600)" }}
+                      >
                         {userData.vehicleMake} {userData.vehicleModel}
                       </p>
                     </div>
@@ -200,7 +268,10 @@ export function RegistrationSuccess({ userData, userType, tenantData }: Registra
               transition={{ delay: 0.5, duration: 0.6 }}
               className="bg-primary-50 rounded-lg p-4"
             >
-              <p className="text-sm font-medium mb-2" style={{ color: "var(--primary-700)" }}>
+              <p
+                className="text-sm font-medium mb-2"
+                style={{ color: "var(--primary-700)" }}
+              >
                 Your {getDashboardName()} is ready at:
               </p>
               <p
@@ -217,7 +288,10 @@ export function RegistrationSuccess({ userData, userType, tenantData }: Registra
               transition={{ delay: 0.6, duration: 0.6 }}
               className="pt-4"
             >
-              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
                 <Button
                   onClick={handleContinue}
                   className="w-full h-11 bg-primary-gradient hover:shadow-custom-hover transition-all duration-300"
@@ -235,10 +309,11 @@ export function RegistrationSuccess({ userData, userType, tenantData }: Registra
               className="text-center"
             >
               <p className="text-xs" style={{ color: "var(--neutral-500)" }}>
-                {userType === "admin" &&
+                {userType === UserRole.ADMIN &&
                   "You can now start managing ride allocations and coordinating with drivers and employees."}
-                {userType === "driver" && "You can now start receiving ride assignments and managing your schedule."}
-                {userType === "employee" &&
+                {userType === UserRole.DRIVER &&
+                  "You can now start receiving ride assignments and managing your schedule."}
+                {userType === UserRole.EMPLOYEE &&
                   "You can now start requesting rides and tracking your transportation needs."}
               </p>
             </motion.div>
@@ -246,5 +321,5 @@ export function RegistrationSuccess({ userData, userType, tenantData }: Registra
         </Card>
       </motion.div>
     </div>
-  )
+  );
 }

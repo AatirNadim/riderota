@@ -2,24 +2,17 @@ import { prisma, UserRole, MembershipStatus } from "@riderota/utils";
 import { components } from "@riderota/utils";
 
 export class AuthRepo {
-  async createSuperAdminInDb(
-    userData: components["schemas"]["SuperadminCreatePayload"]
-  ) {
-    const res = await prisma.user.create({
+  async createUser(userData: any): Promise<string> {
+    const { id } = await prisma.user.create({
       data: {
-        email: userData.email,
+        ...userData,
         passwordHash: userData.password,
-        role: UserRole.SUPERADMIN,
-        name: userData.name,
-        phoneNo: userData.phoneNo,
-        age: userData.age,
-        profileImgUrl: userData.profileImgUrl,
       },
     });
 
-    console.log("\n\nSuperadmin created:", res, "\n\n");
+    console.log("\n\nNew user created:", id, "\n\n");
 
-    return res;
+    return id;
   }
 
   async getUserById(userId: string) {

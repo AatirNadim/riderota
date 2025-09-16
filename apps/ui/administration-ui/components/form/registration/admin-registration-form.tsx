@@ -1,18 +1,46 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { motion } from "framer-motion"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Textarea } from "@/components/ui/textarea"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { UserCheck, Building, Mail, Phone, MapPin, Briefcase, Eye, EyeOff } from "lucide-react"
-import { toast } from "sonner"
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  UserCheck,
+  Building,
+  Mail,
+  Phone,
+  MapPin,
+  Briefcase,
+  Eye,
+  EyeOff,
+} from "lucide-react";
+import { toast } from "sonner";
 
 const adminRegistrationSchema = z
   .object({
@@ -22,8 +50,12 @@ const adminRegistrationSchema = z
     department: z.string().min(1, "Please select a department"),
     employeeId: z.string().min(3, "Employee ID must be at least 3 characters"),
     address: z.string().min(10, "Address must be at least 10 characters"),
-    emergencyContact: z.string().min(10, "Emergency contact must be at least 10 digits"),
-    emergencyContactName: z.string().min(2, "Emergency contact name is required"),
+    emergencyContact: z
+      .string()
+      .min(10, "Emergency contact must be at least 10 digits"),
+    emergencyContactName: z
+      .string()
+      .min(2, "Emergency contact name is required"),
     bio: z.string().optional(),
     password: z.string().min(8, "Password must be at least 8 characters"),
     confirmPassword: z.string().min(8, "Please confirm your password"),
@@ -31,25 +63,28 @@ const adminRegistrationSchema = z
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",
     path: ["confirmPassword"],
-  })
+  });
 
-type AdminRegistrationData = z.infer<typeof adminRegistrationSchema>
+type AdminRegistrationData = z.infer<typeof adminRegistrationSchema>;
 
 interface AdminRegistrationFormProps {
   inviteData: {
-    email: string
-    tenantName: string
-    tenantSlug: string
-    invitedBy: string
-    expiresAt: string
-  }
-  onSuccess: (userData: any) => void
+    email: string;
+    tenantName: string;
+    tenantSlug: string;
+    invitedBy: string;
+    expiresAt: string;
+  };
+  onSuccess: (userData: any) => void;
 }
 
-export function AdminRegistrationForm({ inviteData, onSuccess }: AdminRegistrationFormProps) {
-  const [isLoading, setIsLoading] = useState(false)
-  const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+export function AdminRegistrationForm({
+  inviteData,
+  onSuccess,
+}: AdminRegistrationFormProps) {
+  const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const form = useForm<AdminRegistrationData>({
     resolver: zodResolver(adminRegistrationSchema),
@@ -66,14 +101,14 @@ export function AdminRegistrationForm({ inviteData, onSuccess }: AdminRegistrati
       password: "",
       confirmPassword: "",
     },
-  })
+  });
 
   const onSubmit = async (data: AdminRegistrationData) => {
     try {
-      setIsLoading(true)
+      setIsLoading(true);
 
       // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000))
+      await new Promise((resolve) => setTimeout(resolve, 2000));
 
       const userData = {
         ...data,
@@ -81,16 +116,16 @@ export function AdminRegistrationForm({ inviteData, onSuccess }: AdminRegistrati
         userType: "admin",
         tenantName: inviteData.tenantName,
         registeredAt: new Date().toISOString(),
-      }
+      };
 
-      toast.success("Registration completed successfully!")
-      onSuccess(userData)
+      toast.success("Registration completed successfully!");
+      onSuccess(userData);
     } catch (error) {
-      toast.error("Registration failed. Please try again.")
+      toast.error("Registration failed. Please try again.");
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
@@ -112,25 +147,37 @@ export function AdminRegistrationForm({ inviteData, onSuccess }: AdminRegistrati
             </motion.div>
 
             <div>
-              <CardTitle className="text-2xl font-bold" style={{ color: "var(--neutral-900)" }}>
+              <CardTitle
+                className="text-2xl font-bold"
+                style={{ color: "var(--neutral-900)" }}
+              >
                 Complete Your Admin Registration
               </CardTitle>
               <CardDescription className="text-base mt-2">
                 You've been invited to join{" "}
-                <span className="font-semibold text-primary-600">{inviteData.tenantName}</span> as an Admin
+                <span className="font-semibold text-primary-600">
+                  {inviteData.tenantName}
+                </span>{" "}
+                as an Admin
               </CardDescription>
             </div>
 
             <div className="bg-primary-50 rounded-lg p-4 text-left">
               <div className="flex items-center space-x-3 mb-2">
                 <Mail className="w-4 h-4 text-primary-600" />
-                <span className="text-sm font-medium" style={{ color: "var(--neutral-700)" }}>
+                <span
+                  className="text-sm font-medium"
+                  style={{ color: "var(--neutral-700)" }}
+                >
                   Email: {inviteData.email}
                 </span>
               </div>
               <div className="flex items-center space-x-3">
                 <Building className="w-4 h-4 text-primary-600" />
-                <span className="text-sm font-medium" style={{ color: "var(--neutral-700)" }}>
+                <span
+                  className="text-sm font-medium"
+                  style={{ color: "var(--neutral-700)" }}
+                >
                   Invited by: {inviteData.invitedBy}
                 </span>
               </div>
@@ -139,7 +186,10 @@ export function AdminRegistrationForm({ inviteData, onSuccess }: AdminRegistrati
 
           <CardContent>
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-6"
+              >
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
@@ -148,7 +198,10 @@ export function AdminRegistrationForm({ inviteData, onSuccess }: AdminRegistrati
                       <FormItem>
                         <FormLabel>First Name</FormLabel>
                         <FormControl>
-                          <Input placeholder="Enter your first name" {...field} />
+                          <Input
+                            placeholder="Enter your first name"
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -162,7 +215,10 @@ export function AdminRegistrationForm({ inviteData, onSuccess }: AdminRegistrati
                       <FormItem>
                         <FormLabel>Last Name</FormLabel>
                         <FormControl>
-                          <Input placeholder="Enter your last name" {...field} />
+                          <Input
+                            placeholder="Enter your last name"
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -180,7 +236,11 @@ export function AdminRegistrationForm({ inviteData, onSuccess }: AdminRegistrati
                         <FormControl>
                           <div className="relative">
                             <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-neutral-400" />
-                            <Input placeholder="+1 (555) 123-4567" className="pl-10" {...field} />
+                            <Input
+                              placeholder="+1 (555) 123-4567"
+                              className="pl-10"
+                              {...field}
+                            />
                           </div>
                         </FormControl>
                         <FormMessage />
@@ -188,7 +248,7 @@ export function AdminRegistrationForm({ inviteData, onSuccess }: AdminRegistrati
                     )}
                   />
 
-                  <FormField
+                  {/* <FormField
                     control={form.control}
                     name="employeeId"
                     render={({ field }) => (
@@ -203,35 +263,8 @@ export function AdminRegistrationForm({ inviteData, onSuccess }: AdminRegistrati
                         <FormMessage />
                       </FormItem>
                     )}
-                  />
+                  /> */}
                 </div>
-
-                <FormField
-                  control={form.control}
-                  name="department"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Department</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select your department" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="operations">Operations</SelectItem>
-                          <SelectItem value="hr">Human Resources</SelectItem>
-                          <SelectItem value="finance">Finance</SelectItem>
-                          <SelectItem value="it">Information Technology</SelectItem>
-                          <SelectItem value="marketing">Marketing</SelectItem>
-                          <SelectItem value="sales">Sales</SelectItem>
-                          <SelectItem value="logistics">Logistics</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
 
                 <FormField
                   control={form.control}
@@ -242,7 +275,11 @@ export function AdminRegistrationForm({ inviteData, onSuccess }: AdminRegistrati
                       <FormControl>
                         <div className="relative">
                           <MapPin className="absolute left-3 top-3 w-4 h-4 text-neutral-400" />
-                          <Textarea placeholder="Enter your full address" className="pl-10 min-h-[80px]" {...field} />
+                          <Textarea
+                            placeholder="Enter your full address"
+                            className="pl-10 min-h-[80px]"
+                            {...field}
+                          />
                         </div>
                       </FormControl>
                       <FormMessage />
@@ -274,7 +311,11 @@ export function AdminRegistrationForm({ inviteData, onSuccess }: AdminRegistrati
                         <FormControl>
                           <div className="relative">
                             <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-neutral-400" />
-                            <Input placeholder="+1 (555) 987-6543" className="pl-10" {...field} />
+                            <Input
+                              placeholder="+1 (555) 987-6543"
+                              className="pl-10"
+                              {...field}
+                            />
                           </div>
                         </FormControl>
                         <FormMessage />
@@ -348,7 +389,9 @@ export function AdminRegistrationForm({ inviteData, onSuccess }: AdminRegistrati
                             />
                             <button
                               type="button"
-                              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                              onClick={() =>
+                                setShowConfirmPassword(!showConfirmPassword)
+                              }
                               className="absolute right-3 top-1/2 transform -translate-y-1/2"
                             >
                               {showConfirmPassword ? (
@@ -365,7 +408,10 @@ export function AdminRegistrationForm({ inviteData, onSuccess }: AdminRegistrati
                   />
                 </div>
 
-                <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                <motion.div
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
                   <Button
                     type="submit"
                     disabled={isLoading}
@@ -387,5 +433,5 @@ export function AdminRegistrationForm({ inviteData, onSuccess }: AdminRegistrati
         </Card>
       </motion.div>
     </div>
-  )
+  );
 }
