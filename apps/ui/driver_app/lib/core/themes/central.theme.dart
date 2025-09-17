@@ -99,9 +99,7 @@ final ThemeData centralTheme = ThemeData(
     onSecondary: Colors.white,
     error: AppColors.error500,
     onError: Colors.white,
-    background: AppColors.neutral50,
-    onBackground: AppColors.neutral900,
-    surface: Colors.white,
+    surface: AppColors.neutral50,
     onSurface: AppColors.neutral900,
   ),
 

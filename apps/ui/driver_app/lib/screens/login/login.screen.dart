@@ -32,13 +32,12 @@ class _LoginScreenState extends State<LoginScreen> {
                     prefixIcon: Icon(Icons.email_outlined),
                   ),
                   keyboardType: TextInputType.emailAddress,
-                  validator: (value) => EzValidator.validate(value, [
-                    const RequiredValidation(message: 'Email is required'),
-                    const EmailValidation(
-                      message: 'Please enter a valid email',
-                    ),
-                  ]),
+                  // validator: (value) => EzValidator.validate(value, [
+                  //   const RequiredValidation(message: 'Email is required'),
+                  //   const EmailValidation(
+                  //     message: 'Please enter a valid email',
                 ),
+
                 const SizedBox(height: 20),
 
                 // Password Field
@@ -60,13 +59,13 @@ class _LoginScreenState extends State<LoginScreen> {
                       },
                     ),
                   ),
-                  validator: (value) => EzValidator.validate(value, [
-                    const RequiredValidation(message: 'Password is required'),
-                    const MinLengthValidation(
-                      8,
-                      'Password must be at least 8 characters',
-                    ),
-                  ]),
+                  // validator: (value) => EzValidator.validate(value, [
+                  //   const RequiredValidation(message: 'Password is required'),
+                  //   const MinLengthValidation(
+                  //     8,
+                  //     'Password must be at least 8 characters',
+                  //   ),
+                  // ]),
                 ),
                 const SizedBox(height: 32),
 
