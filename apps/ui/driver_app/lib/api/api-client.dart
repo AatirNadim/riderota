@@ -19,5 +19,5 @@ class ApiClient {
     );
   }
 
-  Dio get _dioClient => _dio;
+  Dio get dioClient => _dio;
 }

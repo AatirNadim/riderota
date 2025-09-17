@@ -1,16 +1,22 @@
 import 'package:dio/dio.dart';
+import 'package:driver_app/api/api-client.dart';
 import 'package:driver_app/core/storage/secure-storage.dart';
 import 'package:driver_app/core/types/auth.types.dart';
 
 class AuthQueries {
-  static final Dio dio = Dio();
+  final ApiClient _apiClient;
+  final SecureStorageService _secureStorageService;
 
-  AuthQueries._privateConstructor();
-  
-  static final AuthQueries instance = AuthQueries._privateConstructor();
+  AuthQueries({
+    required ApiClient apiClient,
+    required SecureStorageService secureStorageService,
+  }) : _apiClient = apiClient,
+       _secureStorageService = secureStorageService;
 
-  static Future<LoginResponse> login(String email, String password) async {
-    Response<LoginResponse> res = await dio.post(
+  // static final AuthQueries instance = AuthQueries._privateConstructor();
+
+  Future<LoginResponse> login(String email, String password) async {
+    Response<LoginResponse> res = await _apiClient.dioClient.post(
       'https://yourapi.com/login',
       data: {'email': email, 'password': password},
     );
@@ -18,8 +24,8 @@ class AuthQueries {
     print('Login Response: ${res.data}');
 
     await Future.wait([
-      SecureStorageService.instance.saveAccessToken(res.data!.accessToken),
-      SecureStorageService.instance.saveRefreshToken(res.data!.refreshToken),
+      _secureStorageService.saveAccessToken(res.data!.accessToken),
+      _secureStorageService.saveRefreshToken(res.data!.refreshToken),
     ]);
     return res.data!;
   }

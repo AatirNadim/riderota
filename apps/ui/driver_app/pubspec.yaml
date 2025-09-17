@@ -41,6 +41,7 @@ dependencies:
   ez_validator: ^0.3.6
   flutter_secure_storage: ^9.2.4
   flutter_dotenv: ^6.0.0
+  get_it: ^8.2.0
 
 dev_dependencies:
   flutter_test:
