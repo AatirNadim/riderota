@@ -157,6 +157,8 @@ export function EmployeeRegistrationForm({
         },
       };
 
+      await onboardUser(userData);
+
       toast.success("Registration completed successfully!");
       onSuccess(userData);
     } catch (error) {
