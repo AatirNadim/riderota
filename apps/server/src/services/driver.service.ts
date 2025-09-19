@@ -8,11 +8,16 @@ export class DriverService {
 
   getRideTasks = async (
     driverId: string
-  ): Promise<components["schemas"]["RideTaskForDriver"][]> => {
+  ) => {
     return this.driverRepository.getRideTasks(driverId);
   };
 
-  generateRideEndOtp = async (driverId: string): Promise<string> => {
+  generateRideEndOtp = async (driverId: string) => {
     return this.driverRepository.createRideEndOtp(driverId);
+  };
+
+
+  getVehicleDetails = async (driverId: string) => {
+    return this.driverRepository.getVehicleDetails(driverId);
   };
 }

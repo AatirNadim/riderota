@@ -185,6 +185,70 @@ paths:
                     type: string
                     example: "Invalid email or password."
 
+  /api/auth/login/driver:
+    post:
+      summary: Driver Login
+      tags: [Authentication & Onboarding]
+      description: >
+        Authenticates a driver user. On success, returns access and refresh
+        tokens via HttpOnly Set-Cookie headers.
+      requestBody:
+        description: Employee credentials for login
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginPayload"
+      responses:
+        "200":
+          description: Login successful. Tokens are returned in HttpOnly cookies.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DriverDetails"
+        "401":
+          description: Unauthorized - Invalid email or password.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid email or password."
+
+  /api/auth/login/employee:
+    post:
+      summary: Employee Login
+      tags: [Authentication & Onboarding]
+      description: >
+        Authenticates an employee user. On success, returns access and refresh
+        tokens via HttpOnly Set-Cookie headers.
+      requestBody:
+        description: Employee credentials for login
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginPayload"
+      responses:
+        "200":
+          description: Login successful. Tokens are returned in HttpOnly cookies.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmployeeDetails"
+        "401":
+          description: Unauthorized - Invalid email or password.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid email or password."
+
   /api/invite:
     post:
       summary: Invite a new User
@@ -696,6 +760,16 @@ components:
           required:
             - vehicleDetails
 
+    EmployeeDetails:
+      allOf:
+        - $ref: "#/components/schemas/UserDetails"
+        - type: object
+          properties:
+            address:
+              $ref: "#/components/schemas/AddressDetails"
+          required:
+            - address
+
     VehicleDetails:
       type: object
       properties:
@@ -752,15 +826,28 @@ components:
           type: string
           enum: [SUPERADMIN, ADMIN, DRIVER, EMPLOYEE]
           example: "EMPLOYEE"
-        status:
+        tenantName:
           type: string
-          enum: [PENDING, MEMBER]
-          example: "ACTIVE"
-        tenantSlug:
-          type: string
-          nullable: true
-          description: "The slug of the tenant the user belongs to."
-          example: "innovate-inc"
+          description: "The name of the tenant the user belongs to."
+          example: "Innovate Inc."
+      required:
+        - id
+        - email
+        - name
+        - phoneNo
+        - role
+        - tenantName
+
+
+    DriverDetails:
+      allOf:
+        - $ref: "#/components/schemas/UserDetails"
+        - type: object
+          properties:
+            vehicleDetails:
+              $ref: "#/components/schemas/VehicleDetails"
+          required:
+            - vehicleDetails
 
     AddressDetails:
       type: object

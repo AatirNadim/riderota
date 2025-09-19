@@ -8,6 +8,8 @@ router.post("/signup/superadmin", authController.superAdminSignupController);
 
 router.post("/login/administration", authController.loginAdministration);
 
+router.post("/api/auth/login/driver"  as keyof paths, authController.loginDriver);
+
 router.post("/users/onboard" as keyof paths, authController.onboardUser);
 
 router.get("/whoami", authController.whoAmIController);

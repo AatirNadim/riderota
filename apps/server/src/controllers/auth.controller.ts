@@ -71,6 +71,45 @@ class AuthController {
     }
   };
 
+
+  loginDriver = async (
+    req: Request,
+    res: Response<any>) => {
+    try {
+      const { email, password } = req.body;
+      const { driverDetails, accessToken, refreshToken } =
+        await this.authService.loginDriver(email, password);
+
+      res.cookie("accessToken", accessToken);
+      res.cookie("refreshToken", refreshToken);
+
+      console.log("setting the cookies", res);
+
+      res.status(200).json(driverDetails);
+    } catch (error) {
+      console.log("Error during employee login:", error);
+      if (error instanceof UserNotFoundError) {
+        res.status(401).json({ message: error.message });
+      } else {
+        res.status(500).json({ message: "Error logging in", error });
+      }
+    }
+  };
+
+  getDriverDetails = async (req: Request, res: Response) => {
+    try {
+      const driverDetails = await this.authService.getDriverDetailsViaTokens(req, res);
+      res.status(200).json(driverDetails);
+    } catch (error) {
+      console.error("Error fetching driver details:", error);
+      if (error instanceof UserNotFoundError) {
+        res.status(404).json({ message: error.message });
+      } else {
+        res.status(500).json({ message: "Error fetching driver details", error });
+      }
+    }
+  }
+
   whoAmIController = async (req: Request, res: Response) => {
     try {
       console.log("Received request to get user information");

@@ -17,6 +17,8 @@ import bcrypt from "bcryptjs";
 import { cookieOptions } from "../constants";
 import { sendInvite } from "./resend.service";
 import { InviteTokenExpiredError } from "../exceptions/invite-token-expired.exception";
+import { DriverService } from "./driver.service";
+import TenantRepo from "../repositories/tenant.repo";
 
 type ValidatedSession = {
   userId: string;
@@ -27,7 +29,7 @@ type ValidatedSession = {
 export class AuthService {
   private salt: string;
 
-  constructor(private authRepo: AuthRepo) {
+  constructor(private driverService: DriverService, private authRepo: AuthRepo, private tenantRepo: TenantRepo) {
     this.salt = bcrypt.genSaltSync(10);
   }
 
@@ -82,11 +84,41 @@ export class AuthService {
     return { user, accessToken, refreshToken };
   }
 
+  async loginDriver(
+    email: string,
+    password: string
+  ): Promise<{
+    driverDetails: components["schemas"]["DriverDetails"];
+    accessToken: string;
+    refreshToken: string;
+  }> {
+    const user = await this.authRepo.getUserByEmail(email);
+    if (!user) throw new UserNotFoundError();
+    
+    if (user.role !== UserRole.DRIVER) {
+      throw new Error("Wrong endpoint to login as administration user");
+    }
+
+    const isPasswordValid = bcrypt.compareSync(password, user.passwordHash);
+    if (!isPasswordValid) throw new Error("Invalid password");
+
+    return await this.getDriverDetailsUtil(user);
+
+  }
+
+  async getDriverDetailsViaTokens(req: Request, res: Response) {
+    const { userId } = await this.validateAndRefreshTokens(req, res);
+    const user = await this.authRepo.getUserById(userId);
+    if (!user) throw new UserNotFoundError();
+
+    return await this.getDriverDetailsUtil(user);
+  }
+
   async getUserFromRequest(req: Request, res: Response) {
     const { userId } = await this.validateAndRefreshTokens(req, res);
 
     console.log("Fetching user details for ID:", userId);
-    const user: components["schemas"]["UserDetails"] | null =
+    const user =
       await this.authRepo.getUserById(userId);
     return user;
   }
@@ -280,5 +312,33 @@ export class AuthService {
         throw new UserNotFoundError();
       }
     }
+  }
+
+
+  private async getDriverDetailsUtil(user: any) { 
+    const tenantDetails = await this.tenantRepo.getTenantDetails(user.tenantSlug!);
+
+    if(!tenantDetails) {
+      throw new Error("Tenant details not found for the driver");
+    }    
+
+    const vehicleDetails = await this.driverService.getVehicleDetails(user.id);
+
+    if(!vehicleDetails) {
+      throw new Error("Vehicle details not found for the driver");
+    }
+
+    const driverDetails: components["schemas"]["DriverDetails"] = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      phoneNo: user.phoneNo,
+      role: user.role,
+      tenantName: tenantDetails.name,
+      vehicleDetails,
+    };
+
+    const { accessToken, refreshToken } = createTokens({ id: user.id });
+    return { driverDetails, accessToken, refreshToken };
   }
 }

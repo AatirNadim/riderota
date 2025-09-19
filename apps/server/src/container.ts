@@ -19,10 +19,10 @@ const adminRepo = new AdminRepository();
 const driverRepo = new DriverRepository();
 
 // Services (depend on repositories and other services)
-const authService = new AuthService(authRepo);
-const tenantService = new TenantService(tenantRepo, authService); // Inject authService here
 const adminService = new AdminService(adminRepo);
 const driverService = new DriverService(driverRepo);
+const authService = new AuthService(driverService, authRepo, tenantRepo);
+const tenantService = new TenantService(tenantRepo, authService); // Inject authService here
 
 // Controllers (depend on services)
 export const authController = new AuthController(authService, tenantService);

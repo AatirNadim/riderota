@@ -351,6 +351,120 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/auth/login/driver": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Driver Login
+         * @description Authenticates a driver user. On success, returns access and refresh tokens via HttpOnly Set-Cookie headers.
+         *
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            /** @description Employee credentials for login */
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["LoginPayload"];
+                };
+            };
+            responses: {
+                /** @description Login successful. Tokens are returned in HttpOnly cookies. */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["DriverDetails"];
+                    };
+                };
+                /** @description Unauthorized - Invalid email or password. */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** @example Invalid email or password. */
+                            message?: string;
+                        };
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/login/employee": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Employee Login
+         * @description Authenticates an employee user. On success, returns access and refresh tokens via HttpOnly Set-Cookie headers.
+         *
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            /** @description Employee credentials for login */
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["LoginPayload"];
+                };
+            };
+            responses: {
+                /** @description Login successful. Tokens are returned in HttpOnly cookies. */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["EmployeeDetails"];
+                    };
+                };
+                /** @description Unauthorized - Invalid email or password. */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** @example Invalid email or password. */
+                            message?: string;
+                        };
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/invite": {
         parameters: {
             query?: never;
@@ -1087,6 +1201,9 @@ export interface components {
         DriverCreatePayload: components["schemas"]["UserCreatePayload"] & {
             vehicleDetails: components["schemas"]["VehicleDetails"];
         };
+        EmployeeDetails: components["schemas"]["UserDetails"] & {
+            address: components["schemas"]["AddressDetails"];
+        };
         VehicleDetails: {
             /** @example Toyota */
             make: string;
@@ -1105,18 +1222,18 @@ export interface components {
              * @description The user's unique identifier.
              * @example clxjq1z0a0000e8b4c2g7h6k9
              */
-            id?: string;
+            id: string;
             /**
              * Format: email
              * @example john.doe@example.com
              */
-            email?: string;
+            email: string;
             /** @example John Doe */
-            name?: string;
+            name: string;
             /** @example 30 */
             age?: number | null;
             /** @example +11234567890 */
-            phoneNo?: string;
+            phoneNo: string;
             /**
              * Format: uri
              * @example https://example.com/profile.jpg
@@ -1126,17 +1243,15 @@ export interface components {
              * @example EMPLOYEE
              * @enum {string}
              */
-            role?: "SUPERADMIN" | "ADMIN" | "DRIVER" | "EMPLOYEE";
+            role: "SUPERADMIN" | "ADMIN" | "DRIVER" | "EMPLOYEE";
             /**
-             * @example ACTIVE
-             * @enum {string}
+             * @description The name of the tenant the user belongs to.
+             * @example Innovate Inc.
              */
-            status?: "PENDING" | "MEMBER";
-            /**
-             * @description The slug of the tenant the user belongs to.
-             * @example innovate-inc
-             */
-            tenantSlug?: string | null;
+            tenantName: string;
+        };
+        DriverDetails: components["schemas"]["UserDetails"] & {
+            vehicleDetails: components["schemas"]["VehicleDetails"];
         };
         AddressDetails: {
             addressLine1: string;
