@@ -1,0 +1,15 @@
+model RideTask {
+  id               String         @id @default(cuid())
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  status           RideTaskStatus
+  driver           User           @relation(name: "RideTaskDriver", fields: [driverId], references: [id])
+  driverId         String
+  passenger        User           @relation(name: "RideTaskPassenger", fields: [passengerId], references: [id])
+  passengerId      String
+  rideStartOtpHash String
+  rideEndOtpHash   String?
+  rideExpires      DateTime
+  from             String
+  to               String
+}
