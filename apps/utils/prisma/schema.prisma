@@ -16,66 +16,6 @@ datasource db {
 //   tenantId String?
 // }
 
-model Tenant {
-  id           String   @id @default(cuid())
-  name         String
-  // use slug as index
-  slug         String   @unique
-  createdAt    DateTime @default(now())
-  superadmin   User     @relation("SuperadminForOrg", fields: [superadminId], references: [id])
-  superadminId String   @unique
-
-  users User[] @relation("UsersInOrg")
-
-  // office   Office? @relation("TenantOfficeMapper", fields: [officeId], references: [id])
-  // officeId String?
-
-  office_name     String
-  office_location String
-  Invitations     Invitations[]
-
-  @@index([slug], name: "idx_slug")
-  @@map("Tenant")
-}
-
-model Address {
-  id           String  @id @default(cuid())
-  addressLine1 String
-  addressLine2 String?
-  city         String
-  zipCode      String
-  landMark     String?
-  user         User?
-}
-
-model User {
-  id            String   @id @default(cuid())
-  email         String   @unique
-  passwordHash  String
-  name          String
-  age           Int?
-  phoneNo       String   @unique
-  profileImgUrl String?
-  address       Address? @relation(fields: [addressId], references: [id])
-  addressId     String?  @unique
-
-  role                     UserRole
-  /**
-   * /**
-   * /**
-   * /**
-   * the organization details should be optional, since a superadmin can exist in the records
-   * without having created an organization yet
-   */
-  organization             Tenant?    @relation("UsersInOrg", fields: [tenantSlug], references: [slug])
-  tenantSlug               String?
-  organizationAsSuperadmin Tenant?    @relation("SuperadminForOrg")
-  vehicle                  Vehicle?
-  RideTaskDriver           RideTask[] @relation(name: "RideTaskDriver")
-  RideTaskPassenger        RideTask[] @relation(name: "RideTaskPassenger")
-
-  @@index([tenantSlug])
-}
 
 model Invitations {
   id             String   @id @default(cuid())
@@ -87,35 +27,10 @@ model Invitations {
   tenantSlug     String
 }
 
-model Vehicle {
-  id           String @id @default(cuid())
-  make         String // e.g., "Toyota"
-  model        String // e.g., "Camry"
-  licensePlate String @unique
-  color        String
-  capacity     Int
-
-  driver   User   @relation(fields: [driverId], references: [id])
-  driverId String @unique
-}
-
-
-enum UserRole {
-  SUPERADMIN
-  ADMIN
-  DRIVER
-  EMPLOYEE
-}
 
 enum MembershipStatus {
   PENDING // The user has requested to join but is not yet approved.
   MEMBER // The user is an active, approved member of the organization.
 }
 
-enum RideTaskStatus {
-  PENDING
-  IN_PROGRESS
-  COMPLETED
-  CANCELLED
-  EXPIRED
-}
+

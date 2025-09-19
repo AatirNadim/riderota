@@ -13,3 +13,23 @@ model RideTask {
   from             String
   to               String
 }
+
+model Vehicle {
+  id           String @id @default(cuid())
+  make         String // e.g., "Toyota"
+  model        String // e.g., "Camry"
+  licensePlate String @unique
+  color        String
+  capacity     Int
+
+  driver   User   @relation(fields: [driverId], references: [id])
+  driverId String @unique
+}
+
+enum RideTaskStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  EXPIRED
+}

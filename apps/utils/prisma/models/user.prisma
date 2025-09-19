@@ -1,0 +1,45 @@
+model Address {
+  id           String  @id @default(cuid())
+  addressLine1 String
+  addressLine2 String?
+  city         String
+  zipCode      String
+  landMark     String?
+  user         User?
+}
+
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  passwordHash  String
+  name          String
+  age           Int?
+  phoneNo       String   @unique
+  profileImgUrl String?
+  address       Address? @relation(fields: [addressId], references: [id])
+  addressId     String?  @unique
+
+  role                     UserRole
+  /**
+   * /**
+   * /**
+   * /**
+   * the organization details should be optional, since a superadmin can exist in the records
+   * without having created an organization yet
+   */
+  organization             Tenant?    @relation("UsersInOrg", fields: [tenantSlug], references: [slug])
+  tenantSlug               String?
+  organizationAsSuperadmin Tenant?    @relation("SuperadminForOrg")
+  vehicle                  Vehicle?
+  RideTaskDriver           RideTask[] @relation(name: "RideTaskDriver")
+  RideTaskPassenger        RideTask[] @relation(name: "RideTaskPassenger")
+
+  @@index([tenantSlug])
+}
+
+enum UserRole {
+  SUPERADMIN
+  ADMIN
+  DRIVER
+  EMPLOYEE
+}

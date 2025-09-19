@@ -1,0 +1,21 @@
+model Tenant {
+  id           String   @id @default(cuid())
+  name         String
+  // use slug as index
+  slug         String   @unique
+  createdAt    DateTime @default(now())
+  superadmin   User     @relation("SuperadminForOrg", fields: [superadminId], references: [id])
+  superadminId String   @unique
+
+  users User[] @relation("UsersInOrg")
+
+  // office   Office? @relation("TenantOfficeMapper", fields: [officeId], references: [id])
+  // officeId String?
+
+  office_name     String
+  office_location String
+  Invitations     Invitations[]
+
+  @@index([slug], name: "idx_slug")
+  @@map("Tenant")
+}
