@@ -1,4 +1,4 @@
-import 'package:driver_app/core/blocs/user-details.bloc.dart';
+import 'package:driver_app/core/blocs/user_details/user-details.bloc.dart';
 import 'package:driver_app/core/themes/central.theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
