@@ -1,9 +1,14 @@
+import 'package:driver_app/api/api-client.dart';
 import 'package:driver_app/core/blocs/user_details/user-details.events.dart';
 import 'package:driver_app/core/blocs/user_details/user-details.state.dart';
 import 'package:driver_app/core/types/user-details.types.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import "package:driver_app/core/locators/service.locator.dart";
 
 class UserDetailsBloc extends Bloc<UserDetailsEvent, UserDetailsState> {
+
+  final ApiClient apiClient = getIt<ApiClient>();
+
   UserDetailsBloc() : super(UserDetailsInitial()) {
     on<LoadUserDetails>(_onLoadUserDetails);
     on<UpdateUserDetails>(_onUpdateUserDetails);
@@ -14,6 +19,7 @@ class UserDetailsBloc extends Bloc<UserDetailsEvent, UserDetailsState> {
     try {
       // Mock API call to fetch user details
       await Future.delayed(const Duration(seconds: 1));
+      // await apiClient.dioClient.get(path)
       final userDetails = UserDetails(
         id: event.userId,
         name: 'John Doe',

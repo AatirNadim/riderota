@@ -1,4 +1,7 @@
 import 'package:driver_app/core/blocs/user_details/user-details.bloc.dart';
+import 'package:driver_app/core/blocs/user_details/user-details.events.dart';
+import 'package:driver_app/core/blocs/user_details/user-details.state.dart';
+import 'package:driver_app/core/types/user-details.types.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
