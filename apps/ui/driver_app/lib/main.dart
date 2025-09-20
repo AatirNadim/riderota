@@ -1,5 +1,7 @@
+import 'package:driver_app/core/blocs/user-details.bloc.dart';
 import 'package:driver_app/core/themes/central.theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import "core/routes/app.router.dart";
 
 void main() {
@@ -11,11 +13,14 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      debugShowCheckedModeBanner: false,
-      title: 'RideRota Driver App',
-      theme: centralTheme,
-      routerConfig: appRouter,
+    return BlocProvider(
+      create: (context) => UserDetailsBloc(),
+      child: MaterialApp.router(
+        debugShowCheckedModeBanner: false,
+        title: 'RideRota Driver App',
+        theme: centralTheme,
+        routerConfig: appRouter,
+      ),
     );
   }
 }

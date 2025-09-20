@@ -1,4 +1,6 @@
+import 'package:driver_app/core/blocs/user-details.bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -12,16 +14,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final _formKey = GlobalKey<FormState>();
 
   // Controllers for driver details
-  final _nameController = TextEditingController(text: 'John Doe');
-  final _phoneController = TextEditingController(text: '+1 123 456 7890');
-  final _addressController = TextEditingController(text: '123 Main St, Anytown, USA');
+  final _nameController = TextEditingController();
+  final _phoneController = TextEditingController();
+  final _addressController = TextEditingController();
 
   // Controllers for vehicle details
-  final _makeController = TextEditingController(text: 'Toyota');
-  final _modelController = TextEditingController(text: 'Camry');
-  final _colorController = TextEditingController(text: 'Blue');
-  final _licensePlateController = TextEditingController(text: 'RIDE-123');
-  final _capacityController = TextEditingController(text: '4');
+  final _makeController = TextEditingController();
+  final _modelController = TextEditingController();
+  final _colorController = TextEditingController();
+  final _licensePlateController = TextEditingController();
+  final _capacityController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    // Assuming we have a way to get the current user's ID, we trigger the load.
+    context.read<UserDetailsBloc>().add(const LoadUserDetails('current_user_id'));
+  }
 
   @override
   void dispose() {
@@ -36,6 +45,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.dispose();
   }
 
+  void _updateControllers(UserDetails userDetails) {
+    _nameController.text = userDetails.name;
+    _phoneController.text = userDetails.phoneNo;
+    _addressController.text = userDetails.address?.addressLine1 ?? '';
+    _makeController.text = userDetails.vehicle?.make ?? '';
+    _modelController.text = userDetails.vehicle?.model ?? '';
+    _colorController.text = userDetails.vehicle?.color ?? '';
+    _licensePlateController.text = userDetails.vehicle?.licensePlate ?? '';
+    _capacityController.text = userDetails.vehicle?.capacity.toString() ?? '';
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -48,79 +68,148 @@ class _ProfileScreenState extends State<ProfileScreen> {
           onPressed: () => context.go('/'),
         ),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              _buildProfileImage(theme),
-              const SizedBox(height: 24),
-              _buildSectionCard(
-                theme,
-                title: 'Personal Details',
-                icon: Icons.person,
-                children: [
-                  _buildTextField(controller: _nameController, label: 'Full Name', icon: Icons.person_outline),
-                  const SizedBox(height: 16),
-                  _buildTextField(controller: _phoneController, label: 'Phone Number', icon: Icons.phone_outlined, keyboardType: TextInputType.phone),
-                  const SizedBox(height: 16),
-                  _buildTextField(controller: _addressController, label: 'Address', icon: Icons.home_outlined),
-                ],
-              ),
-              const SizedBox(height: 24),
-              _buildSectionCard(
-                theme,
-                title: 'Vehicle Details',
-                icon: Icons.directions_car,
-                children: [
-                  _buildTextField(controller: _makeController, label: 'Car Make', icon: Icons.branding_watermark_outlined),
-                  const SizedBox(height: 16),
-                  _buildTextField(controller: _modelController, label: 'Car Model', icon: Icons.model_training_outlined),
-                  const SizedBox(height: 16),
-                  _buildTextField(controller: _colorController, label: 'Color', icon: Icons.color_lens_outlined),
-                  const SizedBox(height: 16),
-                  _buildTextField(controller: _licensePlateController, label: 'License Plate', icon: Icons.pin_outlined),
-                  const SizedBox(height: 16),
-                  _buildTextField(controller: _capacityController, label: 'Capacity', icon: Icons.people_outline, keyboardType: TextInputType.number),
-                ],
-              ),
-              const SizedBox(height: 32),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
+      body: BlocConsumer<UserDetailsBloc, UserDetailsState>(
+        listener: (context, state) {
+          if (state is UserDetailsLoaded) {
+            _updateControllers(state.userDetails);
+            ScaffoldMessenger.of(context)
+              ..hideCurrentSnackBar()
+              ..showSnackBar(
+                const SnackBar(
+                  content: Text('Profile updated!'),
+                  backgroundColor: Colors.green,
                 ),
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Profile Updated Successfully!'),
-                        backgroundColor: Colors.green,
-                      ),
-                    );
-                  }
-                },
-                child: const Text('Update Profile'),
+              );
+          } else if (state is UserDetailsError) {
+            ScaffoldMessenger.of(context)
+              ..hideCurrentSnackBar()
+              ..showSnackBar(
+                SnackBar(
+                  content: Text(state.message),
+                  backgroundColor: theme.colorScheme.error,
+                ),
+              );
+          } else if (state is UserDetailsLoading) {
+            ScaffoldMessenger.of(context)
+              ..hideCurrentSnackBar()
+              ..showSnackBar(
+                const SnackBar(
+                  content: Text('Updating profile...'),
+                  duration: Duration(seconds: 1),
+                ),
+              );
+          }
+        },
+        builder: (context, state) {
+          if (state is UserDetailsInitial || state is UserDetailsLoading && state is! UserDetailsLoaded) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (state is UserDetailsError && state is! UserDetailsLoaded) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text('Failed to load profile.'),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () {
+                      context.read<UserDetailsBloc>().add(const LoadUserDetails('current_user_id'));
+                    },
+                    child: const Text('Retry'),
+                  )
+                ],
               ),
-            ],
-          ),
-        ),
+            );
+          }
+
+          if (state is UserDetailsLoaded) {
+            return SingleChildScrollView(
+              padding: const EdgeInsets.all(16.0),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    _buildProfileImage(theme, state.userDetails.profileImgUrl),
+                    const SizedBox(height: 24),
+                    _buildSectionCard(
+                      theme,
+                      title: 'Personal Details',
+                      icon: Icons.person,
+                      children: [
+                        _buildTextField(controller: _nameController, label: 'Full Name', icon: Icons.person_outline),
+                        const SizedBox(height: 16),
+                        _buildTextField(controller: _phoneController, label: 'Phone Number', icon: Icons.phone_outlined, keyboardType: TextInputType.phone),
+                        const SizedBox(height: 16),
+                        _buildTextField(controller: _addressController, label: 'Address', icon: Icons.home_outlined),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
+                    _buildSectionCard(
+                      theme,
+                      title: 'Vehicle Details',
+                      icon: Icons.directions_car,
+                      children: [
+                        _buildTextField(controller: _makeController, label: 'Car Make', icon: Icons.branding_watermark_outlined),
+                        const SizedBox(height: 16),
+                        _buildTextField(controller: _modelController, label: 'Car Model', icon: Icons.model_training_outlined),
+                        const SizedBox(height: 16),
+                        _buildTextField(controller: _colorController, label: 'Color', icon: Icons.color_lens_outlined),
+                        const SizedBox(height: 16),
+                        _buildTextField(controller: _licensePlateController, label: 'License Plate', icon: Icons.pin_outlined),
+                        const SizedBox(height: 16),
+                        _buildTextField(controller: _capacityController, label: 'Capacity', icon: Icons.people_outline, keyboardType: TextInputType.number),
+                      ],
+                    ),
+                    const SizedBox(height: 32),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      onPressed: () {
+                        if (_formKey.currentState!.validate()) {
+                          final updatedDetails = state.userDetails.copyWith(
+                            name: _nameController.text,
+                            phoneNo: _phoneController.text,
+                            address: state.userDetails.address?.copyWith(addressLine1: _addressController.text) ?? Address(id: 'new', addressLine1: _addressController.text, city: '', zipCode: ''),
+                            vehicle: state.userDetails.vehicle?.copyWith(
+                                  make: _makeController.text,
+                                  model: _modelController.text,
+                                  color: _colorController.text,
+                                  licensePlate: _licensePlateController.text,
+                                  capacity: int.tryParse(_capacityController.text) ?? 0,
+                                ) ??
+                                VehicleDetails(id: 'new', make: _makeController.text, model: _modelController.text, licensePlate: _licensePlateController.text, color: _colorController.text, capacity: int.tryParse(_capacityController.text) ?? 0),
+                          );
+                          context.read<UserDetailsBloc>().add(UpdateUserDetails(updatedDetails));
+                        }
+                      },
+                      child: const Text('Update Profile'),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
+          return const Center(child: Text('Something went wrong.'));
+        },
       ),
     );
   }
 
-  Widget _buildProfileImage(ThemeData theme) {
+  Widget _buildProfileImage(ThemeData theme, String? profileImgUrl) {
     return Center(
       child: Stack(
         children: [
           CircleAvatar(
             radius: 60,
-            backgroundImage: const NetworkImage('https://example.com/profile.jpg'), // Placeholder
+            backgroundImage: profileImgUrl != null ? NetworkImage(profileImgUrl) : null,
             backgroundColor: theme.colorScheme.surface,
+            child: profileImgUrl == null ? const Icon(Icons.person, size: 60) : null,
           ),
           Positioned(
             bottom: 0,
