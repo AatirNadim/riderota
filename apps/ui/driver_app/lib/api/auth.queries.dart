@@ -48,8 +48,7 @@ class AuthQueries {
       throw Exception('No access token found');
     }
 
-    Response<UserDetails> res = await _apiClient.dioClient.get(
-      '${dotenv.env['API_BASE_URL'] ?? 'https://yourapi.com'}/whoami',
+    Response<UserDetails> res = await _apiClient.dioClient.get('/whoami',
       options: Options(
         headers: {'Authorization': 'Bearer ${tokens[0]}',
           'x-refresh-token': tokens[1] ?? '',
