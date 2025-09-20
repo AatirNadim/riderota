@@ -35,7 +35,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void initState() {
     super.initState();
     // Assuming we have a way to get the current user's ID, we trigger the load.
-    context.read<UserDetailsBloc>().add(const LoadUserDetails('current_user_id'));
+    context.read<UserDetailsBloc>().add(const LoadUserDetailsEvent('current_user_id'));
   }
 
   @override
@@ -76,7 +76,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
       body: BlocConsumer<UserDetailsBloc, UserDetailsState>(
         listener: (context, state) {
-          if (state is UserDetailsLoaded) {
+          if (state is UserDetailsLoadedState) {
             _updateControllers(state.userDetails);
             ScaffoldMessenger.of(context)
               ..hideCurrentSnackBar()
@@ -86,7 +86,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   backgroundColor: Colors.green,
                 ),
               );
-          } else if (state is UserDetailsError) {
+          } else if (state is UserDetailsErrorState) {
             ScaffoldMessenger.of(context)
               ..hideCurrentSnackBar()
               ..showSnackBar(
@@ -95,7 +95,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   backgroundColor: theme.colorScheme.error,
                 ),
               );
-          } else if (state is UserDetailsLoading) {
+          } else if (state is UserDetailsLoadingState) {
             ScaffoldMessenger.of(context)
               ..hideCurrentSnackBar()
               ..showSnackBar(
@@ -107,11 +107,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
           }
         },
         builder: (context, state) {
-          if (state is UserDetailsInitial || state is UserDetailsLoading && state is! UserDetailsLoaded) {
+          if (state is UserDetailsInitialState || state is UserDetailsLoadingState && state is! UserDetailsLoadedState) {
             return const Center(child: CircularProgressIndicator());
           }
 
-          if (state is UserDetailsError && state is! UserDetailsLoaded) {
+          if (state is UserDetailsErrorState && state is! UserDetailsLoadedState) {
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -120,7 +120,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () {
-                      context.read<UserDetailsBloc>().add(const LoadUserDetails('current_user_id'));
+                      context.read<UserDetailsBloc>().add(const LoadUserDetailsEvent('current_user_id'));
                     },
                     child: const Text('Retry'),
                   )
@@ -129,7 +129,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             );
           }
 
-          if (state is UserDetailsLoaded) {
+          if (state is UserDetailsLoadedState) {
             return SingleChildScrollView(
               padding: const EdgeInsets.all(16.0),
               child: Form(
@@ -191,7 +191,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ) ??
                                 VehicleDetails(id: 'new', make: _makeController.text, model: _modelController.text, licensePlate: _licensePlateController.text, color: _colorController.text, capacity: int.tryParse(_capacityController.text) ?? 0),
                           );
-                          context.read<UserDetailsBloc>().add(UpdateUserDetails(updatedDetails));
+                          context.read<UserDetailsBloc>().add(UpdateUserDetailsEvent(updatedDetails));
                         }
                       },
                       child: const Text('Update Profile'),

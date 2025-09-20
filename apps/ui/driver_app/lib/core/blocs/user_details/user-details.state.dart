@@ -7,27 +7,27 @@ abstract class UserDetailsState extends Equatable {
   const UserDetailsState();
 }
 
-class UserDetailsInitial extends UserDetailsState {
+class UserDetailsInitialState extends UserDetailsState {
   @override
   List<Object> get props => [];
 }
 
-class UserDetailsLoading extends UserDetailsState {
+class UserDetailsLoadingState extends UserDetailsState {
   @override
   List<Object> get props => [];
 }
 
-class UserDetailsLoaded extends UserDetailsState {
+class UserDetailsLoadedState extends UserDetailsState {
   final UserDetails userDetails;
-  const UserDetailsLoaded(this.userDetails);
+  const UserDetailsLoadedState(this.userDetails);
 
   @override
   List<Object> get props => [userDetails];
 }
 
-class UserDetailsError extends UserDetailsState {
+class UserDetailsErrorState extends UserDetailsState {
   final String message;
-  const UserDetailsError(this.message);
+  const UserDetailsErrorState(this.message);
 
   @override
   List<Object> get props => [message];

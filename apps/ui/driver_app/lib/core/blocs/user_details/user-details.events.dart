@@ -7,17 +7,17 @@ abstract class UserDetailsEvent extends Equatable {
   const UserDetailsEvent();
 }
 
-class LoadUserDetails extends UserDetailsEvent {
+class LoadUserDetailsEvent extends UserDetailsEvent {
   final String userId;
-  const LoadUserDetails(this.userId);
+  const LoadUserDetailsEvent(this.userId);
 
   @override
   List<Object> get props => [userId];
 }
 
-class UpdateUserDetails extends UserDetailsEvent {
+class UpdateUserDetailsEvent extends UserDetailsEvent {
   final UserDetails userDetails;
-  const UpdateUserDetails(this.userDetails);
+  const UpdateUserDetailsEvent(this.userDetails);
 
   @override
   List<Object> get props => [userDetails];
