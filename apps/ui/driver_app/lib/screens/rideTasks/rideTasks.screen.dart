@@ -1,23 +1,10 @@
+import 'package:driver_app/core/blocs/ride-tasks/ride-tasks.bloc.dart';
+import 'package:driver_app/core/blocs/ride-tasks/ride-tasks.events.dart';
+import 'package:driver_app/core/blocs/ride-tasks/ride-tasks.states.dart';
+import 'package:driver_app/core/types/ride-task.types.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'dart:async';
-
-// Mock data model for a ride task
-class RideTask {
-  final String id;
-  final String passengerName;
-  final String from;
-  final String to;
-  final DateTime rideExpires;
-
-  RideTask({
-    required this.id,
-    required this.passengerName,
-    required this.from,
-    required this.to,
-    required this.rideExpires,
-  });
-}
 
 class RideTasksScreen extends StatefulWidget {
   const RideTasksScreen({super.key});
@@ -27,85 +14,35 @@ class RideTasksScreen extends StatefulWidget {
 }
 
 class _RideTasksScreenState extends State<RideTasksScreen> {
-  late Future<List<RideTask>> _rideTasksFuture;
-
   @override
   void initState() {
     super.initState();
-    _rideTasksFuture = _fetchRideTasks();
-  }
-
-  // Mock function to simulate fetching data from a BLoC
-  Future<List<RideTask>> _fetchRideTasks() async {
-    // Simulate network delay
-    await Future.delayed(const Duration(seconds: 2));
-
-    // In a real app, you would call your BLoC here, e.g.:
-    // return context.read<RideTasksBloc>().fetchTasks();
-
-    // Mock data for demonstration
-    return [
-      RideTask(
-        id: 'ride_task_123',
-        passengerName: 'John Doe',
-        from: '123 Main St, Anytown, USA',
-        to: '456 Elm St, Othertown, USA',
-        rideExpires: DateTime.now().add(const Duration(hours: 1)),
-      ),
-      RideTask(
-        id: 'ride_task_124',
-        passengerName: 'Jane Smith',
-        from: '789 Oak Ave, Sometown, USA',
-        to: '101 Pine Ln, Yourtown, USA',
-        rideExpires: DateTime.now().add(const Duration(hours: 2)),
-      ),
-      RideTask(
-        id: 'ride_task_125',
-        passengerName: 'Peter Jones',
-        from: '212 Maple Dr, Anothertown, USA',
-        to: '333 Birch Rd, Finaltown, USA',
-        rideExpires: DateTime.now().add(const Duration(hours: 3)),
-      ),
-    ];
-  }
-
-  void _retryFetch() {
-    setState(() {
-      _rideTasksFuture = _fetchRideTasks();
-    });
+    context.read<RideTasksBloc>().add(FetchRideTasksEvent());
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Ride Tasks'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            if (context.canPop()) {
-              context.pop();
-            } else {
-              context.go('/'); // Fallback to home
-            }
-          },
+          onPressed: () => context.canPop() ? context.pop() : context.go('/'),
         ),
       ),
-      body: FutureBuilder<List<RideTask>>(
-        future: _rideTasksFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
+      body: BlocBuilder<RideTasksBloc, RideTasksState>(
+        builder: (context, state) {
+          if (state is RideTasksLoadingState) {
             return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return _buildErrorState(context, snapshot.error);
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return _buildEmptyState(context);
-          } else {
-            final tasks = snapshot.data!;
-            return _buildTaskList(context, tasks);
+          } else if (state is RideTasksErrorState) {
+            return _buildErrorState(context, state.message);
+          } else if (state is RideTasksLoadedState) {
+            if (state.tasks.isEmpty) {
+              return _buildEmptyState(context);
+            }
+            return _buildTaskList(context, state.tasks);
           }
+          return const Center(child: Text('No tasks available.'));
         },
       ),
     );
@@ -133,13 +70,29 @@ class _RideTasksScreenState extends State<RideTasksScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildCardHeader(context, task.passengerName),
+            _buildCardHeader(context, "Passenger"), // Placeholder
             const Divider(height: 24),
             _buildInfoRow(theme, Icons.location_on_outlined, 'From', task.from),
             const SizedBox(height: 12),
             _buildInfoRow(theme, Icons.flag_outlined, 'To', task.to),
             const SizedBox(height: 12),
-            _buildInfoRow(theme, Icons.timer_outlined, 'Expires', '${task.rideExpires.hour}:${task.rideExpires.minute.toString().padLeft(2, '0')}'),
+            _buildInfoRow(
+                theme,
+                Icons.timer_outlined,
+                'Expires',
+                '${task.rideExpires.hour}:${task.rideExpires.minute.toString().padLeft(2, '0')}'),
+            const SizedBox(height: 16),
+            Align(
+              alignment: Alignment.centerRight,
+              child: ElevatedButton(
+                onPressed: () {
+                  context
+                      .read<RideTasksBloc>()
+                      .add(CompleteRideTaskEvent(task.id));
+                },
+                child: const Text('Mark as Complete'),
+              ),
+            ),
           ],
         ),
       ),
@@ -150,7 +103,8 @@ class _RideTasksScreenState extends State<RideTasksScreen> {
     final theme = Theme.of(context);
     return Row(
       children: [
-        Icon(Icons.person_pin_circle_outlined, color: theme.colorScheme.primary, size: 28),
+        Icon(Icons.person_pin_circle_outlined,
+            color: theme.colorScheme.primary, size: 28),
         const SizedBox(width: 12),
         Text(
           passengerName,
@@ -160,7 +114,8 @@ class _RideTasksScreenState extends State<RideTasksScreen> {
     );
   }
 
-  Widget _buildInfoRow(ThemeData theme, IconData icon, String label, String value) {
+  Widget _buildInfoRow(
+      ThemeData theme, IconData icon, String label, String value) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -170,7 +125,9 @@ class _RideTasksScreenState extends State<RideTasksScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(label, style: theme.textTheme.labelMedium?.copyWith(color: theme.colorScheme.onSurface.withOpacity(0.6))),
+              Text(label,
+                  style: theme.textTheme.labelMedium
+                      ?.copyWith(color: theme.colorScheme.onSurface.withOpacity(0.6))),
               const SizedBox(height: 2),
               Text(value, style: theme.textTheme.bodyLarge),
             ],
@@ -180,7 +137,7 @@ class _RideTasksScreenState extends State<RideTasksScreen> {
     );
   }
 
-  Widget _buildErrorState(BuildContext context, Object? error) {
+  Widget _buildErrorState(BuildContext context, String message) {
     final theme = Theme.of(context);
     return Center(
       child: Padding(
@@ -197,13 +154,14 @@ class _RideTasksScreenState extends State<RideTasksScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              'Please check your connection and try again.',
+              message,
               style: theme.textTheme.bodyLarge,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),
             ElevatedButton.icon(
-              onPressed: _retryFetch,
+              onPressed: () =>
+                  context.read<RideTasksBloc>().add(FetchRideTasksEvent()),
               icon: const Icon(Icons.refresh),
               label: const Text('Retry'),
             ),
@@ -221,7 +179,8 @@ class _RideTasksScreenState extends State<RideTasksScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.explore_off_outlined, color: theme.colorScheme.secondary, size: 60),
+            Icon(Icons.explore_off_outlined,
+                color: theme.colorScheme.secondary, size: 60),
             const SizedBox(height: 16),
             Text(
               'No ride tasks available',

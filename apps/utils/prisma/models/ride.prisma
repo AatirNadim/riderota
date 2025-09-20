@@ -9,7 +9,7 @@ model RideTask {
   passengerId      String
   rideStartOtpHash String
   rideEndOtpHash   String?
-  rideExpires      DateTime
+  rideExpires      DateTime   @default(dbgenerated("CURRENT_TIMESTAMP + INTERVAL '1 day'")) @db.Timestamp(6)
   from             String
   to               String
 }
@@ -27,6 +27,7 @@ model Vehicle {
 }
 
 enum RideTaskStatus {
+  REGISTERED
   PENDING
   IN_PROGRESS
   COMPLETED
